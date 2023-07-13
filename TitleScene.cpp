@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 
+
 //コンストラクタ
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene")
