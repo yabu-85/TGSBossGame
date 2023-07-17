@@ -176,7 +176,7 @@ bool Player::IsPlayerOnGround() {
 }
 
 bool Player::IsPlayerMove() {
-    if (fMove_.x != 0 || fMove_.z || jump_)
+    if (fMove_.x != 0 || fMove_.z)
         return true;
 
     return false;

@@ -11,7 +11,7 @@ Aim::Aim(GameObject* parent)
     perspectiveDistance_ = 4.3f;
     heightDistance_ = 2.0f;
     maxLeng_ = 5.0f;
-    cameraSpeed_ = 0.09f;
+    cameraSpeed_ = 0.08f;
 }
 
 Aim::~Aim()

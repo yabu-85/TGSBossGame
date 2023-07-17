@@ -3,15 +3,12 @@
 #include "Engine/Text.h"
 
 //■■シーンを管理するクラス
-class TitleScene : public GameObject
+class PlayScene  : public GameObject
 {
-	int hPict_[2];    //画像番号
-	Text* pText_;
-
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
-	TitleScene(GameObject* parent);
+	PlayScene (GameObject* parent);
 
 	//初期化
 	void Initialize() override;
