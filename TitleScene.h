@@ -5,7 +5,7 @@
 //■■シーンを管理するクラス
 class TitleScene : public GameObject
 {
-	int hPict_[2];    //画像番号
+	int hPict_[3];    //画像番号
 	Text* pText_;
 
 public:

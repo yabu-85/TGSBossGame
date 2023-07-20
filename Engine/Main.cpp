@@ -28,7 +28,8 @@ const char* WIN_CLASS_NAME = "SampleGame";	//ウィンドウクラス名
 //プロトタイプ宣言
 HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdShow);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
+void LimitMousePointer(HWND hwnd);
+void ReleaseMousePointer();
 
 // エントリーポイント
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -202,7 +203,7 @@ HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdSho
 	HWND hWnd = CreateWindow(
 		WIN_CLASS_NAME,					//ウィンドウクラス名
 		caption,						//タイトルバーに表示する内容
-		WS_OVERLAPPEDWINDOW,			//スタイル（普通のウィンドウ）
+		WS_POPUP | WS_VISIBLE,			//スタイル（普通のウィンドウ WS_OVERLAPPEDWINDOW）
 		CW_USEDEFAULT,					//表示位置左（おまかせ）
 		CW_USEDEFAULT,					//表示位置上（おまかせ）
 		winRect.right - winRect.left,	//ウィンドウ幅
@@ -225,15 +226,61 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-	//ウィンドウを閉じた
+		//ウィンドウを閉じた
 	case WM_DESTROY:
-		PostQuitMessage(0);	//プログラム終了
+		ReleaseMousePointer();  //マウスポインターの制限を解除
+		PostQuitMessage(0);		//プログラム終了
 		return 0;
 
-	//マウスが動いた
+		//マウスが動いた
 	case WM_MOUSEMOVE:
+		//マウスポインターの制限を設定
+		LimitMousePointer(hWnd);
 		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
+
+		//マウスカーソルを非表示にする
+		while (ShowCursor(FALSE) >= 0);
+		return 0;
+
+		//キーボードのキーが押された
+	case WM_KEYDOWN:
+		//エスケープキーが押された場合
+		if (wParam == VK_ESCAPE)
+		{
+			while (ShowCursor(TRUE) < 0);   //マウスカーソルを表示する
+			int result = MessageBox(hWnd, "プログラムを終了しますか？", "確認", MB_OKCANCEL | MB_ICONQUESTION);
+
+			//OKボタンが押された場合、プログラムを終了
+			if (result == IDOK)
+			{
+				ReleaseMousePointer();  // マウスポインターの制限を解除
+				PostQuitMessage(0);      // プログラム終了
+			}
+			else if (result == IDCANCEL)
+			{
+				// キャンセル選択時は何もしない
+			}
+		}
 		return 0;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+// マウスポインターを制限する関数
+void LimitMousePointer(HWND hwnd)
+{
+	RECT windowRect;
+	GetClientRect(hwnd, &windowRect);
+
+	// ウィンドウの矩形領域をスクリーン座標に変換
+	MapWindowPoints(hwnd, nullptr, reinterpret_cast<POINT*>(&windowRect), 2);
+
+	// マウスポインターの制限領域を設定
+	ClipCursor(&windowRect);
+}
+
+// マウスポインターの制限を解除する関数
+void ReleaseMousePointer()
+{
+	ClipCursor(nullptr);
 }

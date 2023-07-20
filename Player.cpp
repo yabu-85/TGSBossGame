@@ -50,7 +50,8 @@ void Player::Update()
         break;
     }
 
-    if (IsPlayerMove()) Rotate(); //移動キーキーが押されていれば向きを変える
+    //移動キーキーが押されていれば向きを変える
+    if (IsPlayerMove()) Rotate();
 
     //ーーーー重力落下ーーーーーー
     if (!IsPlayerOnGround()) {
