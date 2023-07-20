@@ -2,16 +2,16 @@
 #include "Engine/Camera.h"
 #include "Engine/Input.h"
 #include "Player.h"
+#include "Engine/Image.h"
 
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirection_{ 0,0,0 }, plaPos_{ 0,0,0 }, pPlayer_(nullptr),
-    currentCameraPos_{ 0,0,0 }, currentCameraTar_{ 0,0,1 }
+    hPict_(-1)
 {
     mouseSensitivity = 2.5f;
-    perspectiveDistance_ = 4.3f;
-    heightDistance_ = 2.0f;
-    maxLeng_ = 5.0f;
-    cameraSpeed_ = 0.08f;
+    perspectiveDistance_ = 3.2f;
+    heightDistance_ = 1.5f;
+    cameraSpeed_ = 0.4f;
 }
 
 Aim::~Aim()
@@ -25,45 +25,42 @@ void Aim::Initialize()
     //マウス初期位置
     Input::SetMousePosition(800 / 2, 600 / 2);
 
+    //画像データのロード
+    hPict_ = Image::Load("cross.png");
+    assert(hPict_ >= 0);
 }
 
 void Aim::Update()
 {
-    //プレイヤーの移動方向によって回転させるやつ
-    //未完成＜＝ーーーーーーーーーーーーーーーーーー
-    XMVECTOR v = pPlayer_->GetPlaVector();
-    //if (aimDirection_.z < 0.0) transform_.rotate_.y += XMVectorGetX(v) * 7;
-    //else transform_.rotate_.y -= XMVectorGetX(v) * 7;
-
-
     //マウス移動量
     XMFLOAT3 mouseMove = Input::GetMouseMove(); //マウスの移動量を取得
 
-    //移動量を加算
+    //移動量を計算
     transform_.rotate_.y += (mouseMove.x * 0.05f) * mouseSensitivity; //横方向の回転
     transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //縦方向の回転
+    if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
+    if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
 
     //カメラの回転
     XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(transform_.rotate_.x));
     XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-    XMMATRIX matT = XMMatrixTranslation(0, 0, perspectiveDistance_);
+    XMMATRIX matT = XMMatrixTranslation(0, 0, 0);
 
     //カメラの位置と回転を合成
-    XMMATRIX mView = mRotX * mRotY * matT; //カメラ用
-    XMMATRIX mPlaMove = mRotX * mRotY;     //プレイヤーの移動用
+    XMMATRIX mView = mRotX * mRotY; //カメラ用
+    XMMATRIX mPlaMove = mRotY;     //プレイヤーの移動用   
 
-    //プレイヤー座標取得
-    plaPos_ = pPlayer_->GetPlaPos();
-
-    //プレイヤーキャラクターの位置をカメラの位置とする
-    cameraPos_.x = plaPos_.x;
-    cameraPos_.y = plaPos_.y + heightDistance_; //目線高さ
-    cameraPos_.z = plaPos_.z;
-
-    //プレイヤークラスに進行方向ベクトル(float3)を伝える用   
+    //プレイヤークラスに進行方向ベクトル(float3)を伝える用
     const XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
     XMVECTOR caDire = XMVector3TransformNormal(forwardVector, mPlaMove); //XMVector3TransformNormalを使用することで回転のみを適用します
+    XMVector3Normalize(caDire);
     XMStoreFloat3(&aimDirection_, -caDire);
+
+    //プレイヤーの位置をカメラの位置とする
+    plaPos_ = pPlayer_->GetPlaPos();
+    cameraPos_.x = plaPos_.x + aimDirection_.z;
+    cameraPos_.y = plaPos_.y + heightDistance_; //目線高さ
+    cameraPos_.z = plaPos_.z - aimDirection_.x;
 
     //カメラ焦点
     XMVECTOR caTarget = XMLoadFloat3(&cameraPos_);
@@ -75,96 +72,18 @@ void Aim::Update()
     XMStoreFloat3(&cameraPos_, camPos);
     XMStoreFloat3(&cameraTarget_, caTarget);
 
-
-#if 1
-
-    //プレイヤーの移動ー＞移動なしになった場合のなんたらが必要
-
-    static bool inputKey = false;
-
-    //-----------だんだん動くやつ
-    if (pPlayer_->IsPlayerMove()) {
-        XMVECTOR vCameraPosDist, vCameraTarDist;
-        float posDx, posDy, posDz;
-
-        do {
-            vCameraPosDist = cameraPos_ - currentCameraPos_;
-            vCameraTarDist = cameraTarget_ - currentCameraTar_;
-            currentCameraPos_ += (vCameraPosDist * cameraSpeed_);
-            currentCameraTar_ += (vCameraTarDist * cameraSpeed_);
-
-            posDx = XMVectorGetX(XMVector3Length(vCameraPosDist));
-            posDy = XMVectorGetY(XMVector3Length(vCameraPosDist));
-            posDz = XMVectorGetZ(XMVector3Length(vCameraPosDist));
-
-        } while ((posDx + posDy + posDz) > maxLeng_);
-
-        Camera::SetPosition(currentCameraPos_);
-        Camera::SetTarget(currentCameraTar_);
-
-        inputKey = true;
-
-    }
-    else if (!pPlayer_->IsPlayerMove() && inputKey) {
-        XMVECTOR vCameraPosDist, vCameraTarDist;
-        float posDx, posDy, posDz;
-
-        do {
-            vCameraPosDist = cameraPos_ - currentCameraPos_;
-            vCameraTarDist = cameraTarget_ - currentCameraTar_;
-            currentCameraPos_ += (vCameraPosDist * cameraSpeed_);
-            currentCameraTar_ += (vCameraTarDist * cameraSpeed_);
-
-            posDx = XMVectorGetX(XMVector3Length(vCameraPosDist));
-            posDy = XMVectorGetY(XMVector3Length(vCameraPosDist));
-            posDz = XMVectorGetZ(XMVector3Length(vCameraPosDist));
-
-        } while ((posDx + posDy + posDz) > maxLeng_);
-
-        Camera::SetPosition(currentCameraPos_);
-        Camera::SetTarget(currentCameraTar_);
-
-        if (abs(posDx + posDy + posDz) <= 0.01f) inputKey = false;
-
-    }
-    else
-    {
-        Camera::SetPosition(cameraPos_);
-        Camera::SetTarget(cameraTarget_);
-
-        currentCameraPos_ = cameraPos_;
-        currentCameraTar_ = cameraTarget_;
-
-        inputKey = false;
-    }
-
-#else
-
-    XMVECTOR vCameraPosDist, vCameraTarDist;
-    int posDx, posDy, posDz;
-
-    do {
-        vCameraPosDist = cameraPos_ - currentCameraPos_;
-        vCameraTarDist = cameraTarget_ - currentCameraTar_;
-        currentCameraPos_ += (vCameraPosDist * cameraSpeed_);
-        currentCameraTar_ += (vCameraTarDist * cameraSpeed_);
-
-        posDx = XMVectorGetX(XMVector3Length(vCameraPosDist));
-        posDy = XMVectorGetY(XMVector3Length(vCameraPosDist));
-        posDz = XMVectorGetZ(XMVector3Length(vCameraPosDist));
-
-    } while ((posDx + posDy + posDz) > maxLeng_);
-
-    Camera::SetPosition(currentCameraPos_);
-    Camera::SetTarget(currentCameraTar_);
-
-#endif
-
-
+    Camera::SetPosition(cameraPos_);
+    Camera::SetTarget(cameraTarget_);
 }
 
 void Aim::Draw()
 {
+    Transform cross;
+    cross.rotate_.x = 0;
+    cross.rotate_.y = 0;
+    cross.rotate_.z = 0;
+    Image::SetTransform(hPict_, cross);
+    Image::Draw(hPict_);
 }
 
 void Aim::Release()

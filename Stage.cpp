@@ -38,17 +38,6 @@ void Stage::Initialize()
         hModel_[i] = Model::Load(fileName[i]);
         assert(hModel_[i] >= 0);
     }
-
-    for (int x = 0; x < width_; x++) {
-        for (int y = 0; y < height_; y++) {
-            if (table_[x][y] == 10) {
-                Player* pPlayer = (Player*)FindObject("Player");
-                pPlayer->SetPosition(x + 0.5, 0, y + 0.5);
-
-                table_[x][y] = 0;
-            }
-        }
-    }
 }
 
 //çXêV
@@ -98,4 +87,19 @@ int Stage::IsWall(int x, int z)
     }
 
     return 0;
+}
+
+XMFLOAT3 Stage::GetPlaPos()
+{
+    XMFLOAT3 pos;
+    for (int x = 0; x < width_; x++) {
+        for (int y = 0; y < height_; y++) {
+            if (table_[x][y] == 10) {
+                table_[x][y] = 0;
+                return XMFLOAT3(x + 0.5, 0, y + 0.5);
+            }
+        }
+    }
+
+    return XMFLOAT3{ 0,0,0 };
 }

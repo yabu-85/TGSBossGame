@@ -10,7 +10,7 @@ Player::Player(GameObject* parent)
     previousPosition_{ 0,0,0 }
 {
     moveSpeed_ = 0.75f;
-    rotationSpeed_ = 17.0f;
+    rotationSpeed_ = 14.0f;
     gravity_ = 0.008f;
     initVy_ = 0.175f;
 

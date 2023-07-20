@@ -11,8 +11,10 @@ PlayScene::PlayScene(GameObject* parent)
 //‰Šú‰»
 void PlayScene::Initialize()
 {
-	Instantiate<Player>(this);
-	Instantiate<Stage>(this);
+	Stage* pStage = Instantiate<Stage>(this);
+	Player* pPlayer = Instantiate<Player>(this);
+
+	pPlayer->SetPosition(pStage->GetPlaPos());
 }
 
 //XV

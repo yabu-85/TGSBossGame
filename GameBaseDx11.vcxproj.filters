@@ -110,6 +110,7 @@
     <ClCompile Include="PlayScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="PauseMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -193,6 +194,7 @@
     <ClInclude Include="PlayScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="PauseMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
