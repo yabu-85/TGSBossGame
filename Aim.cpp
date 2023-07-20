@@ -11,7 +11,6 @@ Aim::Aim(GameObject* parent)
     mouseSensitivity = 2.5f;
     perspectiveDistance_ = 3.2f;
     heightDistance_ = 1.5f;
-    cameraSpeed_ = 0.4f;
 }
 
 Aim::~Aim()
@@ -57,9 +56,9 @@ void Aim::Update()
 
     //プレイヤーの位置をカメラの位置とする
     plaPos_ = pPlayer_->GetPosition();
-    cameraPos_.x = plaPos_.x + aimDirection_.z;
+    cameraPos_.x = plaPos_.x + (aimDirection_.z * 0.5);
     cameraPos_.y = plaPos_.y + heightDistance_ * pPlayer_->GetCameraHeight(); //目線高さ
-    cameraPos_.z = plaPos_.z - aimDirection_.x;
+    cameraPos_.z = plaPos_.z - (aimDirection_.x * 0.5);
 
     //カメラ焦点
     XMVECTOR caTarget = XMLoadFloat3(&cameraPos_);

@@ -24,7 +24,9 @@ class Player : public GameObject
 
     void CalcMoveVec();                 //移動方向計算・normalize
     float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
-    void Rotate();
+    void Rotate();                      //
+    void Gravity();                     
+    void Crouch();
 
     enum STATE {
         S_IDLE,

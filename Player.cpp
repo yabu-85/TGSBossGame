@@ -53,58 +53,40 @@ void Player::Update()
     //移動キーキーが押されていれば向きを変える
     if (IsPlayerMove()) Rotate();
 
-    //ーーーー重力落下ーーーーーー
-    if (!IsPlayerOnGround()) {
-        transform_.position_.y += graY_;
-        graY_ -= gravity_;
-        firstJump_ = true;
+    //重力
+    if (!IsPlayerOnGround()) Gravity();
 
-        if (IsPlayerOnGround()) {
-            firstJump_ = false;
-            secondJump_ = false;
-            transform_.position_.y = 0.0f;
-            graY_ = 0.0f;
-        }
-    }
+    //しゃがみ
+    Crouch();
 
-    //ーーーーーーーしゃがみーーーーーーーー
-    if (Input::IsKey(DIK_F)) {
-        transform_.scale_.y = 0.12f;
-        isCrouching_ = true;
 
-        if (cameraHeight_ > 0.8f)
-            cameraHeight_ -= 0.02f;
-
-    }
-    else {
-        transform_.scale_.y = 0.2f;
-        isCrouching_ = false;
-
-        if (cameraHeight_ < 1.0f)
-            cameraHeight_ += 0.02f;
-
+    if (Input::IsKey(DIK_UPARROW)) {
+        transform_.position_.y += 1.0f;
     }
 
 }
 
 void Player::UpdateIdle()
 {
-    if (IsPlayerMove()) state_ = S_MOVE;
+
+
+    //--------state----------
+    if (IsPlayerMove()) {
+        anime_ = true;
+        Model::SetAnimFrame(hModel_, 20, 100, 1);
+        state_ = S_MOVE;
+    }
+
     if (Input::IsKeyDown(DIK_SPACE)) state_ = S_JUMP;
 
 }
 
 void Player::UpdateMove()
 {
-    if (anime_ == false) { //一回だけアニメーション呼ぶ
-        anime_ = true;
-        Model::SetAnimFrame(hModel_, 20, 100, 1);
-    }
-
     transform_.position_.x += (fMove_.x * moveSpeed_); // 移動！
     transform_.position_.z += (fMove_.z * moveSpeed_); // z
 
-
+    //--------state----------
     if (!IsPlayerMove()) {
         anime_ = false;
         Model::SetAnimFrame(hModel_, 0, 10, 1);
@@ -170,7 +152,6 @@ XMVECTOR Player::GetPlaVector() {
     return v;
 
 }
-
 
 /*--------------------------------------private-----------------------------------------*/
 
@@ -244,5 +225,41 @@ void Player::Rotate() {
         else {
             transform_.rotate_.y += rotationSpeed_ * (rotationDiff > 0 ? 1 : -1);
         }
+    }
+}
+
+void Player::Gravity()
+{
+    transform_.position_.y += graY_;
+    graY_ -= gravity_;
+    if (graY_ < -1.0f) graY_ = -1.0f;
+    
+    firstJump_ = true;
+
+    if (IsPlayerOnGround()) {
+        firstJump_ = false;
+        secondJump_ = false;
+        transform_.position_.y = 0.0f;
+        graY_ = 0.0f;
+    }
+}
+
+void Player::Crouch()
+{
+    if (Input::IsKey(DIK_F)) {
+        transform_.scale_.y = 0.12f;
+        isCrouching_ = true;
+
+        if (cameraHeight_ > 0.8f)
+            cameraHeight_ -= 0.02f;
+
+    }
+    else {
+        transform_.scale_.y = 0.2f;
+        isCrouching_ = false;
+
+        if (cameraHeight_ < 1.0f)
+            cameraHeight_ += 0.02f;
+
     }
 }

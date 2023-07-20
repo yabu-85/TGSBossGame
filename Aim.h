@@ -10,7 +10,6 @@ class Aim :
     float mouseSensitivity;         //マウス感度
     float perspectiveDistance_;     //どのくらい後ろから映すか
     float heightDistance_;          //焦点の高さ
-    float cameraSpeed_;             //カメラの速度
     XMFLOAT3 cameraTarget_;         //カメラの焦点目標
     XMFLOAT3 cameraPos_;            //カメラの場所目標
     XMFLOAT3 aimDirection_;         //現在の視点に基づいた進行方向ベクトル
