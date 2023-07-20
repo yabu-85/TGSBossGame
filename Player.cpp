@@ -5,7 +5,8 @@
 
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
-    graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f)
+    graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
+    playerMovement_{0,0,0}, movementRatio_(0.0f)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -42,13 +43,16 @@ void Player::Update()
     case STATE::S_MOVE:
         UpdateMove();
         break;
-    case STATE::S_JUMP:
-        UpdateJump();
-        break;
     case STATE::S_DEAD:
         UpdateDead();
         break;
     }
+
+    if(state_ != S_MOVE)
+        CalcMoveRatio(false);
+
+    transform_.position_.x += (playerMovement_.x * moveSpeed_) * movementRatio_; // 移動！
+    transform_.position_.z += (playerMovement_.z * moveSpeed_) * movementRatio_; // z
 
     //移動キーキーが押されていれば向きを変える
     if (IsPlayerMove()) Rotate();
@@ -58,6 +62,10 @@ void Player::Update()
 
     //しゃがみ
     Crouch();
+
+    //jump
+    if (Input::IsKeyDown(DIK_SPACE)) Jump();
+
 
 
     if (Input::IsKey(DIK_UPARROW)) {
@@ -72,19 +80,21 @@ void Player::UpdateIdle()
 
     //--------state----------
     if (IsPlayerMove()) {
-        anime_ = true;
-        Model::SetAnimFrame(hModel_, 20, 100, 1);
+        if (anime_ == false) {
+            anime_ = true;
+            Model::SetAnimFrame(hModel_, 20, 100, 1);
+        }
         state_ = S_MOVE;
     }
-
-    if (Input::IsKeyDown(DIK_SPACE)) state_ = S_JUMP;
 
 }
 
 void Player::UpdateMove()
 {
-    transform_.position_.x += (fMove_.x * moveSpeed_); // 移動！
-    transform_.position_.z += (fMove_.z * moveSpeed_); // z
+    CalcMoveRatio(true);
+
+    if(fMove_.x+fMove_.z != 0.0f)
+        playerMovement_ = fMove_;
 
     //--------state----------
     if (!IsPlayerMove()) {
@@ -93,29 +103,6 @@ void Player::UpdateMove()
         state_ = S_IDLE;
     }
 
-    if (Input::IsKeyDown(DIK_SPACE)) state_ = S_JUMP;
-}
-
-void Player::UpdateJump()
-{
-    if (!IsPlayerOnGround() && firstJump_ && !secondJump_) {
-        graY_ = initVy_ * 0.8;
-        graY_ += gravity_;
-        secondJump_ = true;
-        transform_.position_.y += gravity_;
-        state_ = S_IDLE;
-
-    }
-
-    if (IsPlayerOnGround() && !firstJump_) {
-        graY_ = initVy_;
-        graY_ += gravity_;
-        firstJump_ = true;
-        transform_.position_.y += gravity_;
-
-    }
-
-    state_ = S_IDLE;
 }
 
 void Player::UpdateDead()
@@ -261,5 +248,45 @@ void Player::Crouch()
         if (cameraHeight_ < 1.0f)
             cameraHeight_ += 0.02f;
 
+    }
+}
+
+void Player::Jump()
+{
+    if (!IsPlayerOnGround() && firstJump_ && !secondJump_) {
+        graY_ = initVy_ * 0.8;
+        graY_ += gravity_;
+        secondJump_ = true;
+        transform_.position_.y += gravity_;
+        state_ = S_IDLE;
+        return;
+    }
+    
+    if (IsPlayerOnGround() && !firstJump_) {
+        graY_ = initVy_;
+        graY_ += gravity_;
+        firstJump_ = true;
+        transform_.position_.y += gravity_;
+        return;
+
+    }
+
+}
+
+void Player::CalcMoveRatio(bool type)
+{
+    //加速
+    if (type == true) {
+        if (IsPlayerOnGround()) movementRatio_ += 0.1f;
+        else movementRatio_ += 0.01f;
+        if (movementRatio_ > 1.0f) movementRatio_ = 1.0f;
+        return;
+    }
+    //減衰
+    else {
+        if (IsPlayerOnGround()) movementRatio_ -= 0.15f;
+        else movementRatio_ -= 0.01f;
+        if (movementRatio_ < 0.0f) movementRatio_ = 0.0f;
+        return;
     }
 }

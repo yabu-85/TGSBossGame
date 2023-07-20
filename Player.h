@@ -14,8 +14,10 @@ class Player : public GameObject
     float gravity_;                 //重力の値
     float initVy_;                  //初期ジャンプ力
     float cameraHeight_;            //カメラの高さ (しゃがみとかにしか使わない？)
+    float movementRatio_;           //プレイヤーの移動速度の比率0～1
     XMFLOAT3 fMove_;                //移動方向
     XMFLOAT3 previousPosition_;     //前の座標
+    XMFLOAT3 playerMovement_;       //プレイヤーの移動量
     bool firstJump_;                //ジャンプしているか
     bool secondJump_;               //ジャンプしているか
     bool isCrouching_;              //しゃがんでいるか
@@ -27,11 +29,12 @@ class Player : public GameObject
     void Rotate();                      //
     void Gravity();                     
     void Crouch();
+    void Jump();
+    void CalcMoveRatio(bool type);      //true=プラス１ false=マイナス１
 
     enum STATE {
         S_IDLE,
         S_MOVE,
-        S_JUMP,
         S_DEAD,
     };
     STATE state_;
@@ -46,7 +49,6 @@ public:
 
     void UpdateIdle();
     void UpdateMove();
-    void UpdateJump();
     void UpdateDead();
 
     //ーーーーーーゲッターーーーーーーー
