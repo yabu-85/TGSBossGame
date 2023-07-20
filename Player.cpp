@@ -4,8 +4,8 @@
 #include "Aim.h"
 
 Player::Player(GameObject* parent)
-    : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), pAim_(nullptr), firstJump_(false), secondJump_(false),
-    graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false)
+    : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
+    graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -145,6 +145,24 @@ void Player::Update()
             transform_.position_.y = 0.0f;
             graY_ = 0.0f;
         }
+    }
+
+    //ーーーーーーーしゃがみーーーーーーーー
+    if (Input::IsKey(DIK_F)) {
+        transform_.scale_.y = 0.12f;
+        isCrouching_ = true;
+        
+        if (cameraHeight_ > 0.8f)
+            cameraHeight_ -= 0.02f;
+
+    }
+    else {
+        transform_.scale_.y = 0.2f;
+        isCrouching_ = false;
+
+        if (cameraHeight_ < 1.0f)
+            cameraHeight_ += 0.02f;
+        
     }
 }
 

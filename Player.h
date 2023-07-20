@@ -13,11 +13,13 @@ class Player : public GameObject
     float graY_;                    //ジャンプ時の重力計算用
     float gravity_;                 //重力の値
     float initVy_;                  //初期ジャンプ力
+    float cameraHeight_;            //カメラの高さ (しゃがみとかにしか使わない？)
     XMFLOAT3 fMove_;                //移動方向
     XMFLOAT3 previousPosition_;     //前の座標
     bool firstJump_;                //ジャンプしているか
     bool secondJump_;               //ジャンプしているか
-    bool anime_;
+    bool isCrouching_;              //しゃがんでいるか
+    bool anime_;                    
     Aim* pAim_;
 
     void CalcMoveVec();                 //移動方向計算・normalize
@@ -44,11 +46,10 @@ public:
     void UpdateJump();
     void UpdateDead();
 
-    //ゲッター
-    XMFLOAT3 GetPlaPos() { return transform_.position_; };
-    XMFLOAT3 GetPlaRotate() { return transform_.rotate_; };
-    bool IsPlayerOnGround();
-    bool IsPlayerMove();
-    XMVECTOR GetPlaVector();
+    //ーーーーーーゲッターーーーーーーー
+    bool IsPlayerOnGround();                            //地面についているか
+    bool IsPlayerMove();                                //移動キーを押しているか
+    XMVECTOR GetPlaVector();                            //移動方向取得
+    float GetCameraHeight() { return cameraHeight_; };  //カメラの高さ0.8f ～ 1.0f
 
 };

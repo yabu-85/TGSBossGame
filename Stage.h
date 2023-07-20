@@ -24,9 +24,9 @@ public:
     void Draw() override;
     void Release() override;
 
-    int IsWall(int x, int z); //壁？
+    int IsWall(int x, int z); //１壁、０床 それ以外ー１
     int GetModelHandle() { return hModel_[TYPE_WALL]; }; //モデル番号取得
-    XMFLOAT3 GetPlaPos();
+    XMFLOAT3 GetPlaPos(); //CSVでのプレイヤー座標
 
 };
 

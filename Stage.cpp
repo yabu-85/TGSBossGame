@@ -82,11 +82,8 @@ int Stage::IsWall(int x, int z)
     else if (table_[x][z] == 1) {
         return 1;
     }
-    else if (table_[x][z] == 2) {
-        return 2;
-    }
 
-    return 0;
+    return -1;
 }
 
 XMFLOAT3 Stage::GetPlaPos()

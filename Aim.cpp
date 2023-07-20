@@ -56,9 +56,9 @@ void Aim::Update()
     XMStoreFloat3(&aimDirection_, -caDire);
 
     //プレイヤーの位置をカメラの位置とする
-    plaPos_ = pPlayer_->GetPlaPos();
+    plaPos_ = pPlayer_->GetPosition();
     cameraPos_.x = plaPos_.x + aimDirection_.z;
-    cameraPos_.y = plaPos_.y + heightDistance_; //目線高さ
+    cameraPos_.y = plaPos_.y + heightDistance_ * pPlayer_->GetCameraHeight(); //目線高さ
     cameraPos_.z = plaPos_.z - aimDirection_.x;
 
     //カメラ焦点
