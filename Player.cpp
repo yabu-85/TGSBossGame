@@ -11,7 +11,10 @@ Player::Player(GameObject* parent)
     rotationSpeed_ = 13.0f;
     gravity_ = 0.0075f;
     initVy_ = 0.17f;
+}
 
+Player::~Player()
+{
 }
 
 void Player::Initialize()
@@ -27,8 +30,60 @@ void Player::Initialize()
     pAim_ = Instantiate<Aim>(this);
 }
 
-Player::~Player()
+void Player::Update()
 {
+    previousPosition_ = transform_.position_;
+    CalcMoveVec();
+
+    switch (state_) {
+    case STATE::S_IDLE:
+        UpdateIdle();
+        break;
+    case STATE::S_MOVE:
+        UpdateMove();
+        break;
+    case STATE::S_JUMP:
+        UpdateJump();
+        break;
+    case STATE::S_DEAD:
+        UpdateDead();
+        break;
+    }
+
+    if (IsPlayerMove()) Rotate(); //移動キーキーが押されていれば向きを変える
+
+    //ーーーー重力落下ーーーーーー
+    if (!IsPlayerOnGround()) {
+        transform_.position_.y += graY_;
+        graY_ -= gravity_;
+        firstJump_ = true;
+
+        if (IsPlayerOnGround()) {
+            firstJump_ = false;
+            secondJump_ = false;
+            transform_.position_.y = 0.0f;
+            graY_ = 0.0f;
+        }
+    }
+
+    //ーーーーーーーしゃがみーーーーーーーー
+    if (Input::IsKey(DIK_F)) {
+        transform_.scale_.y = 0.12f;
+        isCrouching_ = true;
+
+        if (cameraHeight_ > 0.8f)
+            cameraHeight_ -= 0.02f;
+
+    }
+    else {
+        transform_.scale_.y = 0.2f;
+        isCrouching_ = false;
+
+        if (cameraHeight_ < 1.0f)
+            cameraHeight_ += 0.02f;
+
+    }
+
 }
 
 void Player::UpdateIdle()
@@ -45,45 +100,16 @@ void Player::UpdateMove()
         Model::SetAnimFrame(hModel_, 20, 100, 1);
     }
 
-    float tx = transform_.position_.x + fMove_.x;
-    float tz = transform_.position_.z + fMove_.z;
-
-    XMVECTOR vFront{ 0, 0, 1, 0 };
-    XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
-    XMVECTOR vAimPos_ = XMLoadFloat3(&fAimPos);
-    vAimPos_ = XMVector3Normalize(vAimPos_);
-    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos_);
-    float dot = XMVectorGetX(vDot);
-    float angle = acos(dot);
-
-    // 外積を求めて半回転だったら angle に -1 を掛ける
-    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos_);
-    if (XMVectorGetY(vCross) < 0) {
-        angle *= -1;
-    }
-
-    //移動
     transform_.position_.x += (fMove_.x * moveSpeed_); // 移動！
     transform_.position_.z += (fMove_.z * moveSpeed_); // z
 
-    // 目標の回転角度を設定
-    targetRotation_ = XMConvertToDegrees(angle);
-
-    // 回転角度をスムーズに変更
-    float rotationDiff = NormalizeAngle(targetRotation_ - transform_.rotate_.y);
-    if (rotationSpeed_ > abs(rotationDiff)) {
-        transform_.rotate_.y = targetRotation_;
-    }
-    else {
-        transform_.rotate_.y += rotationSpeed_ * (rotationDiff > 0 ? 1 : -1);
-    }
 
     if (!IsPlayerMove()) {
         anime_ = false;
         Model::SetAnimFrame(hModel_, 0, 10, 1);
         state_ = S_IDLE;
-
     }
+
     if (Input::IsKeyDown(DIK_SPACE)) state_ = S_JUMP;
 }
 
@@ -111,59 +137,6 @@ void Player::UpdateJump()
 
 void Player::UpdateDead()
 {
-}
-
-void Player::Update()
-{
-    switch (state_) {
-    case STATE::S_IDLE:
-        UpdateIdle();
-        break;
-    case STATE::S_MOVE:
-        UpdateMove();
-        break;
-    case STATE::S_JUMP:
-        UpdateJump();
-        break;
-    case STATE::S_DEAD:
-        UpdateDead();
-        break;
-    }
-
-    previousPosition_ = transform_.position_;
-    CalcMoveVec();
-
-    //ーーーー重力落下ーーーーーー
-    if (!IsPlayerOnGround()) {
-        transform_.position_.y += graY_;
-        graY_ -= gravity_;
-        firstJump_ = true;
-
-        if (IsPlayerOnGround()) {
-            firstJump_ = false;
-            secondJump_ = false;
-            transform_.position_.y = 0.0f;
-            graY_ = 0.0f;
-        }
-    }
-
-    //ーーーーーーーしゃがみーーーーーーーー
-    if (Input::IsKey(DIK_F)) {
-        transform_.scale_.y = 0.12f;
-        isCrouching_ = true;
-        
-        if (cameraHeight_ > 0.8f)
-            cameraHeight_ -= 0.02f;
-
-    }
-    else {
-        transform_.scale_.y = 0.2f;
-        isCrouching_ = false;
-
-        if (cameraHeight_ < 1.0f)
-            cameraHeight_ += 0.02f;
-        
-    }
 }
 
 void Player::Draw()
@@ -194,7 +167,9 @@ XMVECTOR Player::GetPlaVector() {
     XMVECTOR v = previousPosition_ - transform_.position_;
 
     return v;
+
 }
+
 
 /*--------------------------------------private-----------------------------------------*/
 
@@ -235,4 +210,38 @@ float Player::NormalizeAngle(float angle) {
         angle += 360.0f;
     }
     return angle;
+}
+
+void Player::Rotate() {
+
+    float tx = transform_.position_.x + fMove_.x;
+    float tz = transform_.position_.z + fMove_.z;
+
+    XMVECTOR vFront{ 0, 0, 1, 0 };
+    XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
+    XMVECTOR vAimPos_ = XMLoadFloat3(&fAimPos);
+    vAimPos_ = XMVector3Normalize(vAimPos_);
+    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos_);
+    float dot = XMVectorGetX(vDot);
+    float angle = acos(dot);
+
+    // 外積を求めて半回転だったら angle に -1 を掛ける
+    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos_);
+    if (XMVectorGetY(vCross) < 0) {
+        angle *= -1;
+    }
+
+    // 目標の回転角度を設定
+    targetRotation_ = XMConvertToDegrees(angle);
+
+    // 回転角度をスムーズに変更
+    float rotationDiff = NormalizeAngle(targetRotation_ - transform_.rotate_.y);
+    if (rotationDiff != 0) {
+        if (rotationSpeed_ > abs(rotationDiff)) {
+            transform_.rotate_.y = targetRotation_;
+        }
+        else {
+            transform_.rotate_.y += rotationSpeed_ * (rotationDiff > 0 ? 1 : -1);
+        }
+    }
 }
