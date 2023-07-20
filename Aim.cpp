@@ -44,7 +44,6 @@ void Aim::Update()
     //カメラの回転
     XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(transform_.rotate_.x));
     XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-    XMMATRIX matT = XMMatrixTranslation(0, 0, 0);
 
     //カメラの位置と回転を合成
     XMMATRIX mView = mRotX * mRotY; //カメラ用
@@ -82,6 +81,10 @@ void Aim::Draw()
     cross.rotate_.x = 0;
     cross.rotate_.y = 0;
     cross.rotate_.z = 0;
+    cross.scale_.x = 0.5;
+    cross.scale_.y = 0.5;
+    cross.scale_.z = 0.5;
+
     Image::SetTransform(hPict_, cross);
     Image::Draw(hPict_);
 }
