@@ -39,8 +39,8 @@ void TitleScene::Draw()
 	static int screenHeight = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//ÉXÉNÉäÅ[ÉìÇÃçÇÇ≥
 
 	static XMFLOAT3 mousePos = { 0,0,0 };
-	mousePos.x += Input::GetMouseMove().x;
-	mousePos.y += Input::GetMouseMove().y;
+	mousePos.x += Input::GetMouseMove().x * 2.5f;
+	mousePos.y += Input::GetMouseMove().y * 2.5f;
 	if (screenWidth < abs(mousePos.x)) mousePos.x = screenWidth * (mousePos.x > 0.0 ? 1 : -1);
 	if (screenHeight < abs(mousePos.y)) mousePos.y = screenHeight * (mousePos.y > 0.0 ? 1 : -1);
 

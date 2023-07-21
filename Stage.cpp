@@ -88,7 +88,6 @@ int Stage::IsWall(int x, int z)
 
 XMFLOAT3 Stage::GetPlaPos()
 {
-    XMFLOAT3 pos;
     for (int x = 0; x < width_; x++) {
         for (int y = 0; y < height_; y++) {
             if (table_[x][y] == 10) {

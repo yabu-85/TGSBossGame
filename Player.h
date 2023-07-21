@@ -56,5 +56,6 @@ public:
     bool IsPlayerMove();                                //ˆÚ“®ƒL[‚ğ‰Ÿ‚µ‚Ä‚¢‚é‚©
     XMVECTOR GetPlaVector();                            //ˆÚ“®•ûŒüæ“¾
     float GetCameraHeight() { return cameraHeight_; };  //ƒJƒƒ‰‚Ì‚‚³0.8f ` 1.0f
+    bool IsCrouching();
 
 };
