@@ -22,15 +22,15 @@ cbuffer global
 	bool		g_isTexture;		// テクスチャ貼ってあるかどうか
 
 };
+
 //───────────────────────────────────────
 // 頂点シェーダー出力＆ピクセルシェーダー入力データ構造体
 //───────────────────────────────────────
-
 struct VS_OUT
 {
-    float4 pos : SV_POSITION; //位置
-    float2 uv : TEXCOORD; //UV座標
-    float4 color : COLOR; //色（輝度）
+    float4 pos : SV_POSITION;   //位置
+    float2 uv : TEXCOORD;       //UV座標
+    float4 color : COLOR;       //色（輝度）
 
     float4 lightDir : TEXCOORD1;
     float lightLen : TEXCOORD2;
@@ -76,25 +76,17 @@ VS_OUT VS(float4 pos : POSITION, float2 uv : TEXCOORD, float4 normal : NORMAL)
 }
 
 //───────────────────────────────────────
-// ピクセルシェーダ
+//ピクセルシェーダ
 //───────────────────────────────────────
 
 float4 PS(VS_OUT inData) : SV_Target
 {
-    float4 ambientSource = float4(0.2, 0.2, 0.2, 1.0);
+    float4 ambientSource = float4(0.1, 0.1, 0.1, 1.0);
     float4 diffuse;
     float4 ambient;
     float4 wLight = float4(1, 1, 1, 1);
 
-    //最後にかけている奴 は光の減衰させる量を抑えるためのやつ
-    float scalar = dot(inData.lightDir.xyz, inData.normal.xyz) / (inData.lightLen * 0.7);
- 
-    if (scalar < 0.0f)
-    {
-        scalar = 0.0f;
-    }
-
-    //テクスチャがあるとき
+    // テクスチャがあるとき
     if (g_isTexture)
     {
         diffuse = (wLight * g_texture.Sample(g_sampler, inData.uv) * inData.color) / inData.lightLen;
@@ -107,6 +99,21 @@ float4 PS(VS_OUT inData) : SV_Target
         diffuse = (wLight * g_vecDiffuse * inData.color) / inData.lightLen;
         ambient = wLight * g_vecDiffuse * ambientSource;
     }
-    return diffuse + ambient + scalar;
 
+    //最後にかける値は光の減衰させる量を変更する値、ただし透明度にも影響を与えている
+    float scalar = saturate(dot(inData.lightDir.xyz, inData.normal.xyz) / inData.lightLen);
+
+    //光の強さを調整するための係数。ここ低いと薄い色になる
+    float lightIntensity = 2.0;
+
+    //ディフューズとアンビエントを合成
+    float4 finalColor = (diffuse + ambient) * lightIntensity;
+
+    //光の減衰による影響を適用
+    finalColor.rgb *= saturate(1.0 - scalar * 1.0 );
+
+    //アルファ値を1.0に設定
+    finalColor.a = 1.0;
+
+    return finalColor;
 }
