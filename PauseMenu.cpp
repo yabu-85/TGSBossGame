@@ -40,11 +40,15 @@ void PauseMenu::Update()
 
 void PauseMenu::Draw()
 {
-	Model::SetTransform(hModel_[0], transform_);
+	Transform pos0 = transform_;
+	pos0.position_.x = 15.0f;
+	pos0.position_.z = 15.0f;
+	Model::SetTransform(hModel_[0], pos0);
 	Model::Draw(hModel_[0]);
 
 	Transform pos1 = transform_;
-	pos1.position_.x = 3.0f;
+	pos1.position_.x = 5.0f;
+	pos1.position_.z = 15.0f;
 	Model::SetTransform(hModel_[1], pos1);
 	Model::Draw(hModel_[1]);
 

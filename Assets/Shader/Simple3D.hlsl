@@ -22,90 +22,91 @@ cbuffer global
 	bool		g_isTexture;		// テクスチャ貼ってあるかどうか
 
 };
-
 //───────────────────────────────────────
 // 頂点シェーダー出力＆ピクセルシェーダー入力データ構造体
 //───────────────────────────────────────
+
 struct VS_OUT
 {
-	float4 pos    : SV_POSITION;	//位置
-	float4 normal : TEXCOORD2;		//法線
-	float2 uv	  : TEXCOORD0;		//UV座標
-	float4 eye	  : TEXCOORD1;		//視線
+    float4 pos : SV_POSITION; //位置
+    float2 uv : TEXCOORD; //UV座標
+    float4 color : COLOR; //色（輝度）
+
+    float4 lightDir : TEXCOORD1;
+    float lightLen : TEXCOORD2;
+    float4 normal : TEXCOORD3;
 };
 
 //───────────────────────────────────────
 // 頂点シェーダ
 //───────────────────────────────────────
-VS_OUT VS(float4 pos : POSITION, float4 Normal : NORMAL, float2 Uv : TEXCOORD)
+
+VS_OUT VS(float4 pos : POSITION, float2 uv : TEXCOORD, float4 normal : NORMAL)
 {
-	//ピクセルシェーダーへ渡す情報
-	VS_OUT outData;
+    //ピクセルシェーダーに渡す構造体データ
+    VS_OUT outData;
+    
+    //ローカル座標に、ワールド・ビュー・プロジェクション行列をかけて
+    //スクリーン座標に変換し、ピクセルシェーダーへ
+    outData.pos = mul(pos, g_matWVP);
 
-	//ローカル座標に、ワールド・ビュー・プロジェクション行列をかけて
-	//スクリーン座標に変換し、ピクセルシェーダーへ
-	outData.pos = mul(pos, g_matWVP);		
+    //テクスチャデータをピクセルシェーダーへ
+    outData.uv = uv;
+    
+    // ワールド座標系での光源の位置を計算
+    float4 worldg_vecLightDir = mul(g_vecLightDir, g_matWorld);
+    
+    //ライト
+    outData.lightDir = float4(worldg_vecLightDir.xyz, 1.0) - mul(pos.xyzw, g_matWorld);
 
-	//法線の変形
-	Normal.w = 0;					//4次元目は使わないので0
-	Normal = mul(Normal, g_matNormalTrans);		//オブジェクトが変形すれば法線も変形
-	outData.normal = Normal;		//これをピクセルシェーダーへ
+    outData.lightLen = length(outData.lightDir);
+    outData.lightDir = normalize(outData.lightDir);
 
-	//視線ベクトル（ハイライトの計算に必要
-	float4 worldPos = mul(pos, g_matWorld);					//ローカル座標にワールド行列をかけてワールド座標へ
-	outData.eye = normalize(g_vecCameraPosition - worldPos);	//視点から頂点位置を引き算し視線を求めてピクセルシェーダーへ
+    //法線
+    normal = float4(normal.xyz, 0);
+    outData.normal = mul(normal, g_matWVP);
+    
+    //輝度情報をピクセルシェーダ―へ
+    float4 light = mul(g_vecLightDir, g_matWorld);
+    light = normalize(light);
+    outData.normal = mul(normal, g_matWorld);
+    outData.color = clamp(dot(mul(normal, g_matWorld), outData.lightDir), 0, 1);
 
-	//UV「座標
-	outData.uv = Uv;	//そのままピクセルシェーダーへ
-
-
-	//まとめて出力
-	return outData;
+    return outData;
 }
 
 //───────────────────────────────────────
 // ピクセルシェーダ
 //───────────────────────────────────────
+
 float4 PS(VS_OUT inData) : SV_Target
 {
-	//ライトの向き
-	float4 lightDir = g_vecLightDir;	//グルーバル変数は変更できないので、いったんローカル変数へ
-	lightDir = normalize(lightDir);	//向きだけが必要なので正規化
+    float4 ambientSource = float4(0.2, 0.2, 0.2, 1.0);
+    float4 diffuse;
+    float4 ambient;
+    float4 wLight = float4(1, 1, 1, 1);
 
-	//法線はピクセルシェーダーに持ってきた時点で補完され長さが変わっている
-	//正規化しておかないと面の明るさがおかしくなる
-	inData.normal = normalize(inData.normal);
+    //最後にかけている奴 は光の減衰させる量を抑えるためのやつ
+    float scalar = dot(inData.lightDir.xyz, inData.normal.xyz) / (inData.lightLen * 0.7);
+ 
+    if (scalar < 0.0f)
+    {
+        scalar = 0.0f;
+    }
 
-	//拡散反射光（ディフューズ）
-	//法線と光のベクトルの内積が、そこの明るさになる
-	float4 shade = saturate(dot(inData.normal, -lightDir));
-	shade.a = 1;	//暗いところが透明になるので、強制的にアルファは1
+    //テクスチャがあるとき
+    if (g_isTexture)
+    {
+        diffuse = (wLight * g_texture.Sample(g_sampler, inData.uv) * inData.color) / inData.lightLen;
+        ambient = wLight * g_texture.Sample(g_sampler, inData.uv) * ambientSource;
+    }
 
-	float4 diffuse;
-	//テクスチャ有無
-	if (g_isTexture == true)
-	{
-		//テクスチャの色
-		diffuse = g_texture.Sample(g_sampler, inData.uv);
-	}
-	else
-	{
-		//マテリアルの色
-		diffuse = g_vecDiffuse;
-	}
+    //テクスチャがないとき
+    else
+    {
+        diffuse = (wLight * g_vecDiffuse * inData.color) / inData.lightLen;
+        ambient = wLight * g_vecDiffuse * ambientSource;
+    }
+    return diffuse + ambient + scalar;
 
-	//環境光（アンビエント）
-	//これはMaya側で指定し、グローバル変数で受け取ったものをそのまま
-	float4 ambient = g_vecAmbient;
-
-	//鏡面反射光（スペキュラー）
-	float4 speculer = float4(0, 0, 0, 0);	//とりあえずハイライトは無しにしておいて…
-	if (g_vecSpeculer.a != 0)	//スペキュラーの情報があれば
-	{
-		float4 R = reflect(lightDir, inData.normal);			//正反射ベクトル
-		speculer = pow(saturate(dot(R, inData.eye)), g_shuniness) * g_vecSpeculer;	//ハイライトを求める
-	}
-
-	//最終的な色
-	return diffuse * shade + diffuse * ambient + speculer;
 }
