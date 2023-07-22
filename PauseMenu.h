@@ -4,6 +4,7 @@
 class PauseMenu :
     public GameObject
 {
+    int hModel_[5];                    //ƒ‚ƒfƒ‹”Ô†
 
 public:
     PauseMenu(GameObject* parent);

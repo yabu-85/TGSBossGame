@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 #include "Player.h"
 #include "Stage.h"
+#include "PauseMenu.h"
 
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
@@ -15,6 +16,8 @@ void PlayScene::Initialize()
 	Player* pPlayer = Instantiate<Player>(this);
 
 	pPlayer->SetPosition(pStage->GetPlaPos());
+
+	Instantiate<PauseMenu>(this);
 }
 
 //更新
