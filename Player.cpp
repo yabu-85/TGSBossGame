@@ -54,7 +54,7 @@ void Player::Update()
     transform_.position_.x += (playerMovement_.x * moveSpeed_) * movementRatio_; // 移動！
     transform_.position_.z += (playerMovement_.z * moveSpeed_) * movementRatio_; // z
 
-    //移動キーキーが押されていれば向きを変える
+    //移動キーが押されていれば向きを変える
     if (IsPlayerMove()) Rotate();
 
     //重力
@@ -138,6 +138,11 @@ XMVECTOR Player::GetPlaVector() {
 
     return v;
 
+}
+
+bool Player::IsCrouching()
+{
+    return false;
 }
 
 /*--------------------------------------private-----------------------------------------*/
@@ -253,6 +258,11 @@ void Player::Crouch()
 
 void Player::Jump()
 {
+    if (isCrouching_ == true && IsPlayerOnGround()) {
+        firstJump_ = true;
+
+    }
+
     if (!IsPlayerOnGround() && firstJump_ && !secondJump_) {
         graY_ = initVy_ * 0.8;
         graY_ += gravity_;
@@ -262,7 +272,7 @@ void Player::Jump()
         return;
     }
     
-    if (IsPlayerOnGround() && !firstJump_) {
+    if (IsPlayerOnGround()) {
         graY_ = initVy_;
         graY_ += gravity_;
         firstJump_ = true;
@@ -290,3 +300,4 @@ void Player::CalcMoveRatio(bool type)
         return;
     }
 }
+

@@ -20,14 +20,6 @@ namespace Input
 	DIMOUSESTATE prevMouseState_;			//前フレームのマウスの状態
 	POINT mousePos_;							//マウスカーソルの位置
 
-	//コントローラー
-	const int MAX_PAD_NUM = 4;
-	XINPUT_STATE controllerState_[MAX_PAD_NUM];
-	XINPUT_STATE prevControllerState_[MAX_PAD_NUM];
-
-
-
-
 	//初期化
 	void Initialize(HWND hWnd)
 	{
@@ -62,13 +54,6 @@ namespace Input
 		pMouseDevice_->Acquire();
 		memcpy(&prevMouseState_, &mouseState_, sizeof(mouseState_));
 		pMouseDevice_->GetDeviceState(sizeof(mouseState_), &mouseState_);
-
-		//コントローラー
-		for (int i = 0; i < MAX_PAD_NUM; i++)
-		{
-			memcpy(&prevControllerState_[i], &controllerState_[i], sizeof(controllerState_[i]));
-			XInputGetState(i, &controllerState_[i]);
-		}
 
 	}
 
@@ -171,7 +156,6 @@ namespace Input
 		mousePos_.y = y;
 	}
 
-
 	//そのフレームでのマウスの移動量を取得
 	XMFLOAT3 GetMouseMove()
 	{
@@ -179,112 +163,5 @@ namespace Input
 		return result;
 	}
 
-
-	/////////////////////////////　コントローラー情報取得　//////////////////////////////////
-
-	//コントローラーのボタンが押されているか調べる
-	bool IsPadButton(int buttonCode, int padID)
-	{
-		if (controllerState_[padID].Gamepad.wButtons & buttonCode)
-		{
-			return true; //押してる
-		}
-		return false; //押してない
-	}
-
-	//コントローラーのボタンを今押したか調べる（押しっぱなしは無効）
-	bool IsPadButtonDown(int buttonCode, int padID)
-	{
-		//今は押してて、前回は押してない
-		if (IsPadButton(buttonCode, padID) && !(prevControllerState_[padID].Gamepad.wButtons & buttonCode))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	//コントローラーのボタンを今放したか調べる
-	bool IsPadButtonUp(int buttonCode, int padID)
-	{
-		//今押してなくて、前回は押してる
-		if (!IsPadButton(buttonCode, padID) && prevControllerState_[padID].Gamepad.wButtons & buttonCode)
-		{
-			return true;
-		}
-		return false;
-	}
-
-
-	float GetAnalogValue(int raw, int max, int deadZone)
-	{
-		float result = (float)raw;
-
-		if (result > 0)
-		{
-			//デッドゾーン
-			if (result < deadZone)
-			{
-				result = 0;
-			}
-			else
-			{
-				result = (result - deadZone) / (max - deadZone);
-			}
-		}
-
-		else
-		{
-			//デッドゾーン
-			if (result > -deadZone)
-			{
-				result = 0;
-			}
-			else
-			{
-				result = (result + deadZone) / (max - deadZone);
-			}
-		}
-
-		return result;
-	}
-
-
-	//左スティックの傾きを取得
-	XMFLOAT3 GetPadStickL(int padID)
-	{
-		float x = GetAnalogValue(controllerState_[padID].Gamepad.sThumbLX, 32767, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-		float y = GetAnalogValue(controllerState_[padID].Gamepad.sThumbLY, 32767, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-		return XMFLOAT3(x, y, 0);
-	}
-
-	//右スティックの傾きを取得
-	XMFLOAT3 GetPadStickR(int padID)
-	{
-		float x = GetAnalogValue(controllerState_[padID].Gamepad.sThumbRX, 32767, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-		float y = GetAnalogValue(controllerState_[padID].Gamepad.sThumbRY, 32767, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-		return XMFLOAT3(x, y, 0);
-	}
-
-	//左トリガーの押し込み具合を取得
-	float GetPadTrrigerL(int padID)
-	{
-		return GetAnalogValue(controllerState_[padID].Gamepad.bLeftTrigger, 255, XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-	}
-
-	//右トリガーの押し込み具合を取得
-	float GetPadTrrigerR(int padID)
-	{
-		return GetAnalogValue(controllerState_[padID].Gamepad.bRightTrigger, 255, XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-	}
-
-	//振動させる
-	void SetPadVibration(int l, int r, int padID)
-	{
-		XINPUT_VIBRATION vibration;
-		ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
-		vibration.wLeftMotorSpeed = l; // 左モーターの強さ
-		vibration.wRightMotorSpeed = r;// 右モーターの強さ
-		XInputSetState(padID, &vibration);
-	}
 
 }
