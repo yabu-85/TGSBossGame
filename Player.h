@@ -1,11 +1,13 @@
 #pragma once
 #include "Engine/GameObject.h"
 #include "Aim.h"
+#include "Engine/Text.h"
 
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
 class Player : public GameObject
 {
+    Text* pText_;
     int hModel_;                    //モデル番号
     float moveSpeed_;               //移動
     float targetRotation_;          //目標の回転角度
@@ -24,20 +26,33 @@ class Player : public GameObject
     bool anime_;                    
     Aim* pAim_;
 
-    void CalcMoveVec();                 //移動方向計算・normalize
-    float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
+    //---------------privateメンバ関数---------------
+
+    void CalcMove();                    //移動方向計算・normalize
     void Rotate();                      //
     void Gravity();                     
     void Crouch();
     void Jump();
     void CalcMoveRatio(bool type);      //true=プラス１ false=マイナス１
+    
+    float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
 
+    bool IsMovementKeyPressed();        //移動キーを押しているか
+    bool IsPlayerMove();                //移動キーを押しているか
+    bool IsPlayerOnGround();            //地面についているか
+
+    //------------------State------------------
     enum STATE {
         S_IDLE,
         S_MOVE,
         S_DEAD,
     };
     STATE state_;
+
+    void UpdateIdle();
+    void UpdateMove();
+    void UpdateDead();
+
 
 public:
     Player(GameObject* parent);
@@ -47,15 +62,8 @@ public:
     void Draw() override;
     void Release() override;
 
-    void UpdateIdle();
-    void UpdateMove();
-    void UpdateDead();
-
     //ーーーーーーゲッターーーーーーーー
-    bool IsPlayerOnGround();                            //地面についているか
-    bool IsPlayerMove();                                //移動キーを押しているか
     XMVECTOR GetPlaVector();                            //移動方向取得
     float GetCameraHeight() { return cameraHeight_; };  //カメラの高さ0.8f ～ 1.0f
-    bool IsCrouching();
 
 };

@@ -6,7 +6,7 @@
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
-    playerMovement_{0,0,0}, movementRatio_(0.0f)
+    playerMovement_{0,0,0}, movementRatio_(0.0f), pText_(nullptr)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -29,12 +29,14 @@ void Player::Initialize()
     assert(hModel_ >= 0);
 
     pAim_ = Instantiate<Aim>(this);
+
+    pText_ = new Text;
+    pText_->Initialize();
 }
 
 void Player::Update()
 {
     previousPosition_ = transform_.position_;
-    CalcMoveVec();
 
     switch (state_) {
     case STATE::S_IDLE:
@@ -54,7 +56,7 @@ void Player::Update()
     transform_.position_.x += (playerMovement_.x * moveSpeed_) * movementRatio_; // 移動！
     transform_.position_.z += (playerMovement_.z * moveSpeed_) * movementRatio_; // z
 
-    //移動キーが押されていれば向きを変える
+    //移動するなら向きを変える
     if (IsPlayerMove()) Rotate();
 
     //重力
@@ -66,20 +68,50 @@ void Player::Update()
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
 
+    //攻撃
+    //フルオートはKey、単発||近接はKeyDown
+    if (Input::IsMouseButton(0)) {
+        transform_.rotate_.y += 1.0f;
+    }
 
+    //覗き込み||近接ガード||slow（落下速度低下）
+    if (Input::IsMouseButton(1)) {
+        transform_.rotate_.y -= 1.0f;
+    }
 
+    //デバック用こまんど
     if (Input::IsKey(DIK_UPARROW)) {
         transform_.position_.y += 1.0f;
     }
+}
+
+void Player::Draw()
+{
+    Model::SetTransform(hModel_, transform_);
+    Model::Draw(hModel_);
+
+    pText_->Draw(30, 30, (int)movementRatio_ * 100);
+}
+
+void Player::Release()
+{
+}
+
+XMVECTOR Player::GetPlaVector() {
+    XMVECTOR v = previousPosition_ - transform_.position_;
+
+    return v;
 
 }
+
+/*--------------------------------State------------------------*/
 
 void Player::UpdateIdle()
 {
 
 
     //--------state----------
-    if (IsPlayerMove()) {
+    if (IsMovementKeyPressed()) {
         if (anime_ == false) {
             anime_ = true;
             Model::SetAnimFrame(hModel_, 20, 100, 1);
@@ -92,12 +124,11 @@ void Player::UpdateIdle()
 void Player::UpdateMove()
 {
     CalcMoveRatio(true);
+    CalcMove();
 
-    if(fMove_.x+fMove_.z != 0.0f)
-        playerMovement_ = fMove_;
 
     //--------state----------
-    if (!IsPlayerMove()) {
+    if (!IsMovementKeyPressed()) {
         anime_ = false;
         Model::SetAnimFrame(hModel_, 0, 10, 1);
         state_ = S_IDLE;
@@ -109,45 +140,9 @@ void Player::UpdateDead()
 {
 }
 
-void Player::Draw()
-{
-    Model::SetTransform(hModel_, transform_);
-    Model::Draw(hModel_);
-}
-
-void Player::Release()
-{
-}
-
-bool Player::IsPlayerOnGround() {
-    if (transform_.position_.y <= 0.0f)
-        return true;
-
-    return false;
-}
-
-bool Player::IsPlayerMove() {
-    if (fMove_.x != 0 || fMove_.z)
-        return true;
-
-    return false;
-}
-
-XMVECTOR Player::GetPlaVector() {
-    XMVECTOR v = previousPosition_ - transform_.position_;
-
-    return v;
-
-}
-
-bool Player::IsCrouching()
-{
-    return false;
-}
-
 /*--------------------------------------private-----------------------------------------*/
 
-void Player::CalcMoveVec()
+void Player::CalcMove()
 {
     fMove_ = { 0,0,0 };
     XMFLOAT3 aimDirection = pAim_->GetAimDirection();
@@ -172,8 +167,28 @@ void Player::CalcMoveVec()
 
     //fMove_の正規化と数値調整
     XMVECTOR vMove = XMLoadFloat3(&fMove_);
-    vMove = XMVector3Normalize(vMove) * 0.1;
+    vMove = XMVector3Normalize(vMove) * 0.1f;
     XMStoreFloat3(&fMove_, vMove);
+
+    if (IsPlayerOnGround()) {
+        playerMovement_ = fMove_;
+
+    }
+    else if (fMove_.x != 0.0f || fMove_.z != 0.0f) {
+
+        fMove_ = { ((fMove_.x - playerMovement_.x) * 0.04f) , 0.0f , ((fMove_.z - playerMovement_.z) * 0.04f ) };
+        playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z};
+
+        if (abs(playerMovement_.x) + abs(playerMovement_.z) >= 1.0f) {
+            vMove = XMLoadFloat3(&playerMovement_);
+            XMVector3Normalize(vMove);
+            XMStoreFloat3(&playerMovement_, vMove);
+        }
+
+        Rotate();
+    }
+    
+    
 }
 
 float Player::NormalizeAngle(float angle) {
@@ -188,8 +203,8 @@ float Player::NormalizeAngle(float angle) {
 
 void Player::Rotate() {
 
-    float tx = transform_.position_.x + fMove_.x;
-    float tz = transform_.position_.z + fMove_.z;
+    float tx = transform_.position_.x + playerMovement_.x;
+    float tz = transform_.position_.z + playerMovement_.z;
 
     XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
@@ -197,7 +212,7 @@ void Player::Rotate() {
     vAimPos_ = XMVector3Normalize(vAimPos_);
     XMVECTOR vDot = XMVector3Dot(vFront, vAimPos_);
     float dot = XMVectorGetX(vDot);
-    float angle = acos(dot);
+    float angle = (float)acos(dot);
 
     // 外積を求めて半回転だったら angle に -1 を掛ける
     XMVECTOR vCross = XMVector3Cross(vFront, vAimPos_);
@@ -264,7 +279,7 @@ void Player::Jump()
     }
 
     if (!IsPlayerOnGround() && firstJump_ && !secondJump_) {
-        graY_ = initVy_ * 0.8;
+        graY_ = initVy_ * 0.8f;
         graY_ += gravity_;
         secondJump_ = true;
         transform_.position_.y += gravity_;
@@ -288,7 +303,7 @@ void Player::CalcMoveRatio(bool type)
     //加速
     if (type == true) {
         if (IsPlayerOnGround()) movementRatio_ += 0.1f;
-        else movementRatio_ += 0.01f;
+        else movementRatio_ += 0.05f;
         if (movementRatio_ > 1.0f) movementRatio_ = 1.0f;
         return;
     }
@@ -301,3 +316,24 @@ void Player::CalcMoveRatio(bool type)
     }
 }
 
+bool Player::IsPlayerOnGround() {
+    if (transform_.position_.y <= 0.0f)
+        return true;
+
+    return false;
+}
+
+bool Player::IsMovementKeyPressed()
+{
+    if (Input::IsKey(DIK_W) || Input::IsKey(DIK_A) || Input::IsKey(DIK_S) || Input::IsKey(DIK_D))
+        return true;
+
+    return false;
+}
+
+bool Player::IsPlayerMove() {
+    if (graY_ == 0.0f && playerMovement_.x + playerMovement_.z != 0.0f)
+        return true;
+
+    return false;
+}
