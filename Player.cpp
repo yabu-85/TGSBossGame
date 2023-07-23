@@ -91,6 +91,8 @@ void Player::Draw()
     Model::Draw(hModel_);
 
     pText_->Draw(30, 30, (int)movementRatio_ * 100);
+    pText_->Draw(30, 70, (int)(pAim_->GetAimDirection().y * 100));
+
 }
 
 void Player::Release()
@@ -176,6 +178,9 @@ void Player::CalcMove()
     }
     else if (fMove_.x != 0.0f || fMove_.z != 0.0f) {
 
+        //今の進行方向、目標方向の差を出して、今の進行方向に差の小さい数を足してる
+        //今は回転方法ちょっと違うけど本家と同じにしたい
+
         fMove_ = { ((fMove_.x - playerMovement_.x) * 0.04f) , 0.0f , ((fMove_.z - playerMovement_.z) * 0.04f ) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z};
 
@@ -206,7 +211,7 @@ void Player::Rotate() {
     float tx = transform_.position_.x + playerMovement_.x;
     float tz = transform_.position_.z + playerMovement_.z;
 
-    XMVECTOR vFront{ 0, 0, 1, 0 };
+    const XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
     XMVECTOR vAimPos_ = XMLoadFloat3(&fAimPos);
     vAimPos_ = XMVector3Normalize(vAimPos_);
@@ -273,20 +278,41 @@ void Player::Crouch()
 
 void Player::Jump()
 {
-    if (isCrouching_ == true && IsPlayerOnGround()) {
-        firstJump_ = true;
+    //BulletJump
+    if (isCrouching_ == true && (!firstJump_ || !secondJump_)) {
+        if (!firstJump_) firstJump_ = true;
+        else secondJump_ = true;
 
+        const float bulletJump = 1.8f;
+        float aimDirectionY = 1.0f + pAim_->GetAimDirection().y;
+
+        if (aimDirectionY < 1.0f) {
+            if (aimDirectionY <= 0.01f) aimDirectionY = 1.99f * bulletJump;
+            else aimDirectionY = 1.0f * bulletJump;
+        }
+        else  aimDirectionY *= bulletJump;
+        
+        graY_ = initVy_ * (aimDirectionY - 1.0f);
+        graY_ += gravity_;
+        transform_.position_.y += gravity_;
+
+        XMFLOAT3 aimDirection = pAim_->GetAimDirection();
+        playerMovement_ = { aimDirection.x * 0.8f , 0.0f , aimDirection.z * 0.8f };
+        movementRatio_ = 1.0f;
+
+        return;
     }
 
+    //SecondJump
     if (!IsPlayerOnGround() && firstJump_ && !secondJump_) {
         graY_ = initVy_ * 0.8f;
         graY_ += gravity_;
         secondJump_ = true;
         transform_.position_.y += gravity_;
-        state_ = S_IDLE;
         return;
     }
     
+    //FirstJump
     if (IsPlayerOnGround()) {
         graY_ = initVy_;
         graY_ += gravity_;

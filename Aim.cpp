@@ -45,12 +45,11 @@ void Aim::Update()
     XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 
     //カメラの位置と回転を合成
-    XMMATRIX mView = mRotX * mRotY; //カメラ用
-    XMMATRIX mPlaMove = mRotY;     //プレイヤーの移動用   
+    XMMATRIX mView = mRotX * mRotY;
 
     //プレイヤークラスに進行方向ベクトル(float3)を伝える用
     const XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    XMVECTOR caDire = XMVector3TransformNormal(forwardVector, mPlaMove); //XMVector3TransformNormalを使用することで回転のみを適用します
+    XMVECTOR caDire = XMVector3TransformNormal(forwardVector, mView); //XMVector3TransformNormalを使用することで回転のみを適用します
     XMVector3Normalize(caDire);
     XMStoreFloat3(&aimDirection_, -caDire);
 
