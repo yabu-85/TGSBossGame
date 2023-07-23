@@ -177,10 +177,7 @@ void Player::CalcMove()
 
     }
     else if (fMove_.x != 0.0f || fMove_.z != 0.0f) {
-
-        //今の進行方向、目標方向の差を出して、今の進行方向に差の小さい数を足してる
-        //今は回転方法ちょっと違うけど本家と同じにしたい
-
+        //空中での移動、今のMoveから徐々に目標へ値を近づけている
         fMove_ = { ((fMove_.x - playerMovement_.x) * 0.04f) , 0.0f , ((fMove_.z - playerMovement_.z) * 0.04f ) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z};
 
@@ -361,7 +358,7 @@ void Player::CalcMoveRatio(bool type)
 {
     //加速
     if (type == true) {
-        if (IsPlayerOnGround()) movementRatio_ += 0.1f;
+        if (IsPlayerOnGround()) movementRatio_ += 0.075f;
         else movementRatio_ += 0.05f;
         if (movementRatio_ > 1.0f) movementRatio_ = 1.0f;
         return;
