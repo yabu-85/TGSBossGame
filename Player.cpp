@@ -6,7 +6,7 @@
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
-    playerMovement_{0,0,0}, movementRatio_(0.0f), pText_(nullptr)
+    playerMovement_{0,0,0}, movementRatio_(0.0f), pText_(nullptr), bulletJump_(false)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -57,7 +57,7 @@ void Player::Update()
     transform_.position_.z += (playerMovement_.z * moveSpeed_) * movementRatio_; // z
 
     //à⁄ìÆÇ∑ÇÈÇ»ÇÁå¸Ç´ÇïœÇ¶ÇÈ
-    if (IsPlayerMove()) Rotate();
+    if (IsPlayerMove()) GradualRotate();
 
     //èdóÕ
     if (!IsPlayerOnGround()) Gravity();
@@ -90,8 +90,8 @@ void Player::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-    pText_->Draw(30, 30, (int)movementRatio_ * 100);
-    pText_->Draw(30, 70, (int)(pAim_->GetAimDirection().y * 100));
+    pText_->Draw(30, 30, (int)(movementRatio_ * 100.0f));
+    pText_->Draw(30, 70, (int)(pAim_->GetAimDirection().y * 100.0f));
 
 }
 
@@ -189,8 +189,6 @@ void Player::CalcMove()
             XMVector3Normalize(vMove);
             XMStoreFloat3(&playerMovement_, vMove);
         }
-
-        Rotate();
     }
     
     
@@ -206,8 +204,30 @@ float Player::NormalizeAngle(float angle) {
     return angle;
 }
 
-void Player::Rotate() {
+void Player::InstantRotate() {
+    float tx = transform_.position_.x + playerMovement_.x;
+    float tz = transform_.position_.z + playerMovement_.z;
 
+    const XMVECTOR vFront{ 0, 0, 1, 0 };
+    XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
+    XMVECTOR vAimPos_ = XMLoadFloat3(&fAimPos);
+    vAimPos_ = XMVector3Normalize(vAimPos_);
+    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos_);
+    float dot = XMVectorGetX(vDot);
+    float angle = (float)acos(dot);
+
+    // äOêœÇãÅÇﬂÇƒîºâÒì]ÇæÇ¡ÇΩÇÁ angle Ç… -1 Çä|ÇØÇÈ
+    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos_);
+    if (XMVectorGetY(vCross) < 0) {
+        angle *= -1;
+    }
+
+    transform_.rotate_.y = XMConvertToDegrees(angle);
+
+}
+
+void Player::GradualRotate()
+{
     float tx = transform_.position_.x + playerMovement_.x;
     float tz = transform_.position_.z + playerMovement_.z;
 
@@ -251,6 +271,7 @@ void Player::Gravity()
     if (IsPlayerOnGround()) {
         firstJump_ = false;
         secondJump_ = false;
+        bulletJump_ = false;
         transform_.position_.y = 0.0f;
         graY_ = 0.0f;
     }
@@ -279,16 +300,27 @@ void Player::Crouch()
 void Player::Jump()
 {
     //BulletJump
-    if (isCrouching_ == true && (!firstJump_ || !secondJump_)) {
+    if (isCrouching_ == true && !bulletJump_ && (!firstJump_ || !secondJump_)) {
         if (!firstJump_) firstJump_ = true;
         else secondJump_ = true;
+        bulletJump_ = true;
 
         const float bulletJump = 1.8f;
         float aimDirectionY = 1.0f + pAim_->GetAimDirection().y;
 
+        XMFLOAT3 aimDirection = pAim_->GetAimDirection();
+        XMVECTOR v;
+
         if (aimDirectionY < 1.0f) {
             if (aimDirectionY <= 0.01f) aimDirectionY = 1.99f * bulletJump;
-            else aimDirectionY = 1.0f * bulletJump;
+            else {
+                aimDirectionY = 1.0f * bulletJump;
+
+                aimDirection = { aimDirection.x, 0, aimDirection.z };
+                v = XMLoadFloat3(&aimDirection);
+                v = XMVector3Normalize(v);
+                XMStoreFloat3(&aimDirection, v);
+            }
         }
         else  aimDirectionY *= bulletJump;
         
@@ -296,9 +328,10 @@ void Player::Jump()
         graY_ += gravity_;
         transform_.position_.y += gravity_;
 
-        XMFLOAT3 aimDirection = pAim_->GetAimDirection();
-        playerMovement_ = { aimDirection.x * 0.8f , 0.0f , aimDirection.z * 0.8f };
+        playerMovement_ = { aimDirection.x * 0.6f , 0.0f , aimDirection.z * 0.6f };
         movementRatio_ = 1.0f;
+
+        InstantRotate();
 
         return;
     }
@@ -336,7 +369,7 @@ void Player::CalcMoveRatio(bool type)
     //å∏êä
     else {
         if (IsPlayerOnGround()) movementRatio_ -= 0.15f;
-        else movementRatio_ -= 0.01f;
+        else movementRatio_ -= 0.008f;
         if (movementRatio_ < 0.0f) movementRatio_ = 0.0f;
         return;
     }
@@ -358,7 +391,7 @@ bool Player::IsMovementKeyPressed()
 }
 
 bool Player::IsPlayerMove() {
-    if (graY_ == 0.0f && playerMovement_.x + playerMovement_.z != 0.0f)
+    if (graY_ != 0.0f || playerMovement_.x != 0.0f || playerMovement_.z != 0.0f)
         return true;
 
     return false;

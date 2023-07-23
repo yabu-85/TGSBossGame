@@ -22,6 +22,7 @@ class Player : public GameObject
     XMFLOAT3 playerMovement_;       //プレイヤーの移動量
     bool firstJump_;                //ジャンプしているか
     bool secondJump_;               //ジャンプしているか
+    bool bulletJump_;               //バレットジャンプしているか
     bool isCrouching_;              //しゃがんでいるか
     bool anime_;                    
     Aim* pAim_;
@@ -29,10 +30,11 @@ class Player : public GameObject
     //---------------privateメンバ関数---------------
 
     void CalcMove();                    //移動方向計算・normalize
-    void Rotate();                      //
-    void Gravity();                     
-    void Crouch();
-    void Jump();
+    void InstantRotate();               //即座に回転
+    void GradualRotate();               //徐々に振り向く
+    void Gravity();                     //重力うけます
+    void Crouch();                      //しゃがみ関係です
+    void Jump();                        //ジャンプするよん
     void CalcMoveRatio(bool type);      //true=プラス１ false=マイナス１
     
     float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
