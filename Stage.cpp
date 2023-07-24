@@ -74,6 +74,25 @@ void Stage::Release()
     delete[] table_;
 }
 
+float Stage::GetFloorHeight(int x, int z)
+{
+    if (x < width_ && z < height_ && x >= 0 && z >= 0) {
+        switch (table_[x][z])
+        {
+        case 0:
+            return 0.0f;
+        case 1:
+            return 1.0f;
+        case 2:
+            return 5.0f;
+        default:
+            return 0.0f;
+        }
+    }
+
+    return 0.0f;
+}
+
 XMFLOAT3 Stage::GetPlaPos()
 {
     for (int x = 0; x < width_; x++) {

@@ -25,6 +25,7 @@ public:
     void Draw() override;
     void Release() override;
 
+    float GetFloorHeight(int x, int z); //0（床）、１（壁）、２（高壁）、ー１（無し）
     int GetModelHandle() { return hModel_[TYPE_WALL]; }; //モデル番号取得
     XMFLOAT3 GetPlaPos(); //CSVでのプレイヤー座標
 

@@ -68,9 +68,7 @@ void Aim::Update()
     XMVector3Normalize(camPos);
     XMStoreFloat3(&aimDirectionXY_, -camPos);
     
-    if (pPlayer_->IsAiming())
-        camPos = caTarget + (camPos * (perspectiveDistance_ * 0.75)); // プレイヤーの半径を考慮して回転を適用します
-    else camPos = caTarget + (camPos * perspectiveDistance_); // プレイヤーの半径を考慮して回転を適用します
+    camPos = caTarget + (camPos * (perspectiveDistance_ * pPlayer_->IsAiming())); // プレイヤーの半径を考慮して回転を適用します
 
     XMStoreFloat3(&cameraPos_, camPos);
     XMStoreFloat3(&cameraTarget_, caTarget);

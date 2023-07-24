@@ -2,12 +2,13 @@
 #include "Engine/Input.h"
 #include "Engine/Model.h"
 #include "Aim.h"
+#include "Stage.h"
 
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{0,0,0}, movementRatio_(0.0f), pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false)
+    isDecelerating_(false), pStage_(nullptr)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -30,6 +31,7 @@ void Player::Initialize()
     assert(hModel_ >= 0);
 
     pAim_ = Instantiate<Aim>(this);
+    pStage_ = (Stage*)FindObject("Stage");
 
     pText_ = new Text;
     pText_->Initialize();
@@ -87,8 +89,11 @@ void Player::Update()
         else {
             isDecelerating_ = true;
             if (graY_ > 0.0) graY_ = 0.0f;
+            decelerationTime_ += 0.05f;
+            graY_ *= decelerationTime_;
         }
     }
+
     if (Input::IsMouseButtonUp(1)) isDecelerating_ = false;
     if (isDecelerating_) decelerationTime_ += 0.0015f;
 
@@ -111,6 +116,8 @@ void Player::Draw()
     else 
         pText_->Draw(70, 110, "false");
 
+    pText_->Draw(30, 150, (int)(pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z) ));
+
 }
 
 void Player::Release()
@@ -124,14 +131,14 @@ XMVECTOR Player::GetPlaVector() {
 
 }
 
-bool Player::IsAiming()
+float Player::IsAiming()
 {
     if (IsPlayerOnGround()) {
-        if (Input::IsMouseButton(1)) return true;
+        if (Input::IsMouseButton(1)) return 0.4f;
     }
-    else if (isDecelerating_) return true;
+    else if (isDecelerating_) return 0.75f;
         
-    return false;
+    return 1.0f;
 }
 
 /*--------------------------------State------------------------*/
@@ -303,7 +310,7 @@ void Player::Gravity()
         secondJump_ = false;
         bulletJump_ = false;
         isDecelerated_ = false;
-        transform_.position_.y = 0.0f;
+        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
         graY_ = 0.0f;
     }
 }
@@ -409,7 +416,9 @@ void Player::CalcMoveRatio(bool type)
 }
 
 bool Player::IsPlayerOnGround() {
-    if (transform_.position_.y <= 0.0f)
+    float ground = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+
+    if (transform_.position_.y <= ground)
         return true;
 
     return false;

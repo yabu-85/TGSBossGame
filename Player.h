@@ -3,10 +3,13 @@
 #include "Aim.h"
 #include "Engine/Text.h"
 
+class Stage;
+
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
 class Player : public GameObject
 {
+    Stage* pStage_;
     Text* pText_;
     int hModel_;                    //モデル番号
     float moveSpeed_;               //移動
@@ -70,7 +73,7 @@ public:
     //ーーーーーーゲッターーーーーーーー
     XMVECTOR GetPlaVector();                            //移動方向取得
     float GetCameraHeight() { return cameraHeight_; };  //カメラの高さ0.8f ～ 1.0f
-    bool IsAiming();
+    float IsAiming();                                   //ズーム値：地上（近い！）,空中（中くらい）,覗いてない（1.0）
     bool IsDecelerating() { return isDecelerating_; };
 
 };
