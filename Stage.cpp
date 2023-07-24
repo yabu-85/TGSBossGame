@@ -4,13 +4,13 @@
 
 //コンストラクタ
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), hModel_{ -1, -1 }, table_(nullptr)
+    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1 }, table_(nullptr)
 {
     CsvReader csv;
     csv.Load("Map.csv");
 
-    width_ = csv.GetWidth();
-    height_ = csv.GetHeight();
+    width_ = (int)csv.GetWidth();
+    height_ = (int)csv.GetHeight();
 
     table_ = new int* [width_];
 
@@ -31,7 +31,7 @@ Stage::~Stage()
 //初期化
 void Stage::Initialize()
 {
-    const char* fileName[] = { "Floor.fbx","Wall.fbx" };
+    const char* fileName[] = { "Floor.fbx","Wall.fbx", "HightWall.fbx"};
 
     //モデルデータのロード
     for (int i = 0; i < TYPE_MAX; i++) { //壁と床のロード
@@ -74,25 +74,13 @@ void Stage::Release()
     delete[] table_;
 }
 
-int Stage::IsWall(int x, int z)
-{
-    if (table_[x][z] == 0) {
-        return 0;
-    }
-    else if (table_[x][z] == 1) {
-        return 1;
-    }
-
-    return -1;
-}
-
 XMFLOAT3 Stage::GetPlaPos()
 {
     for (int x = 0; x < width_; x++) {
         for (int y = 0; y < height_; y++) {
             if (table_[x][y] == 10) {
                 table_[x][y] = 0;
-                return XMFLOAT3(x + 0.5, 0, y + 0.5);
+                return XMFLOAT3((float)x + 0.5f, 0.0f, (float)y + 0.5f);
             }
         }
     }

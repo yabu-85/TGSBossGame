@@ -5,8 +5,8 @@
 #include "Engine/Image.h"
 
 Aim::Aim(GameObject* parent)
-    : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirection_{ 0,0,0 }, plaPos_{ 0,0,0 }, pPlayer_(nullptr),
-    hPict_(-1)
+    : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }
+    , plaPos_{ 0,0,0 }, pPlayer_(nullptr), hPict_(-1)
 {
     mouseSensitivity = 2.5f;
     perspectiveDistance_ = 3.2f;
@@ -45,32 +45,39 @@ void Aim::Update()
     XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 
     //カメラの位置と回転を合成
-    XMMATRIX mView = mRotX * mRotY;
+    XMMATRIX mView = mRotX * mRotY; //カメラ用
+    XMMATRIX mPlaMove = mRotY;     //プレイヤーの移動用   
 
     //プレイヤークラスに進行方向ベクトル(float3)を伝える用
     const XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    XMVECTOR caDire = XMVector3TransformNormal(forwardVector, mView); //XMVector3TransformNormalを使用することで回転のみを適用します
+    XMVECTOR caDire = XMVector3TransformNormal(forwardVector, mPlaMove); //XMVector3TransformNormalを使用することで回転のみを適用します
     XMVector3Normalize(caDire);
-    XMStoreFloat3(&aimDirection_, -caDire);
+    XMStoreFloat3(&aimDirectionY_, -caDire);
 
     //プレイヤーの位置をカメラの位置とする
     plaPos_ = pPlayer_->GetPosition();
-    cameraPos_.x = plaPos_.x + (aimDirection_.z * 0.5);
+    cameraPos_.x = plaPos_.x + (aimDirectionY_.z * 0.5);
     cameraPos_.y = plaPos_.y + heightDistance_ * pPlayer_->GetCameraHeight(); //目線高さ
-    cameraPos_.z = plaPos_.z - (aimDirection_.x * 0.5);
+    cameraPos_.z = plaPos_.z - (aimDirectionY_.x * 0.5);
 
     //カメラ焦点
     XMVECTOR caTarget = XMLoadFloat3(&cameraPos_);
 
     // カメラポジション
     XMVECTOR camPos = XMVector3TransformNormal(forwardVector, mView); //XMVector3TransformNormalを使用することで回転のみを適用します
-    camPos = caTarget + (camPos * perspectiveDistance_); // プレイヤーの半径を考慮して回転を適用します
+    XMVector3Normalize(camPos);
+    XMStoreFloat3(&aimDirectionXY_, -camPos);
+    
+    if (pPlayer_->IsAiming())
+        camPos = caTarget + (camPos * (perspectiveDistance_ * 0.75)); // プレイヤーの半径を考慮して回転を適用します
+    else camPos = caTarget + (camPos * perspectiveDistance_); // プレイヤーの半径を考慮して回転を適用します
 
     XMStoreFloat3(&cameraPos_, camPos);
     XMStoreFloat3(&cameraTarget_, caTarget);
 
     Camera::SetPosition(cameraPos_);
     Camera::SetTarget(cameraTarget_);
+
 }
 
 void Aim::Draw()

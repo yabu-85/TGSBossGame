@@ -6,7 +6,8 @@
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
-    playerMovement_{0,0,0}, movementRatio_(0.0f), pText_(nullptr), bulletJump_(false)
+    playerMovement_{0,0,0}, movementRatio_(0.0f), pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
+    isDecelerating_(false)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -57,7 +58,7 @@ void Player::Update()
     transform_.position_.z += (playerMovement_.z * moveSpeed_) * movementRatio_; // z
 
     //移動するなら向きを変える
-    if (IsPlayerMove()) GradualRotate();
+    if (IsMovementKeyPressed()) GradualRotate();
 
     //重力
     if (!IsPlayerOnGround()) Gravity();
@@ -75,14 +76,25 @@ void Player::Update()
     }
 
     //覗き込み||近接ガード||slow（落下速度低下）
-    if (Input::IsMouseButton(1)) {
-        transform_.rotate_.y -= 1.0f;
+    //近接？なにそれ
+    if (Input::IsMouseButtonDown(1) && !IsPlayerOnGround()) {
+        if (!isDecelerated_) {
+            decelerationTime_ = 0.0f;
+            graY_ = 0.0f;
+            isDecelerated_ = true;
+            isDecelerating_ = true;
+        }
+        else {
+            isDecelerating_ = true;
+            if (graY_ > 0.0) graY_ = 0.0f;
+        }
     }
+    if (Input::IsMouseButtonUp(1)) isDecelerating_ = false;
+    if (isDecelerating_) decelerationTime_ += 0.0015f;
+
 
     //デバック用こまんど
-    if (Input::IsKey(DIK_UPARROW)) {
-        transform_.position_.y += 1.0f;
-    }
+    if (Input::IsKey(DIK_UPARROW)) transform_.position_.y += 1.0f;
 }
 
 void Player::Draw()
@@ -91,7 +103,13 @@ void Player::Draw()
     Model::Draw(hModel_);
 
     pText_->Draw(30, 30, (int)(movementRatio_ * 100.0f));
-    pText_->Draw(30, 70, (int)(pAim_->GetAimDirection().y * 100.0f));
+    pText_->Draw(30, 70, (int)(pAim_->GetAimDirectionXY().y * 100.0f));
+    pText_->Draw(30, 110, (int)(decelerationTime_ * 100.0f));
+
+    if(isDecelerating_) 
+        pText_->Draw(70, 110, "true");
+    else 
+        pText_->Draw(70, 110, "false");
 
 }
 
@@ -104,6 +122,16 @@ XMVECTOR Player::GetPlaVector() {
 
     return v;
 
+}
+
+bool Player::IsAiming()
+{
+    if (IsPlayerOnGround()) {
+        if (Input::IsMouseButton(1)) return true;
+    }
+    else if (isDecelerating_) return true;
+        
+    return false;
 }
 
 /*--------------------------------State------------------------*/
@@ -147,7 +175,7 @@ void Player::UpdateDead()
 void Player::CalcMove()
 {
     fMove_ = { 0,0,0 };
-    XMFLOAT3 aimDirection = pAim_->GetAimDirection();
+    XMFLOAT3 aimDirection = pAim_->GetAimDirectionY();
 
     // PlayerクラスのMove関数内の一部
     if (Input::IsKey(DIK_W)) {
@@ -260,15 +288,21 @@ void Player::GradualRotate()
 void Player::Gravity()
 {
     transform_.position_.y += graY_;
-    graY_ -= gravity_;
-    if (graY_ < -1.0f) graY_ = -1.0f;
+    if (isDecelerating_)
+        graY_ -= (gravity_ * decelerationTime_);
+    else graY_ -= gravity_;
+
+    const float maxGra = -1.0f;
+    if (graY_ < maxGra) graY_ = maxGra;
     
+    //空中にいるなら一回目のジャンプは不可に
     firstJump_ = true;
 
     if (IsPlayerOnGround()) {
         firstJump_ = false;
         secondJump_ = false;
         bulletJump_ = false;
+        isDecelerated_ = false;
         transform_.position_.y = 0.0f;
         graY_ = 0.0f;
     }
@@ -296,6 +330,8 @@ void Player::Crouch()
 
 void Player::Jump()
 {
+    isDecelerating_ = false;
+
     //BulletJump
     if (isCrouching_ == true && !bulletJump_ && (!firstJump_ || !secondJump_)) {
         if (!firstJump_) firstJump_ = true;
@@ -303,9 +339,9 @@ void Player::Jump()
         bulletJump_ = true;
 
         const float bulletJump = 1.8f;
-        float aimDirectionY = 1.0f + pAim_->GetAimDirection().y;
+        float aimDirectionY = 1.0f + pAim_->GetAimDirectionXY().y;
 
-        XMFLOAT3 aimDirection = pAim_->GetAimDirection();
+        XMFLOAT3 aimDirection = pAim_->GetAimDirectionXY();
         XMVECTOR v;
 
         if (aimDirectionY < 1.0f) {
@@ -366,7 +402,7 @@ void Player::CalcMoveRatio(bool type)
     //減衰
     else {
         if (IsPlayerOnGround()) movementRatio_ -= 0.15f;
-        else movementRatio_ -= 0.008f;
+        else movementRatio_ -= 0.005f;
         if (movementRatio_ < 0.0f) movementRatio_ = 0.0f;
         return;
     }

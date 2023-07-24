@@ -12,7 +12,8 @@ class Aim :
     float heightDistance_;          //焦点の高さ
     XMFLOAT3 cameraTarget_;         //カメラの焦点目標
     XMFLOAT3 cameraPos_;            //カメラの場所目標
-    XMFLOAT3 aimDirection_;         //現在の視点に基づいた進行方向ベクトル
+    XMFLOAT3 aimDirectionXY_;       //現在の視点に基づいた進行方向ベクトル
+    XMFLOAT3 aimDirectionY_;        //現在の視点に基づいた進行方向ベクトル
     XMFLOAT3 plaPos_;               //プレイヤー位置
     Player* pPlayer_;
 
@@ -25,6 +26,7 @@ public:
     void Release() override;
 
     //進行方向ベクトルのAim情報を取得
-    XMFLOAT3 GetAimDirection() { return aimDirection_; }
+    XMFLOAT3 GetAimDirectionY() { return aimDirectionY_; }
+    XMFLOAT3 GetAimDirectionXY() { return aimDirectionXY_; }
 };
 
