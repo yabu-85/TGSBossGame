@@ -8,7 +8,7 @@
 #include "Engine/Input.h"
 
 TitleScene::TitleScene(GameObject* parent)
-	: GameObject(parent, "TitleScene"), hPict_{-1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}
+	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}
 {
 }
 
@@ -20,8 +20,8 @@ struct ButtonInfo {
 	std::string name;
 }tbl[] = {
 	{0,0,100,100,"Start"},
-	{50,0,100,100,"Setting"},
-	{100,0,100,100,"Quit"},
+	{0,-200,100,100,"Setting"},
+	{0,-400,100,100,"Quit"},
 
 };
 
@@ -31,9 +31,10 @@ void TitleScene::Initialize()
 	pText_ = new Text;
 	pText_->Initialize();
 
-	const char* fileName[] = { "Title.png", "cross.png"};
-	const int png = 2;
-	for (int i = 0; i < png; i++) { //•Ç‚Æ°‚Ìƒ[ƒh
+	const char* fileName[] = { "Title.png", "cross.png", "GameTitle.png"};
+	const int png = sizeof(fileName) / sizeof(fileName[0]);
+
+	for (int i = 0; i < png; i++) {
 		hPict_[i] = Image::Load(fileName[i]);
 		assert(hPict_[i] >= 0);
 	}
@@ -74,9 +75,18 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	if (disp_) {
-		Image::SetTransform(hPict_[0], transform_);
-		Image::Draw(hPict_[0]);
+	//	Image::SetTransform(hPict_[0], transform_);
+	//	Image::Draw(hPict_[0]);
+
 		DrawCursor();
+
+		Transform pos = transform_;
+		pos.position_.y = 0.5f;
+		pos.scale_.x = 1.2f;
+		pos.scale_.y = 1.2f;
+		Image::SetTransform(hPict_[2], pos);
+		Image::Draw(hPict_[2]);
+
 	}
 
 }

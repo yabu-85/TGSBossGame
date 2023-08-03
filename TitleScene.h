@@ -4,7 +4,7 @@
 
 class TitleScene : public GameObject
 {
-	int hPict_[2];		//画像番号
+	int hPict_[3];		//画像番号
 	Text* pText_;		//
 	bool disp_;			//表示するかどうか
 	XMFLOAT3 mousePos_;	//マウス座標
