@@ -19,8 +19,8 @@ class Player : public GameObject
     float gravity_;                 //重力の値
     float initVy_;                  //初期ジャンプ力
     float cameraHeight_;            //カメラの高さ (しゃがみとかにしか使わない？)
-    float movementRatio_;           //プレイヤーの移動速度の比率0～1
     float decelerationTime_;        //落下の減速時間(def=1.0->0.0
+    float maxMoveSpeed_;            //最大移動速度
     XMFLOAT3 fMove_;                //移動方向
     XMFLOAT3 previousPosition_;     //前の座標
     XMFLOAT3 playerMovement_;       //プレイヤーの移動量
@@ -30,7 +30,7 @@ class Player : public GameObject
     bool isCrouching_;              //しゃがんでいるか
     bool anime_;                    //アニメーションしてる？
     bool isDecelerated_;            //既に減速しているか
-    bool isDecelerating_;           //右クリック押しているか
+    bool isDecelerating_;           //減速状態か
     Aim* pAim_;
 
     //---------------privateメンバ関数---------------
@@ -41,8 +41,6 @@ class Player : public GameObject
     void Gravity();                     //重力うけます
     void Crouch();                      //しゃがみ関係です
     void Jump();                        //ジャンプするよん
-    void CalcMoveRatio(bool type);      //true=プラス１ false=マイナス１
-    
     float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
 
     bool IsMovementKeyPressed();        //移動キーを押しているか

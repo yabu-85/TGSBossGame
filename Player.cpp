@@ -7,8 +7,8 @@
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
-    playerMovement_{0,0,0}, movementRatio_(0.0f), pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr)
+    playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
+    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -26,8 +26,10 @@ void Player::Initialize()
     transform_.scale_.y = 0.2f;
     transform_.scale_.z = 0.2f;
 
+    transform_.rotate_.y = 180.0f;  //Blender
+
     //モデルデータのロード
-    hModel_ = Model::Load("Human.fbx");
+    hModel_ = Model::Load("huu.fbx");
     assert(hModel_ >= 0);
 
     pAim_ = Instantiate<Aim>(this);
@@ -35,6 +37,9 @@ void Player::Initialize()
 
     pText_ = new Text;
     pText_->Initialize();
+
+    Model::SetAnimFrame(hModel_, 0, 160, 1);
+
 }
 
 void Player::Update()
@@ -53,11 +58,8 @@ void Player::Update()
         break;
     }
 
-    if(state_ != S_MOVE)
-        CalcMoveRatio(false);
-
-    transform_.position_.x += (playerMovement_.x * moveSpeed_) * movementRatio_; // 移動！
-    transform_.position_.z += (playerMovement_.z * moveSpeed_) * movementRatio_; // z
+    transform_.position_.x += (playerMovement_.x * moveSpeed_); // 移動！
+    transform_.position_.z += (playerMovement_.z * moveSpeed_); // z
 
     //移動するなら向きを変える
     if (IsMovementKeyPressed()) GradualRotate();
@@ -77,26 +79,48 @@ void Player::Update()
         transform_.rotate_.y += 1.0f;
     }
 
+
+    //graYにかけて値を出すんじゃなくてgraY自体を計算する
+    //そうすれば減速した後の速度から始められる
+    //今のやり方だと出来ない！（多分
+    
     //覗き込み||近接ガード||slow（落下速度低下）
-    //近接？なにそれ
+    //こっちは最初に押したらのやつ
     if (Input::IsMouseButtonDown(1) && !IsPlayerOnGround()) {
+        isDecelerating_ = true;
+
         if (!isDecelerated_) {
+            //上へ移動している場合は0に
+            if (graY_ > 0.0f)graY_ = 0.0f;
+            else graY_ *= 0.3f;
+
             decelerationTime_ = 0.0f;
-            graY_ = 0.0f;
             isDecelerated_ = true;
-            isDecelerating_ = true;
         }
         else {
-            isDecelerating_ = true;
-            if (graY_ > 0.0) graY_ = 0.0f;
-            decelerationTime_ += 0.05f;
-            graY_ *= decelerationTime_;
+            graY_ = graY_ * decelerationTime_;
+
         }
     }
 
-    if (Input::IsMouseButtonUp(1)) isDecelerating_ = false;
-    if (isDecelerating_) decelerationTime_ += 0.0015f;
 
+
+    if(Input::IsMouseButtonUp(1)) {
+        isDecelerating_ = false;
+    }
+
+    //減速している
+    if (isDecelerating_ ) {
+        const float noDe = 0.8f; //減速をやめる時間
+        const float deTime = 0.005f;
+
+        //float ag = ((1.0f - decelerationTime_) * gravity_);
+        //graY_ = graY_ + ag;
+        decelerationTime_ += deTime * decelerationTime_;
+
+        //減速時間終わったよの処理
+        if (decelerationTime_ > noDe) isDecelerating_ = false;
+    }
 
     //デバック用こまんど
     if (Input::IsKey(DIK_UPARROW)) transform_.position_.y += 1.0f;
@@ -107,16 +131,19 @@ void Player::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-    pText_->Draw(30, 30, (int)(movementRatio_ * 100.0f));
-    pText_->Draw(30, 70, (int)(pAim_->GetAimDirectionXY().y * 100.0f));
-    pText_->Draw(30, 110, (int)(decelerationTime_ * 100.0f));
+    pText_->Draw(30, 30, (int)( (abs(playerMovement_.x) + abs(playerMovement_.z)) * 100.0f ) );
+    pText_->Draw(30, 70, (int)( (maxMoveSpeed_ * 100.0f)));
+    pText_->Draw(30, 110, (int)(pAim_->GetAimDirectionXY().y * 100.0f));
+    pText_->Draw(30, 150, (int)(decelerationTime_ * 100.0f));
 
     if(isDecelerating_) 
-        pText_->Draw(70, 110, "true");
+        pText_->Draw(70, 150, "true");
     else 
-        pText_->Draw(70, 110, "false");
+        pText_->Draw(70, 150, "false");
 
-    pText_->Draw(30, 150, (int)(pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z) ));
+    pText_->Draw(30, 190, (int)(pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z) ));
+
+    pText_->Draw(30, 250, (int)(transform_.position_.y * 100.0f));
 
 }
 
@@ -151,7 +178,7 @@ void Player::UpdateIdle()
     if (IsMovementKeyPressed()) {
         if (anime_ == false) {
             anime_ = true;
-            Model::SetAnimFrame(hModel_, 20, 100, 1);
+            Model::SetAnimFrame(hModel_, 40, 80, 1);
         }
         state_ = S_MOVE;
     }
@@ -160,14 +187,13 @@ void Player::UpdateIdle()
 
 void Player::UpdateMove()
 {
-    CalcMoveRatio(true);
     CalcMove();
 
 
     //--------state----------
     if (!IsMovementKeyPressed()) {
         anime_ = false;
-        Model::SetAnimFrame(hModel_, 0, 10, 1);
+        Model::SetAnimFrame(hModel_, 0, 0, 1);
         state_ = S_IDLE;
     }
 
@@ -203,27 +229,44 @@ void Player::CalcMove()
     }
 
     //fMove_の正規化と数値調整
-    XMVECTOR vMove = XMLoadFloat3(&fMove_);
-    vMove = XMVector3Normalize(vMove) * 0.1f;
-    XMStoreFloat3(&fMove_, vMove);
+    
+    //Normalizeの事をちゃんと理解しよう
+    //平方根の定理を使ったやつね
 
+    XMVECTOR vMove = XMLoadFloat3(&fMove_);
+    vMove = XMVector3Normalize(vMove);
+    
     if (IsPlayerOnGround()) {
+        XMStoreFloat3(&fMove_, vMove * 0.1f);
         playerMovement_ = fMove_;
 
     }
-    else if (fMove_.x != 0.0f || fMove_.z != 0.0f) {
-        //空中での移動、今のMoveから徐々に目標へ値を近づけている
-        fMove_ = { ((fMove_.x - playerMovement_.x) * 0.04f) , 0.0f , ((fMove_.z - playerMovement_.z) * 0.04f ) };
+    else  {
+        XMStoreFloat3(&fMove_, vMove);
+
+        //fMove_
+        fMove_ = { ((fMove_.x - playerMovement_.x) * 0.004f) , 0.0f , ((fMove_.z - playerMovement_.z) * 0.004f ) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z};
 
-        if (abs(playerMovement_.x) + abs(playerMovement_.z) >= 1.0f) {
+
+
+        float max = ( abs(playerMovement_.x) + abs(playerMovement_.z) );
+        if (max > maxMoveSpeed_) {
+
+
             vMove = XMLoadFloat3(&playerMovement_);
-            XMVector3Normalize(vMove);
+            vMove = XMVector3Normalize(vMove);
+            vMove *= maxMoveSpeed_;
+
+            // もしmaxMoveSpeed_が1.0を超える場合は、再度正規化する
+            if (XMVectorGetX(XMVector3Length(vMove)) > 1.0f) {
+                vMove = XMVector3Normalize(vMove);
+            }
+
             XMStoreFloat3(&playerMovement_, vMove);
+
         }
     }
-    
-    
 }
 
 float Player::NormalizeAngle(float angle) {
@@ -255,6 +298,7 @@ void Player::InstantRotate() {
     }
 
     transform_.rotate_.y = XMConvertToDegrees(angle);
+    transform_.rotate_.y += 180.0f; //Blender
 
 }
 
@@ -281,10 +325,11 @@ void Player::GradualRotate()
     targetRotation_ = XMConvertToDegrees(angle);
 
     // 回転角度をスムーズに変更
-    float rotationDiff = NormalizeAngle(targetRotation_ - transform_.rotate_.y);
+    float rotationDiff = NormalizeAngle(targetRotation_ - (transform_.rotate_.y -180.0f) );  //Blender
     if (rotationDiff != 0) {
         if (rotationSpeed_ > abs(rotationDiff)) {
             transform_.rotate_.y = targetRotation_;
+            transform_.rotate_.y += 180.0f; //Blender
         }
         else {
             transform_.rotate_.y += rotationSpeed_ * (rotationDiff > 0 ? 1 : -1);
@@ -295,13 +340,13 @@ void Player::GradualRotate()
 void Player::Gravity()
 {
     transform_.position_.y += graY_;
-    if (isDecelerating_)
-        graY_ -= (gravity_ * decelerationTime_);
+
+    if(isDecelerating_) graY_ -= gravity_ * 0.5f;
     else graY_ -= gravity_;
 
     const float maxGra = -1.0f;
     if (graY_ < maxGra) graY_ = maxGra;
-    
+
     //空中にいるなら一回目のジャンプは不可に
     firstJump_ = true;
 
@@ -310,9 +355,13 @@ void Player::Gravity()
         secondJump_ = false;
         bulletJump_ = false;
         isDecelerated_ = false;
+        playerMovement_ = { 0.0f , 0.0f , 0.0f};
         transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
         graY_ = 0.0f;
+
+        return;
     }
+
 }
 
 void Player::Crouch()
@@ -341,20 +390,23 @@ void Player::Jump()
 
     //BulletJump
     if (isCrouching_ == true && !bulletJump_ && (!firstJump_ || !secondJump_)) {
+
+        //flag制御
         if (!firstJump_) firstJump_ = true;
         else secondJump_ = true;
         bulletJump_ = true;
 
-        const float bulletJump = 1.8f;
+        //XZ,Y軸の移動量計算
+        const float buJump = 1.8f;
         float aimDirectionY = 1.0f + pAim_->GetAimDirectionXY().y;
 
         XMFLOAT3 aimDirection = pAim_->GetAimDirectionXY();
         XMVECTOR v;
 
         if (aimDirectionY < 1.0f) {
-            if (aimDirectionY <= 0.01f) aimDirectionY = 1.99f * bulletJump;
+            if (aimDirectionY <= 0.01f) aimDirectionY = 1.99f * buJump;
             else {
-                aimDirectionY = 1.0f * bulletJump;
+                aimDirectionY = 1.0f * buJump;
 
                 aimDirection = { aimDirection.x, 0, aimDirection.z };
                 v = XMLoadFloat3(&aimDirection);
@@ -362,14 +414,18 @@ void Player::Jump()
                 XMStoreFloat3(&aimDirection, v);
             }
         }
-        else  aimDirectionY *= bulletJump;
+        else  aimDirectionY *= buJump;
         
         graY_ = initVy_ * (aimDirectionY - 1.0f);
         graY_ += gravity_;
         transform_.position_.y += gravity_;
 
-        playerMovement_ = { aimDirection.x * 0.6f , 0.0f , aimDirection.z * 0.6f };
-        movementRatio_ = 1.0f;
+        playerMovement_ = { aimDirection.x * 0.4f , 0.0f , aimDirection.z * 0.4f };
+
+        //maxSpeed
+        float a = abs(playerMovement_.x) + abs(playerMovement_.z);
+        maxMoveSpeed_ = a;
+        if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
 
         InstantRotate();
 
@@ -382,6 +438,18 @@ void Player::Jump()
         graY_ += gravity_;
         secondJump_ = true;
         transform_.position_.y += gravity_;
+
+        // 移動速度のx方向とz方向の成分を取得
+        float xSpeed = std::abs(playerMovement_.x);
+        float zSpeed = std::abs(playerMovement_.z);
+
+        // 前に移動する場合のMaxSpeedを計算
+        maxMoveSpeed_ = max(xSpeed, zSpeed);
+
+        // 斜めに移動する場合のMaxSpeedを計算
+        //maxMoveSpeed_ = sqrt(xSpeed * xSpeed + zSpeed * zSpeed) / sqrt(2.0f);
+
+
         return;
     }
     
@@ -391,28 +459,17 @@ void Player::Jump()
         graY_ += gravity_;
         firstJump_ = true;
         transform_.position_.y += gravity_;
+
+        XMVECTOR v = { 0.5f, 0, 0.5f,0 };
+        v = XMVector3Normalize(v) * 0.1f;
+        XMFLOAT3 f;
+        XMStoreFloat3(&f, v);
+        maxMoveSpeed_ = abs(f.x) + abs(f.z);
+
         return;
 
     }
 
-}
-
-void Player::CalcMoveRatio(bool type)
-{
-    //加速
-    if (type == true) {
-        if (IsPlayerOnGround()) movementRatio_ += 0.075f;
-        else movementRatio_ += 0.05f;
-        if (movementRatio_ > 1.0f) movementRatio_ = 1.0f;
-        return;
-    }
-    //減衰
-    else {
-        if (IsPlayerOnGround()) movementRatio_ -= 0.15f;
-        else movementRatio_ -= 0.005f;
-        if (movementRatio_ < 0.0f) movementRatio_ = 0.0f;
-        return;
-    }
 }
 
 bool Player::IsPlayerOnGround() {

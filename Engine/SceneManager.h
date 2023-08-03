@@ -29,9 +29,13 @@ public:
 	//シーン切り替え（実際に切り替わるのはこの次のフレーム）
 	//引数：next	次のシーンのID
 	void ChangeScene(SCENE_ID next);
+	
+	//すでにロゴを表示したか/falseまだ
+	bool IsLogoShown() { return logoShown; };
 
 private:
 	SCENE_ID currentSceneID_;	//現在のシーン
 	SCENE_ID nextSceneID_;		//次のシーン
 
+	bool logoShown;				//ロゴ表示したか（falseまだ
 };

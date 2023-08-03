@@ -31,7 +31,7 @@ Stage::~Stage()
 //初期化
 void Stage::Initialize()
 {
-    const char* fileName[] = { "Floor.fbx","Wall.fbx", "HightWall.fbx"};
+    const char* fileName[] = { "Floor.fbx","Wall.fbx", "huu.fbx"};
 
     //モデルデータのロード
     for (int i = 0; i < TYPE_MAX; i++) { //壁と床のロード
