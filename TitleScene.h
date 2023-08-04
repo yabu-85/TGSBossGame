@@ -19,4 +19,6 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
+
+	XMFLOAT3 GetMousePos() { return mousePos_; };
 };

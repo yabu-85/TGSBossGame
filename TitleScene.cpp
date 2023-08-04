@@ -13,15 +13,15 @@ TitleScene::TitleScene(GameObject* parent)
 }
 
 struct ButtonInfo {
-	int x;
-	int y;
-	int width;
-	int height;
+	float x;
+	float y;
+	float width;
+	float height;
 	std::string name;
 }tbl[] = {
-	{0,0,100,100,"Start"},
-	{0,-200,100,100,"Setting"},
-	{0,-400,100,100,"Quit"},
+	{0.0f, 0.0f, 100.0f, 100.0f, "Start"},
+	{0.0f, -200.0f, 100.0f, 100.0f, "Setting"},
+	{0.0f, -400.0f, 100.0f, 100.0f, "Quit"},
 
 };
 
@@ -75,8 +75,10 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	if (disp_) {
-	//	Image::SetTransform(hPict_[0], transform_);
-	//	Image::Draw(hPict_[0]);
+
+		Image::SetAlpha(hPict_[0], 10);
+		Image::SetTransform(hPict_[0], transform_);
+		Image::Draw(hPict_[0]);
 
 		DrawCursor();
 
@@ -104,6 +106,7 @@ void TitleScene::DrawCursor()
 	mousePos_.y += Input::GetMouseMove().y * 2.5f;
 	if (screenWidth < abs(mousePos_.x)) mousePos_.x = screenWidth * (mousePos_.x > 0.0 ? 1 : -1);
 	if (screenHeight < abs(mousePos_.y)) mousePos_.y = screenHeight * (mousePos_.y > 0.0 ? 1 : -1);
+	Input::SetMousePosition(mousePos_.x, mousePos_.y);
 
 	//”wŒi‚ÌPNG
 	pText_->Draw(30, 30, mousePos_.x);
@@ -114,7 +117,6 @@ void TitleScene::DrawCursor()
 	aim.scale_.y = 0.5f;
 	aim.scale_.z = 0.5f;
 	aim.position_ = mousePos_;
-
 	aim.position_ = { aim.position_.x / screenWidth ,-aim.position_.y / screenHeight ,0 };
 
 	Image::SetTransform(hPict_[1], aim);
