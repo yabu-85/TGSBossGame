@@ -8,7 +8,7 @@ Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f)
+    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), active_(true)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -37,13 +37,13 @@ void Player::Initialize()
 
     pText_ = new Text;
     pText_->Initialize();
-
-    Model::SetAnimFrame(hModel_, 0, 160, 1);
-
 }
 
 void Player::Update()
 {
+    if (!active_) return;
+
+
     previousPosition_ = transform_.position_;
 
     switch (state_) {
@@ -78,7 +78,6 @@ void Player::Update()
     if (Input::IsMouseButton(0)) {
         transform_.rotate_.y += 1.0f;
     }
-
 
     //graYにかけて値を出すんじゃなくてgraY自体を計算する
     //そうすれば減速した後の速度から始められる

@@ -3,16 +3,16 @@
 #include "Engine/SceneManager.h"
 #include "Logo.h"
 #include "Button.h"
-
 #include "Engine/Text.h"
 #include "Engine/Input.h"
+#include "ExitMenu.h"
 
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}
 {
 }
 
-struct ButtonInfo {
+struct ButtonInfoTitle {
 	float x;
 	float y;
 	float width;
@@ -33,7 +33,6 @@ void TitleScene::Initialize()
 
 	const char* fileName[] = { "Title.png", "cross.png", "GameTitle.png"};
 	const int png = sizeof(fileName) / sizeof(fileName[0]);
-
 	for (int i = 0; i < png; i++) {
 		hPict_[i] = Image::Load(fileName[i]);
 		assert(hPict_[i] >= 0);
@@ -49,15 +48,13 @@ void TitleScene::Initialize()
 		disp_ = true;
 		ButtonInitializ();
 	}
+
 }
 
 void TitleScene::Update()
 {
 	if (disp_) {
-		if (Input::IsMouseButtonDown(0)) {
-			SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-			pSceneManager->ChangeScene(SCENE_ID_PLAY);
-		}
+		CheckButtonPressed();
 
 	}
 	else {
@@ -66,7 +63,6 @@ void TitleScene::Update()
 		if (pLogo->IsEndDraw()) {
 			disp_ = true;
 			pLogo->KillMe();
-
 			ButtonInitializ();
 		}
 	}
@@ -75,9 +71,11 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	if (disp_) {
-
-		Image::SetAlpha(hPict_[0], 10);
-		Image::SetTransform(hPict_[0], transform_);
+		Image::SetAlpha(hPict_[0], 0);
+		Transform pos1 = transform_;
+		pos1.scale_.x = 1.6f;
+		pos1.scale_.y = 1.2f;
+		Image::SetTransform(hPict_[0], pos1);
 		Image::Draw(hPict_[0]);
 
 		DrawCursor();
@@ -88,7 +86,7 @@ void TitleScene::Draw()
 		pos.scale_.y = 1.2f;
 		Image::SetTransform(hPict_[2], pos);
 		Image::Draw(hPict_[2]);
-
+		
 	}
 
 }
@@ -96,6 +94,8 @@ void TitleScene::Draw()
 void TitleScene::Release()
 {
 }
+
+//private関数たちーーーーーーーーーーーーー
 
 void TitleScene::DrawCursor()
 {
@@ -106,11 +106,6 @@ void TitleScene::DrawCursor()
 	mousePos_.y += Input::GetMouseMove().y * 2.5f;
 	if (screenWidth < abs(mousePos_.x)) mousePos_.x = screenWidth * (mousePos_.x > 0.0 ? 1 : -1);
 	if (screenHeight < abs(mousePos_.y)) mousePos_.y = screenHeight * (mousePos_.y > 0.0 ? 1 : -1);
-	Input::SetMousePosition(mousePos_.x, mousePos_.y);
-
-	//背景のPNG
-	pText_->Draw(30, 30, mousePos_.x);
-	pText_->Draw(30, 70, mousePos_.y);
 
 	Transform aim;
 	aim.scale_.x = 0.5f;
@@ -125,10 +120,52 @@ void TitleScene::DrawCursor()
 
 void TitleScene::ButtonInitializ()
 {
-	const int button = 3;
+	const int button = sizeof(tbl) / sizeof(tbl[0]);
 	for (int i = 0; i < button; i++) {
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
 		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+	}
+}
+
+void TitleScene::CheckButtonPressed()
+{
+	if (!Input::IsMouseButtonDown(0))
+		return;
+
+	std::list<GameObject*>* gs = GetChildList();
+	for (GameObject* obj : *gs) {
+		if (obj->GetObjectName() != "Button") {
+			continue;
+		}
+
+		Button* pButton = (Button*)obj;
+		if (pButton->IsButtonClicked()){
+			std::string na = pButton->GetName();
+			
+			if(na == "Start") {
+				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+				pSceneManager->ChangeScene(SCENE_ID_PLAY);
+			}
+			else if (na == "Setting") {
+				mousePos_.y += 200.0f;
+				break;
+			}
+			else if (na == "Quit") {
+				Instantiate<ExitMenu>(this);
+				for (GameObject* obj : *gs) {
+					if (obj->GetObjectName() != "Button") {
+						continue;
+					}
+
+					Button* pButton = (Button*)obj;
+					pButton->SetActive(false);
+					pButton->SetAlpha_(10);
+
+				}
+
+				break;
+			}
+		}
 	}
 }

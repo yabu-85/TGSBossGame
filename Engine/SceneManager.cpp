@@ -11,7 +11,7 @@
 
 //コンストラクタ
 SceneManager::SceneManager(GameObject * parent)
-	: GameObject(parent, "SceneManager"), logoShown(false)
+	: GameObject(parent, "SceneManager"), logoShown(true)
 {
 }
 

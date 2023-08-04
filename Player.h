@@ -31,6 +31,7 @@ class Player : public GameObject
     bool anime_;                    //アニメーションしてる？
     bool isDecelerated_;            //既に減速しているか
     bool isDecelerating_;           //減速状態か
+    bool active_;                   //操作を受け付けるか
     Aim* pAim_;
 
     //---------------privateメンバ関数---------------
@@ -67,6 +68,8 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+
+    void SetActive(bool b) { active_ = b; };
 
     //ーーーーーーゲッターーーーーーーー
     XMVECTOR GetPlaVector();                            //移動方向取得

@@ -150,6 +150,7 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
+    <ClCompile Include="ExitMenu.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="Logo.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="ExitMenu.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="Logo.h" />
     <ClInclude Include="PauseMenu.h" />

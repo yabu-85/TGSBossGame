@@ -6,7 +6,7 @@
 
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }
-    , plaPos_{ 0,0,0 }, pPlayer_(nullptr), hPict_(-1)
+    , plaPos_{ 0,0,0 }, pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true)
 {
     mouseSensitivity = 2.5f;
     perspectiveDistance_ = 3.2f;
@@ -21,9 +21,6 @@ void Aim::Initialize()
 {
     pPlayer_ = (Player*)FindObject("Player");
 
-    //マウス初期位置
-    Input::SetMousePosition(800 / 2, 600 / 2);
-
     //画像データのロード
     hPict_ = Image::Load("cross.png");
     assert(hPict_ >= 0);
@@ -32,13 +29,16 @@ void Aim::Initialize()
 void Aim::Update()
 {
     //マウス移動量
-    XMFLOAT3 mouseMove = Input::GetMouseMove(); //マウスの移動量を取得
+    if (aimMove_) {
+        XMFLOAT3 mouseMove = Input::GetMouseMove(); //マウスの移動量を取得
 
-    //移動量を計算
-    transform_.rotate_.y += (mouseMove.x * 0.05f) * mouseSensitivity; //横方向の回転
-    transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //縦方向の回転
-    if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
-    if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
+        //移動量を計算
+        transform_.rotate_.y += (mouseMove.x * 0.05f) * mouseSensitivity; //横方向の回転
+        transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //縦方向の回転
+        if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
+        if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
+    
+    }
 
     //カメラの回転
     XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(transform_.rotate_.x));

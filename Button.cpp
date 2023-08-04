@@ -4,7 +4,8 @@
 #include "TitleScene.h"
 
 Button::Button(GameObject* parent):
-	GameObject(parent, "Button"), hPict_{-1,-1}, width_(0), height_(0), name_(""), pTitleScene_(nullptr), widePos_{0,0,0}
+	GameObject(parent, "Button"), hPict_{-1,-1}, width_(0), height_(0), name_(""), widePos_{0,0,0}, alpha_(0),
+	isButtonInactive_(true)
 {
 }
 
@@ -14,35 +15,36 @@ Button::~Button()
 
 void Button::Initialize()
 {
-	pTitleScene_ = (TitleScene*)FindObject("TitleScene");
+	alpha_ = 255;
 }
 
 void Button::Update()
 {
-	XMFLOAT3 mouse = pTitleScene_->GetMousePos();
-	if (-mouse.y < widePos_.y + 60 && -mouse.y > widePos_.y - 60) {
-		transform_.scale_.x = 0.8f;
-		transform_.scale_.y = 0.7f;
-	}
-	else {
-		transform_.scale_.x = 0.6f;
-		transform_.scale_.y = 0.6f;
-	}
+	if (isButtonInactive_) {
+		XMFLOAT3 mouse = { 0,0,0 };
 
-	if (Input::IsKey(DIK_SPACE)) {
-		int a = 0;
+		if (-mouse.y < widePos_.y + 80 && -mouse.y > widePos_.y - 80) {
+			transform_.scale_.x = 0.65f;
+			transform_.scale_.y = 0.7f;
+		}
+		else {
+			transform_.scale_.x = 0.6f;
+			transform_.scale_.y = 0.6f;
+		}
 	}
 }
 
 void Button::Draw()
 {
+	Image::SetAlpha(hPict_[0], alpha_);
 	Image::SetTransform(hPict_[0], transform_);
 	Image::Draw(hPict_[0]);
 
 	Transform pos = transform_;
+	if(alpha_ == 255) Image::SetAlpha(hPict_[1], 100);
+	else Image::SetAlpha(hPict_[1], alpha_);
 	Image::SetTransform(hPict_[1], pos);
 	Image::Draw(hPict_[1]);
-
 
 }
 
@@ -76,4 +78,16 @@ void Button::SetValue(float x, float y, float w, float h, std::string n)
 	// 1100 * 120
 	hPict_[1] = Image::Load("Frame.png");
 	assert(hPict_[1] >= 0);
+}
+
+bool Button::IsButtonClicked()
+{
+	if (!isButtonInactive_)
+		return false;
+
+	XMFLOAT3 mouse = { 0,0,0 };
+	if (-mouse.y < widePos_.y + 80 && -mouse.y > widePos_.y - 80) 
+		return true;
+	
+	return false;
 }

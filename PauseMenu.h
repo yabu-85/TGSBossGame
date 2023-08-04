@@ -4,7 +4,10 @@
 class PauseMenu :
     public GameObject
 {
-    int hModel_;                    //ƒ‚ƒfƒ‹”Ô†
+    int hPict_[2];
+
+    void ButtonInitializ(); 
+    void CheckButtonPressed();
 
 public:
     PauseMenu(GameObject* parent);

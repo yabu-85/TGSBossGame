@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "Stage.h"
 #include "PauseMenu.h"
+#include "Engine/Input.h"
+#include "ExitMenu.h"
 
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
@@ -16,13 +18,16 @@ void PlayScene::Initialize()
 	Player* pPlayer = Instantiate<Player>(this);
 
 	pPlayer->SetPosition(pStage->GetPlaPos());
-
-	Instantiate<PauseMenu>(this);
 }
 
 //更新
 void PlayScene ::Update()
 {
+	if (Input::IsKeyDown(DIK_E)) {
+		Instantiate<PauseMenu>(this);
+		Player* pPlayer = (Player*)FindObject("Player");
+		pPlayer->SetActive(false);
+	}
 }
 
 //描画
@@ -34,3 +39,4 @@ void PlayScene ::Draw()
 void PlayScene ::Release()
 {
 }
+

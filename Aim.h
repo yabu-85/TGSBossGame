@@ -10,6 +10,8 @@ class Aim :
     float mouseSensitivity;         //マウス感度
     float perspectiveDistance_;     //どのくらい後ろから映すか
     float heightDistance_;          //焦点の高さ
+    bool aimDraw_;                  //エイムを表示するか
+    bool aimMove_;                  //エイムを動かすかどうか
     XMFLOAT3 cameraTarget_;         //カメラの焦点目標
     XMFLOAT3 cameraPos_;            //カメラの場所目標
     XMFLOAT3 aimDirectionXY_;       //現在の視点に基づいた進行方向ベクトル
@@ -28,5 +30,8 @@ public:
     //進行方向ベクトルのAim情報を取得
     XMFLOAT3 GetAimDirectionY() { return aimDirectionY_; }
     XMFLOAT3 GetAimDirectionXY() { return aimDirectionXY_; }
+    void SetAimDraw(bool b) { aimDraw_ = b; };
+    void SetAimMove(bool b) { aimMove_ = b; };
+
 };
 

@@ -11,6 +11,7 @@ class TitleScene : public GameObject
 
 	void DrawCursor();
 	void ButtonInitializ();
+	void CheckButtonPressed();	//ƒ{ƒ^ƒ“‰Ÿ‚³‚ê‚½‚©’²‚×‚é
 
 public:
 
