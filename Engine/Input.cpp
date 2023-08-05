@@ -19,6 +19,7 @@ namespace Input
 	DIMOUSESTATE mouseState_;				//マウスの状態
 	DIMOUSESTATE prevMouseState_;			//前フレームのマウスの状態
 	POINT mousePos_;							//マウスカーソルの位置
+	XMFLOAT3 mousePosSub_;						//マウスカーソルの位置 -screensize ～ screensize
 
 	//初期化
 	void Initialize(HWND hWnd)
@@ -39,6 +40,8 @@ namespace Input
 		pDInput_->CreateDevice(GUID_SysMouse, &pMouseDevice_, nullptr);
 		pMouseDevice_->SetDataFormat(&c_dfDIMouse);
 		pMouseDevice_->SetCooperativeLevel(hWnd_, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+
+		mousePosSub_ = { 0,0,0 };
 	}
 
 
@@ -54,6 +57,17 @@ namespace Input
 		pMouseDevice_->Acquire();
 		memcpy(&prevMouseState_, &mouseState_, sizeof(mouseState_));
 		pMouseDevice_->GetDeviceState(sizeof(mouseState_), &mouseState_);
+
+		//マウスサブの座標計算
+		mousePosSub_ = { mousePosSub_.x + GetMouseMove().x, mousePosSub_.y + GetMouseMove().y, 0 };
+
+		static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
+		static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
+
+		if (mousePosSub_.x > screenWidth) mousePosSub_.x = screenWidth;
+		if (mousePosSub_.y > screenHeight) mousePosSub_.y = screenHeight;
+		if (mousePosSub_.x < -screenWidth) mousePosSub_.x = -screenWidth;
+		if (mousePosSub_.y < -screenHeight) mousePosSub_.y = -screenHeight;
 
 	}
 
@@ -149,11 +163,23 @@ namespace Input
 		return result;
 	}
 
+	XMFLOAT3 GetMousePositionSub()
+	{
+		XMFLOAT3 result = XMFLOAT3((float)mousePosSub_.x, (float)mousePosSub_.y, 0);
+		return result;
+	}
+
 	//マウスカーソルの位置をセット
 	void SetMousePosition(int x, int y)
 	{
 		mousePos_.x = x;
 		mousePos_.y = y;
+	}
+
+	void SetMousePositionSub(int x, int y)
+	{
+		mousePosSub_.x = x;
+		mousePosSub_.y = y;
 	}
 
 	//そのフレームでのマウスの移動量を取得

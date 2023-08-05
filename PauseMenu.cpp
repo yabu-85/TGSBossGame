@@ -59,7 +59,10 @@ void PauseMenu::Draw()
 	Image::Draw(hPict_[0]);
 
 	Transform abb;
-	abb.position_ = { 0,0.5,0 };
+	abb.position_ = Input::GetMousePositionSub();
+	static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
+	static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
+	abb.position_ = { abb.position_.x / screenWidth, -abb.position_.y / screenHeight , 0 };
 
 	Image::SetTransform(hPict_[1], abb);
 	Image::Draw(hPict_[1]);
@@ -95,14 +98,15 @@ void PauseMenu::CheckButtonPressed()
 			std::string na = pButton->GetName();
 
 			if (na == "ReturnGame") {
-			}
-			else if (na == "Setting") {
 				Aim* pAim = (Aim*)FindObject("Aim");
 				pAim->SetAimMove(true);
 				Player* pPlayer = (Player*)FindObject("Player");
 				pPlayer->SetActive(true);
 				KillMe();
 				break;
+			}
+			else if (na == "Setting") {
+
 			}
 			else if (na == "ReturnTitle") {
 				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");

@@ -12,7 +12,6 @@ class Button : public GameObject
 	bool isButtonInactive_; //ボタンを押す感知しない
 	std::string name_;		//ボタンに表示するPngの
 	XMFLOAT3 widePos_;		//-1～1じゃなく,-1280～1280とかの座標
-	XMFLOAT3 mousePos_;
 
 public:
 	Button(GameObject* parent);

@@ -20,8 +20,9 @@ void Button::Initialize()
 
 void Button::Update()
 {
+
 	if (isButtonInactive_) {
-		XMFLOAT3 mouse = { 0,0,0 };
+		XMFLOAT3 mouse = Input::GetMousePositionSub();
 
 		if (-mouse.y < widePos_.y + 80 && -mouse.y > widePos_.y - 80) {
 			transform_.scale_.x = 0.65f;
@@ -85,7 +86,7 @@ bool Button::IsButtonClicked()
 	if (!isButtonInactive_)
 		return false;
 
-	XMFLOAT3 mouse = { 0,0,0 };
+	XMFLOAT3 mouse = Input::GetMousePositionSub();
 	if (-mouse.y < widePos_.y + 80 && -mouse.y > widePos_.y - 80) 
 		return true;
 	

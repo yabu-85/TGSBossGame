@@ -86,7 +86,6 @@ void TitleScene::Draw()
 		pos.scale_.y = 1.2f;
 		Image::SetTransform(hPict_[2], pos);
 		Image::Draw(hPict_[2]);
-		
 	}
 
 }
@@ -99,20 +98,15 @@ void TitleScene::Release()
 
 void TitleScene::DrawCursor()
 {
-	static int screenWidth = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
-	static int screenHeight = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
-	
-	mousePos_.x += Input::GetMouseMove().x * 2.5f;
-	mousePos_.y += Input::GetMouseMove().y * 2.5f;
-	if (screenWidth < abs(mousePos_.x)) mousePos_.x = screenWidth * (mousePos_.x > 0.0 ? 1 : -1);
-	if (screenHeight < abs(mousePos_.y)) mousePos_.y = screenHeight * (mousePos_.y > 0.0 ? 1 : -1);
+	static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
+	static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
 
 	Transform aim;
 	aim.scale_.x = 0.5f;
 	aim.scale_.y = 0.5f;
 	aim.scale_.z = 0.5f;
-	aim.position_ = mousePos_;
-	aim.position_ = { aim.position_.x / screenWidth ,-aim.position_.y / screenHeight ,0 };
+	aim.position_ = Input::GetMousePositionSub();
+	aim.position_ = { aim.position_.x / screenWidth, -aim.position_.y / screenHeight , 0};
 
 	Image::SetTransform(hPict_[1], aim);
 	Image::Draw(hPict_[1]);
@@ -148,7 +142,6 @@ void TitleScene::CheckButtonPressed()
 				pSceneManager->ChangeScene(SCENE_ID_PLAY);
 			}
 			else if (na == "Setting") {
-				mousePos_.y += 200.0f;
 				break;
 			}
 			else if (na == "Quit") {
