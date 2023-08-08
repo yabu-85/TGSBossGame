@@ -8,10 +8,9 @@
 #include "Image.h"
 #include "Audio.h"
 
-
 //コンストラクタ
 SceneManager::SceneManager(GameObject * parent)
-	: GameObject(parent, "SceneManager"), logoShown(true)
+	: GameObject(parent, "SceneManager"), logoShown_(true), currentSceneID_(SCENE_ID_TITLE), nextSceneID_(SCENE_ID_TITLE)
 {
 }
 

@@ -6,6 +6,7 @@
 #include "Engine/Text.h"
 #include "Engine/Input.h"
 #include "ExitMenu.h"
+#include "Engine/Global.h"
 
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}
@@ -38,9 +39,13 @@ void TitleScene::Initialize()
 		assert(hPict_[i] >= 0);
 	}
 
+	disp_ = false;
+
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-	if (!pSceneManager->IsLogoShown()) {
+	bool ab = !pSceneManager->IsLogoShown();
+	if (ab) {
 		//ロゴを表示
+		pSceneManager->SetLogoShown(true);
 		Instantiate<Logo>(this);
 
 	} else {
@@ -92,6 +97,7 @@ void TitleScene::Draw()
 
 void TitleScene::Release()
 {
+	SAFE_DELETE(pText_);
 }
 
 //private関数たちーーーーーーーーーーーーー

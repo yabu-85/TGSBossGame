@@ -52,8 +52,8 @@ void Stage::Draw()
 
     for (int x = 0; x < width_; x++) {                   //一つのStageオブジェクトで何個も表示させる
         for (int z = 0; z < height_; z++) {                 //transform.posxtxon.x を使うとバグるからblocktransの変数を使う
-            blockTrans.position_.x = x;
-            blockTrans.position_.z = z;
+            blockTrans.position_.x = (float)x;
+            blockTrans.position_.z = (float)z;
 
             int type = table_[x][z];
 
@@ -90,7 +90,7 @@ float Stage::GetFloorHeight(int x, int z)
         }
     }
 
-    return 0.0f;
+    return -10.0f;
 }
 
 XMFLOAT3 Stage::GetPlaPos()

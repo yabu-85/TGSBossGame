@@ -4,6 +4,8 @@
 #include "Aim.h"
 #include "Stage.h"
 
+#define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
+
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
@@ -18,6 +20,9 @@ Player::Player(GameObject* parent)
 
 Player::~Player()
 {
+    SAFE_DELETE(pAim_);
+    SAFE_DELETE(pText_);
+    SAFE_DELETE(pStage_);
 }
 
 void Player::Initialize()
@@ -130,19 +135,15 @@ void Player::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-    pText_->Draw(30, 30, (int)( (abs(playerMovement_.x) + abs(playerMovement_.z)) * 100.0f ) );
-    pText_->Draw(30, 70, (int)( (maxMoveSpeed_ * 100.0f)));
-    pText_->Draw(30, 110, (int)(pAim_->GetAimDirectionXY().y * 100.0f));
-    pText_->Draw(30, 150, (int)(decelerationTime_ * 100.0f));
-
-    if(isDecelerating_) 
-        pText_->Draw(70, 150, "true");
-    else 
-        pText_->Draw(70, 150, "false");
+//    pText_->Draw(30, 30, (int)( (abs(playerMovement_.x) + abs(playerMovement_.z)) * 100.0f ) );
+//    pText_->Draw(30, 70, (int)( (maxMoveSpeed_ * 100.0f)));
+//    pText_->Draw(30, 110, (int)(pAim_->GetAimDirectionXY().y * 100.0f));
+//    pText_->Draw(30, 150, (int)(decelerationTime_ * 100.0f));
 
     pText_->Draw(30, 190, (int)(pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z) ));
-
-    pText_->Draw(30, 250, (int)(transform_.position_.y * 100.0f));
+    pText_->Draw(30, 250, (int)(transform_.position_.x));
+    pText_->Draw(30, 290, (int)(transform_.position_.y));
+    pText_->Draw(30, 340, (int)(transform_.position_.z));
 
 }
 
@@ -171,17 +172,15 @@ float Player::IsAiming()
 
 void Player::UpdateIdle()
 {
-
-
     //--------state----------
     if (IsMovementKeyPressed()) {
         if (anime_ == false) {
             anime_ = true;
             Model::SetAnimFrame(hModel_, 40, 80, 1);
+
         }
         state_ = S_MOVE;
     }
-
 }
 
 void Player::UpdateMove()
@@ -366,15 +365,16 @@ void Player::Gravity()
 void Player::Crouch()
 {
     if (Input::IsKey(DIK_F)) {
-        transform_.scale_.y = 0.12f;
         isCrouching_ = true;
+        
+     //   Model::SetAnimFrame(hModel_, 120, 120, 1);
 
         if (cameraHeight_ > 0.8f)
             cameraHeight_ -= 0.02f;
 
     }
     else {
-        transform_.scale_.y = 0.2f;
+     //   Model::SetAnimFrame(hModel_, 0, 0, 1);
         isCrouching_ = false;
 
         if (cameraHeight_ < 1.0f)

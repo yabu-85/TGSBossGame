@@ -64,8 +64,6 @@ namespace Model
 			return (int)_datas.size() - 1;
 	}
 
-
-
 	//描画
 	void Draw(int handle)
 	{
@@ -81,11 +79,26 @@ namespace Model
 		if (_datas[handle]->nowFrame > (float)_datas[handle]->endFrame)
 			_datas[handle]->nowFrame = (float)_datas[handle]->startFrame;
 
+		if (_datas[handle]->isBlending) {
+			//アニメーションを進める
+			_datas[handle]->blendNowFrame += _datas[handle]->animSpeed;
 
+			//最後までアニメーションしたら戻す
+			if (_datas[handle]->blendNowFrame > (float)_datas[handle]->blendEndFrame)
+				_datas[handle]->blendNowFrame = (float)_datas[handle]->blendStartFrame;
+
+			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame,
+				(int)_datas[handle]->blendNowFrame, (float)_datas[handle]->blendWeight);
+
+			return;
+		}
 
 		if (_datas[handle]->pFbx)
 		{
+			// 現在のアニメーションフレームでモデルを描画
 			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame);
+
+
 		}
 	}
 
@@ -134,6 +147,11 @@ namespace Model
 		_datas.clear();
 	}
 
+	//アニメーションのフレーム数をセット
+	void SetBlendingAnimFrame(int handle, int startFrame1, int endFrame1, int startFrame2, int endFrame2, float animSpeed, float blendWeight)
+	{
+		_datas[handle]->SetBlendingAnimFrame(startFrame1, endFrame1, startFrame2, endFrame2, animSpeed, blendWeight);
+	}
 
 	//アニメーションのフレーム数をセット
 	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed)

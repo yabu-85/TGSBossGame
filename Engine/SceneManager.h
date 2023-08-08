@@ -31,11 +31,12 @@ public:
 	void ChangeScene(SCENE_ID next);
 	
 	//すでにロゴを表示したか/falseまだ
-	bool IsLogoShown() { return logoShown; };
+	bool IsLogoShown() { return logoShown_; };
+	void SetLogoShown(bool b) { logoShown_ = b; };
 
 private:
 	SCENE_ID currentSceneID_;	//現在のシーン
 	SCENE_ID nextSceneID_;		//次のシーン
 
-	bool logoShown;				//ロゴ表示したか（falseまだ
+	bool logoShown_;				//ロゴ表示したか（falseまだ
 };

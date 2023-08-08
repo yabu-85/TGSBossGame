@@ -55,8 +55,10 @@ class FbxParts
 	struct  Bone
 	{
 		XMMATRIX  bindPose;      // 初期ポーズ時のボーン変換行列
-		XMMATRIX  newPose;       // アニメーションで変化したときのボーン変換行列
-		XMMATRIX  diffPose;      // mBindPose に対する mNowPose の変化量
+		XMMATRIX  newPose1;      // time1のフレームのボーン変換行列
+		XMMATRIX  diffPose1;     // mBindPose に対する newPose1 の変化量
+		XMMATRIX  newPose2;      // time2のフレームのボーン変換行列
+		XMMATRIX  diffPose2;     // mBindPose に対する newPose2 の変化量
 	};
 
 	// ウェイト構造体（ボーンと頂点の関連付け）
@@ -126,6 +128,9 @@ public:
 	//描画
 	//引数：world	ワールド行列
 	void Draw(Transform& transform);
+
+	// アニメーションのブレンディングを行う
+	void DrawBlendedSkinAnime(Transform& transform, FbxTime time1, FbxTime time2, float blendFactor);
 
 	//ボーン有りのモデルを描画
 	//引数：transform	行列情報

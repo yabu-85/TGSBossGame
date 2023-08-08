@@ -3,6 +3,9 @@
 #include "Engine/Input.h"
 #include "Player.h"
 #include "Engine/Image.h"
+#include "Engine/Global.h"
+
+#define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }
@@ -15,6 +18,7 @@ Aim::Aim(GameObject* parent)
 
 Aim::~Aim()
 {
+    //SAFE_DELETE(pPlayer_);
 }
 
 void Aim::Initialize()

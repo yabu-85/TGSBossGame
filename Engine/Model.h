@@ -27,9 +27,17 @@ namespace Model
 		float nowFrame, animSpeed;
 		int startFrame, endFrame;
 
+		// ブレンディング用フィールド
+		bool isBlending;
+		float blendNowFrame;
+		int blendStartFrame;
+		int blendEndFrame;
+		float blendWeight;
+		
 
 		//初期化
-		ModelData() : pFbx(nullptr), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0)
+		ModelData() : pFbx(nullptr), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0),
+			isBlending(false), blendNowFrame(0.0f), blendStartFrame(0), blendEndFrame(0), blendWeight(0.0f)
 		{
 		}
 
@@ -39,10 +47,26 @@ namespace Model
 		//引数：animSpeed	アニメーション速度
 		void SetAnimFrame(int start, int end, float speed)
 		{
+			isBlending = false;
+
 			nowFrame = (float)start;
 			startFrame = start;
 			endFrame = end;
 			animSpeed = speed;
+		}
+
+		// ブレンディングアニメーションのパラメータを設定
+		void SetBlendingAnimFrame(int _startFrame1, int _endFrame1, int _startFrame2, int _endFrame2, float _blendSpeed, float _blendWeight)
+		{
+			 isBlending = true;
+
+			 nowFrame = (float)_startFrame1;
+			 blendNowFrame = (float)_startFrame2;
+			 blendStartFrame = _startFrame2;
+			 endFrame = _endFrame1;
+			 blendEndFrame = _endFrame2;
+			 animSpeed = _blendSpeed;
+			 blendWeight = _blendWeight;
 		}
 	};
 
@@ -67,6 +91,16 @@ namespace Model
 	//全てのモデルを解放
 	//（シーンが切り替わるときは必ず実行）
 	void AllRelease();
+
+	//ブレンディングする二つのフレーム数と影響度をセット
+	//引数：handle		設定したいモデルの番号
+	//引数：startFrame	開始フレーム1
+	//引数：endFrame	終了フレーム1
+	//引数：startFrame	開始フレーム2
+	//引数：endFrame	終了フレーム2
+	//引数：animSpeed	アニメーション速度
+	//引数：blendWeight アニメーション２の影響度
+	void SetBlendingAnimFrame(int handle, int startFrame1, int endFrame1, int startFrame2, int endFrame2, float animSpeed, float blendWeight);
 
 	//アニメーションのフレーム数をセット
 	//引数：handle		設定したいモデルの番号

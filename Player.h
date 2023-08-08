@@ -5,12 +5,8 @@
 
 class Stage;
 
-#define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
-
 class Player : public GameObject
 {
-    Stage* pStage_;
-    Text* pText_;
     int hModel_;                    //モデル番号
     float moveSpeed_;               //移動
     float targetRotation_;          //目標の回転角度
@@ -32,6 +28,8 @@ class Player : public GameObject
     bool isDecelerated_;            //既に減速しているか
     bool isDecelerating_;           //減速状態か
     bool active_;                   //操作を受け付けるか
+    Stage* pStage_;
+    Text* pText_;
     Aim* pAim_;
 
     //---------------privateメンバ関数---------------

@@ -60,14 +60,10 @@ namespace Input
 
 		//マウスサブの座標計算
 		mousePosSub_ = { mousePosSub_.x + GetMouseMove().x, mousePosSub_.y + GetMouseMove().y, 0 };
-
 		static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
-		static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
-
-		if (mousePosSub_.x > screenWidth) mousePosSub_.x = screenWidth;
-		if (mousePosSub_.y > screenHeight) mousePosSub_.y = screenHeight;
-		if (mousePosSub_.x < -screenWidth) mousePosSub_.x = -screenWidth;
-		if (mousePosSub_.y < -screenHeight) mousePosSub_.y = -screenHeight;
+		static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");
+		mousePosSub_.x = max(-screenWidth, min(screenWidth, mousePosSub_.x)); // -screensize ~ screensizeの範囲に収めてる
+		mousePosSub_.y = max(-screenHeight, min(screenHeight, mousePosSub_.y));
 
 	}
 

@@ -113,9 +113,6 @@
     <ClCompile Include="PlayScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>TitleScene</Filter>
-    </ClCompile>
     <ClCompile Include="Logo.cpp">
       <Filter>TitleScene</Filter>
     </ClCompile>
@@ -132,6 +129,7 @@
       <Filter>PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="ExitMenu.cpp" />
+    <ClCompile Include="Button.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -212,9 +210,6 @@
     <ClInclude Include="PlayScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>TitleScene</Filter>
-    </ClInclude>
     <ClInclude Include="Logo.h">
       <Filter>TitleScene</Filter>
     </ClInclude>
@@ -231,6 +226,7 @@
       <Filter>PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="ExitMenu.h" />
+    <ClInclude Include="Button.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

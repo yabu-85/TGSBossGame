@@ -49,6 +49,7 @@ void Logo::Initialize()
 	seq_line = 0;
 
 	Image::SetAlpha(hPict_, 0);
+	end_ = false;
 }
 
 void Logo::Update()
