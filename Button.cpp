@@ -42,8 +42,7 @@ void Button::Draw()
 	Image::Draw(hPict_[0]);
 
 	Transform pos = transform_;
-	if(alpha_ == 255) Image::SetAlpha(hPict_[1], 100);
-	else Image::SetAlpha(hPict_[1], alpha_);
+	Image::SetAlpha(hPict_[1], 255 - (255 - alpha_ * 0.4));
 	Image::SetTransform(hPict_[1], pos);
 	Image::Draw(hPict_[1]);
 

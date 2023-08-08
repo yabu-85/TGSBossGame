@@ -75,6 +75,8 @@ void Player::Update()
     //しゃがみ
     Crouch();
 
+    IsInWall();
+
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
 
@@ -187,14 +189,12 @@ void Player::UpdateMove()
 {
     CalcMove();
 
-
     //--------state----------
     if (!IsMovementKeyPressed()) {
         anime_ = false;
         Model::SetAnimFrame(hModel_, 0, 0, 1);
         state_ = S_IDLE;
     }
-
 }
 
 void Player::UpdateDead()
@@ -367,15 +367,17 @@ void Player::Crouch()
     if (Input::IsKey(DIK_F)) {
         isCrouching_ = true;
         
-     //   Model::SetAnimFrame(hModel_, 120, 120, 1);
+        Model::SetAnimFrame(hModel_, 120, 120, 1);
 
         if (cameraHeight_ > 0.8f)
             cameraHeight_ -= 0.02f;
 
     }
     else {
-     //   Model::SetAnimFrame(hModel_, 0, 0, 1);
         isCrouching_ = false;
+
+        if(Input::IsKeyUp(DIK_F))
+        Model::SetAnimFrame(hModel_, 0, 0, 1);
 
         if (cameraHeight_ < 1.0f)
             cameraHeight_ += 0.02f;
@@ -396,16 +398,17 @@ void Player::Jump()
         bulletJump_ = true;
 
         //XZ,Y軸の移動量計算
-        const float buJump = 1.8f;
+        const float buJumpY = 1.65f;
+        const float buJumpXZ = 0.3f;
         float aimDirectionY = 1.0f + pAim_->GetAimDirectionXY().y;
 
         XMFLOAT3 aimDirection = pAim_->GetAimDirectionXY();
         XMVECTOR v;
 
         if (aimDirectionY < 1.0f) {
-            if (aimDirectionY <= 0.01f) aimDirectionY = 1.99f * buJump;
+            if (aimDirectionY <= 0.01f) aimDirectionY = 1.99f * buJumpY;
             else {
-                aimDirectionY = 1.0f * buJump;
+                aimDirectionY = 1.0f * buJumpY;
 
                 aimDirection = { aimDirection.x, 0, aimDirection.z };
                 v = XMLoadFloat3(&aimDirection);
@@ -413,13 +416,13 @@ void Player::Jump()
                 XMStoreFloat3(&aimDirection, v);
             }
         }
-        else  aimDirectionY *= buJump;
+        else  aimDirectionY *= buJumpY;
         
         graY_ = initVy_ * (aimDirectionY - 1.0f);
         graY_ += gravity_;
         transform_.position_.y += gravity_;
 
-        playerMovement_ = { aimDirection.x * 0.4f , 0.0f , aimDirection.z * 0.4f };
+        playerMovement_ = { aimDirection.x * buJumpXZ, 0.0f , aimDirection.z * buJumpXZ};
 
         //maxSpeed
         float a = abs(playerMovement_.x) + abs(playerMovement_.z);
@@ -446,7 +449,7 @@ void Player::Jump()
         maxMoveSpeed_ = max(xSpeed, zSpeed);
 
         // 斜めに移動する場合のMaxSpeedを計算
-        //maxMoveSpeed_ = sqrt(xSpeed * xSpeed + zSpeed * zSpeed) / sqrt(2.0f);
+       // maxMoveSpeed_ = sqrt(xSpeed * xSpeed + zSpeed * zSpeed) / sqrt(2.0f);
 
 
         return;
@@ -493,4 +496,64 @@ bool Player::IsPlayerMove() {
         return true;
 
     return false;
+}
+
+void Player::IsInWall() {
+    //壁との判定  ここ壁だったとき
+    int checkX1, checkX2;
+    int checkZ1, checkZ2;
+    float ground1, ground2;
+
+    checkX1 = (int)(transform_.position_.x + 0.15f); //前
+    checkZ1 = (int)(transform_.position_.z + 0.3f);
+    checkX2 = (int)(transform_.position_.x - 0.15f);
+    checkZ2 = (int)(transform_.position_.z + 0.3f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
+
+    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) { //床やけやったら
+        transform_.position_.z = (float)((int)transform_.position_.z) + (1.0f - 0.3f);
+    }
+
+    checkX1 = (int)(transform_.position_.x + 0.3f); //右
+    checkZ1 = (int)(transform_.position_.z + 0.15f);
+    checkX2 = (int)(transform_.position_.x + 0.3f);
+    checkZ2 = (int)(transform_.position_.z - 0.15f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
+
+    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
+        transform_.position_.x = (float)((int)transform_.position_.x + 1) - 0.3f;  // x　だけ戻すことで斜め移動ができるようになる     
+    }
+
+    checkX1 = (int)(transform_.position_.x + 0.15f); //後ろ
+    checkZ1 = (int)(transform_.position_.z - 0.3f);
+    checkX2 = (int)(transform_.position_.x - 0.15f);
+    checkZ2 = (int)(transform_.position_.z - 0.3f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
+
+    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
+        transform_.position_.z = (float)((int)transform_.position_.z) + 0.3f;
+    }
+
+    checkX1 = (int)(transform_.position_.x - 0.3f); //左
+    checkZ1 = (int)(transform_.position_.z + 0.15f);
+    checkX2 = (int)(transform_.position_.x - 0.3f);
+    checkZ2 = (int)(transform_.position_.z - 0.15f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
+
+    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
+        transform_.position_.x = (float)((int)transform_.position_.x) + 0.3f;
+    }
+
 }

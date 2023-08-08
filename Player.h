@@ -40,6 +40,7 @@ class Player : public GameObject
     void Gravity();                     //重力うけます
     void Crouch();                      //しゃがみ関係です
     void Jump();                        //ジャンプするよん
+    void IsInWall();
     float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
 
     bool IsMovementKeyPressed();        //移動キーを押しているか

@@ -2,6 +2,9 @@
 #include "Engine/Model.h"
 #include "Engine/CsvReader.h"
 
+const int startX = 10;
+const int startZ = 10;
+
 //コンストラクタ
 Stage::Stage(GameObject* parent)
     :GameObject(parent, "Stage"), hModel_{ -1, -1, -1 }, table_(nullptr)
@@ -31,7 +34,7 @@ Stage::~Stage()
 //初期化
 void Stage::Initialize()
 {
-    const char* fileName[] = { "Floor.fbx","Wall.fbx", "HightWall.fbx"};
+    const char* fileName[] = { "Floor.fbx","Wall.fbx", "Wall2.fbx", "HightWall.fbx"};
 
     //モデルデータのロード
     for (int i = 0; i < TYPE_MAX; i++) { //壁と床のロード
@@ -84,13 +87,32 @@ float Stage::GetFloorHeight(int x, int z)
         case 1:
             return 1.0f;
         case 2:
+            return 2.0f;
+        case 3:
             return 5.0f;
         default:
-            return 0.0f;
+            return -10.0f;
         }
     }
 
     return -10.0f;
+}
+
+bool Stage::IsWall(int x, int z)
+{
+    if (x < width_ && z < height_ && x >= 0 && z >= 0) {
+        if (table_[x][z] == 1) {
+            return true;
+        }
+        else if (table_[x][z] == 2) {
+            return true;
+        }
+        else if (table_[x][z] == 3) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 XMFLOAT3 Stage::GetPlaPos()
