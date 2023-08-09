@@ -34,7 +34,7 @@ void Player::Initialize()
     transform_.rotate_.y = 180.0f;  //Blender
 
     //モデルデータのロード
-    hModel_ = Model::Load("huu.fbx");
+    hModel_ = Model::Load("huuSky.fbx");
     assert(hModel_ >= 0);
 
     pAim_ = Instantiate<Aim>(this);
@@ -178,7 +178,7 @@ void Player::UpdateIdle()
     if (IsMovementKeyPressed()) {
         if (anime_ == false) {
             anime_ = true;
-            Model::SetAnimFrame(hModel_, 40, 80, 1);
+            Model::SetAnimFrame(hModel_, 30, 70, 1.5);
 
         }
         state_ = S_MOVE;
@@ -448,8 +448,11 @@ void Player::Jump()
         // 前に移動する場合のMaxSpeedを計算
         maxMoveSpeed_ = max(xSpeed, zSpeed);
 
-        // 斜めに移動する場合のMaxSpeedを計算
-       // maxMoveSpeed_ = sqrt(xSpeed * xSpeed + zSpeed * zSpeed) / sqrt(2.0f);
+        XMVECTOR v = { 0.5f, 0, 0.5f,0 };
+        v = XMVector3Normalize(v) * 0.1f;
+        XMFLOAT3 f;
+        XMStoreFloat3(&f, v);
+        // = abs(f.x) + abs(f.z);
 
 
         return;
