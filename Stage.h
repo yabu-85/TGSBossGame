@@ -7,6 +7,7 @@ enum {
     TYPE_WALL,
     TYPE_WALL2,
     TYPE_HIGHTWALL,
+    TYPE_SLOPE,
     TYPE_MAX
 };
 

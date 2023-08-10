@@ -7,7 +7,7 @@ const int startZ = 10;
 
 //コンストラクタ
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1 }, table_(nullptr)
+    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1, -1, -1 }, table_(nullptr)
 {
     CsvReader csv;
     csv.Load("Map.csv");
@@ -34,7 +34,7 @@ Stage::~Stage()
 //初期化
 void Stage::Initialize()
 {
-    const char* fileName[] = { "Floor.fbx","Wall.fbx", "Wall2.fbx", "HightWall.fbx"};
+    const char* fileName[] = { "Floor.fbx","Wall.fbx", "Wall2.fbx", "HightWall.fbx", "Slope.fbx"};
 
     //モデルデータのロード
     for (int i = 0; i < TYPE_MAX; i++) { //壁と床のロード

@@ -34,7 +34,7 @@ void Player::Initialize()
     transform_.rotate_.y = 180.0f;  //Blender
 
     //モデルデータのロード
-    hModel_ = Model::Load("huuSky.fbx");
+    hModel_ = Model::Load("huu.fbx");
     assert(hModel_ >= 0);
 
     pAim_ = Instantiate<Aim>(this);
@@ -178,7 +178,7 @@ void Player::UpdateIdle()
     if (IsMovementKeyPressed()) {
         if (anime_ == false) {
             anime_ = true;
-            Model::SetAnimFrame(hModel_, 30, 70, 1.5);
+            Model::SetAnimFrame(hModel_, 30, 60, 1);
 
         }
         state_ = S_MOVE;
@@ -478,8 +478,55 @@ void Player::Jump()
 }
 
 bool Player::IsPlayerOnGround() {
-    float ground = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+    
+    //落ちるときの瞬間移動はなくすことができるけど他がエラー出るやつ
+    /*
+    int checkX1, checkX2;
+    int checkZ1, checkZ2;
+    float ground1, ground2;
 
+    checkX1 = (int)(transform_.position_.x + 0.15f); //前
+    checkZ1 = (int)(transform_.position_.z + 0.3f);
+    checkX2 = (int)(transform_.position_.x - 0.15f);
+    checkZ2 = (int)(transform_.position_.z + 0.3f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
+        return true;
+
+    checkX1 = (int)(transform_.position_.x + 0.3f); //右
+    checkZ1 = (int)(transform_.position_.z + 0.15f);
+    checkX2 = (int)(transform_.position_.x + 0.3f);
+    checkZ2 = (int)(transform_.position_.z - 0.15f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
+        return true;
+
+    checkX1 = (int)(transform_.position_.x + 0.15f); //後ろ
+    checkZ1 = (int)(transform_.position_.z - 0.3f);
+    checkX2 = (int)(transform_.position_.x - 0.15f);
+    checkZ2 = (int)(transform_.position_.z - 0.3f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
+        return true;
+
+    checkX1 = (int)(transform_.position_.x - 0.3f); //左
+    checkZ1 = (int)(transform_.position_.z + 0.15f);
+    checkX2 = (int)(transform_.position_.x - 0.3f);
+    checkZ2 = (int)(transform_.position_.z - 0.15f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
+        return true;
+    */
+    
+    float ground = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
     if (transform_.position_.y <= ground)
         return true;
 
