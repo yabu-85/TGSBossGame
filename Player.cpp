@@ -4,13 +4,16 @@
 #include "Aim.h"
 #include "Stage.h"
 
+#include <thread>
+#include <chrono>
+
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), active_(true)
+    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -46,7 +49,7 @@ void Player::Initialize()
 
 void Player::Update()
 {
-    if (!active_) return;
+    if (!isActive_) return;
 
 
     previousPosition_ = transform_.position_;
@@ -81,9 +84,9 @@ void Player::Update()
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
 
     //攻撃
-    //フルオートはKey、単発||近接はKeyDown
-    if (Input::IsMouseButton(0)) {
-        transform_.rotate_.y += 1.0f;
+    //フルオートはKey、単発||近接
+    if (Input::IsMouseButtonDown(0)) {
+        pAim_->TriggerCameraShake(6, 0.3f, 1.0f);
     }
 
     //graYにかけて値を出すんじゃなくてgraY自体を計算する
@@ -151,6 +154,15 @@ void Player::Draw()
 
 void Player::Release()
 {
+}
+
+void Player::SetActiveWithDelay(bool isActive)
+{
+    //1秒後に実際のアクティブ状態を設定するタイマーをセットアップ
+    std::thread([this, isActive]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        isActive_ = isActive;
+    }).detach();    
 }
 
 XMVECTOR Player::GetPlaVector() {

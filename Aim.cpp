@@ -5,20 +5,20 @@
 #include "Engine/Image.h"
 #include "Engine/Global.h"
 
-#define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
-
 Aim::Aim(GameObject* parent)
-    : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }
-    , plaPos_{ 0,0,0 }, pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true)
+    : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }, plaPos_{ 0,0,0 },
+    pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f)
+
 {
     mouseSensitivity = 2.5f;
     perspectiveDistance_ = 3.2f;
     heightDistance_ = 1.5f;
+    cross_.scale_ = { 0.5f, 0.5f, 0.5f };
+
 }
 
 Aim::~Aim()
 {
-    //SAFE_DELETE(pPlayer_);
 }
 
 void Aim::Initialize()
@@ -41,7 +41,6 @@ void Aim::Update()
         transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //縦方向の回転
         if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
         if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
-    
     }
 
     //カメラの回転
@@ -71,8 +70,31 @@ void Aim::Update()
     XMVECTOR camPos = XMVector3TransformNormal(forwardVector, mView); //XMVector3TransformNormalを使用することで回転のみを適用します
     XMVector3Normalize(camPos);
     XMStoreFloat3(&aimDirectionXY_, -camPos);
+
+    if (isShaking_) {
+        //シェイク中にカメラ位置をランダムに変動させるロジック
+        const float shakeValue = 0.03f;
+        shakeAmplitude_ -= shakeValue;
+
+        //シェイクの経過時間を進める
+        float deltaTime = 1.0f / 60.0f;
+        shakeTimer_ -= deltaTime;
+
+        //シェイクが終了したら元の位置に戻すアニメーションを開始
+        if (shakeTimer_ <= 0.0f) {
+            shakeAmplitude_ += shakeValue + shakeValue;
+
+            //owari
+            if (shakeAmplitude_ >= 1.0f) {
+                isShaking_ = false;
+                shakeAmplitude_ = 1.0f;
+            }
+        }
+    }
     
-    camPos = caTarget + (camPos * (perspectiveDistance_ * pPlayer_->IsAiming())); // プレイヤーの半径を考慮して回転を適用します
+    //プレイヤーの半径を考慮して回転を適用します
+    //ここAimの近さの値をプレイヤーから取得して計算もしてる
+    camPos = caTarget + (camPos * (perspectiveDistance_ * pPlayer_->IsAiming() * shakeAmplitude_));
 
     XMStoreFloat3(&cameraPos_, camPos);
     XMStoreFloat3(&cameraTarget_, caTarget);
@@ -84,18 +106,19 @@ void Aim::Update()
 
 void Aim::Draw()
 {
-    Transform cross;
-    cross.rotate_.x = 0;
-    cross.rotate_.y = 0;
-    cross.rotate_.z = 0;
-    cross.scale_.x = 0.5;
-    cross.scale_.y = 0.5;
-    cross.scale_.z = 0.5;
-
-    Image::SetTransform(hPict_, cross);
+    Image::SetTransform(hPict_, cross_);
     Image::Draw(hPict_);
 }
 
 void Aim::Release()
 {
+}
+
+void Aim::TriggerCameraShake(int t, float s, float a)
+{
+    isShaking_ = true;
+    shakeTimer_ = t;
+    shakeStrength_ = s;
+    shakeAmplitude_ = a;
+    
 }

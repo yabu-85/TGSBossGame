@@ -18,6 +18,7 @@ void PlayScene::Initialize()
 	Player* pPlayer = Instantiate<Player>(this);
 
 	pPlayer->SetPosition(pStage->GetPlaPos());
+	pPlayer->SetActiveWithDelay(true);
 }
 
 //XV
