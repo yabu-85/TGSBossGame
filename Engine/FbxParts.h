@@ -129,7 +129,7 @@ public:
 	//引数：world	ワールド行列
 	void Draw(Transform& transform);
 
-	// アニメーションのブレンディングを行う
+	// アニメーションのブレンディングを行う（失敗作
 	void DrawBlendedSkinAnime(Transform& transform, FbxTime time1, FbxTime time2, float blendFactor);
 
 	//ボーン有りのモデルを描画
@@ -148,6 +148,12 @@ public:
 	//引数：position	ワールド座標での位置【out】
 	//戻値：見つかればtrue
 	bool GetBonePosition(std::string boneName, XMFLOAT3	* position);
+
+	//任意のボーンの位置を取得
+	//引数：boneName	取得したいボーンの位置
+	//引数：position	ワールド座標での位置【out】
+	//戻値：見つかればtrue
+	bool GetBonePosition(std::string boneName, FbxTime time, XMFLOAT3* position);
 
 	//スキンメッシュ情報を取得
 	//戻値：スキンメッシュ情報

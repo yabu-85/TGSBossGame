@@ -86,7 +86,7 @@ void Player::Update()
     //攻撃
     //フルオートはKey、単発||近接
     if (Input::IsMouseButtonDown(0)) {
-        pAim_->TriggerCameraShake(6, 0.3f, 1.0f);
+        pAim_->TriggerCameraShake(5, 0.03f, 1.0f);
     }
 
     //graYにかけて値を出すんじゃなくてgraY自体を計算する
@@ -379,7 +379,8 @@ void Player::Crouch()
     if (Input::IsKey(DIK_F)) {
         isCrouching_ = true;
         
-        Model::SetAnimFrame(hModel_, 120, 120, 1);
+        if (Input::IsKeyDown(DIK_F))
+        Model::SetAnimFrame(hModel_, 120, 160, 1);
 
         if (cameraHeight_ > 0.8f)
             cameraHeight_ -= 0.02f;

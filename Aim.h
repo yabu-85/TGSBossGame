@@ -2,6 +2,7 @@
 #include "Engine/GameObject.h"
 
 class Player;
+class Stage;
 
 class Aim :
     public GameObject
@@ -23,6 +24,7 @@ class Aim :
     XMFLOAT3 plaPos_;               //プレイヤー位置
     Transform cross_;               //AimのTransform
     Player* pPlayer_;
+    Stage* pStage_;
 
 public:
     Aim(GameObject* parent);

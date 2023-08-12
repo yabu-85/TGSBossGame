@@ -709,6 +709,41 @@ bool FbxParts::GetBonePosition(std::string boneName, XMFLOAT3 * position)
 	return false;
 }
 
+bool FbxParts::GetBonePosition(std::string boneName, FbxTime time, XMFLOAT3* position)
+{
+	for (int i = 0; i < numBone_; i++)
+	{
+		FbxAnimEvaluator* evaluator = ppCluster_[i]->GetLink()->GetScene()->GetAnimationEvaluator();
+		FbxMatrix mCurrentOrentation = evaluator->GetNodeGlobalTransform(ppCluster_[i]->GetLink(), time);
+
+		XMFLOAT4X4 pose;
+		for (DWORD x = 0; x < 4; x++)
+		{
+			for (DWORD y = 0; y < 4; y++)
+			{
+				pose(x, y) = (float)mCurrentOrentation.Get(x, y);
+			}
+		}
+		pBoneArray_[i].newPose1 = XMLoadFloat4x4(&pose);
+		pBoneArray_[i].diffPose1 = XMMatrixInverse(nullptr, pBoneArray_[i].bindPose);
+		pBoneArray_[i].diffPose1 *= pBoneArray_[i].newPose1;
+
+		if (boneName == ppCluster_[i]->GetLink()->GetName())
+		{
+			FbxMatrix globalPosition = mCurrentOrentation;
+
+			position->x = (float)globalPosition[3][0];
+			position->y = (float)globalPosition[3][1];
+			position->z = (float)globalPosition[3][2];
+
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
 void FbxParts::RayCast(RayCastData * data)
 {
 	data->hit = FALSE;
@@ -729,7 +764,6 @@ void FbxParts::RayCast(RayCastData * data)
 			float dist = 0.0f;
 
 			hit = Direct3D::Intersect(data->start, data->dir, ver[0], ver[1], ver[2], &dist);
-
 
 			if (hit && dist < data->dist)
 			{

@@ -29,7 +29,7 @@ public:
 
     float GetFloorHeight(int x, int z);
     bool IsWall(int x, int z);
-    int GetModelHandle() { return hModel_[TYPE_WALL]; }; //モデル番号取得
+    int GetModelHandle(int i) { return hModel_[i]; }; //モデル番号取得
     XMFLOAT3 GetPlaPos(); //CSVでのプレイヤー座標
 
 };

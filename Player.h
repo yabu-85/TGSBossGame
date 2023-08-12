@@ -76,5 +76,6 @@ public:
     float GetCameraHeight() { return cameraHeight_; };  //カメラの高さ0.8f ～ 1.0f
     float IsAiming();                                   //ズーム値：地上（近い！）,空中（中くらい）,覗いてない（1.0）
     bool IsDecelerating() { return isDecelerating_; };
+    int GetModelHandle() { return hModel_; }
 
 };

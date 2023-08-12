@@ -165,6 +165,23 @@ XMFLOAT3 Fbx::GetBonePosition(std::string boneName)
 	return position;
 }
 
+XMFLOAT3 Fbx::GetBoneAnimPosition(std::string boneName, int frame)
+{
+	XMFLOAT3 position = XMFLOAT3(0, 0, 0);
+
+	FbxTime time;
+	time.SetTime(0, 0, 0, frame, 0, 0, _frameRate);
+
+	for (int i = 0; i < parts_.size(); i++)
+	{
+		if (parts_[i]->GetBonePosition(boneName, time, &position))
+			break;
+	}
+
+	return position;
+
+}
+
 //レイキャスト（レイを飛ばして当たり判定）
 void Fbx::RayCast(RayCastData * data)
 {

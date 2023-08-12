@@ -4,10 +4,15 @@
 #include "Player.h"
 #include "Engine/Image.h"
 #include "Engine/Global.h"
+#include "Stage.h"
+#include "Engine/Model.h"
+#include "Engine/VFX.h"
+#include <map>
 
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }, plaPos_{ 0,0,0 },
-    pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f)
+    pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f),
+    pStage_(nullptr)
 
 {
     mouseSensitivity = 2.5f;
@@ -24,11 +29,15 @@ Aim::~Aim()
 void Aim::Initialize()
 {
     pPlayer_ = (Player*)FindObject("Player");
+    pStage_ = (Stage*)FindObject("Stage");
 
     //画像データのロード
     hPict_ = Image::Load("cross.png");
     assert(hPict_ >= 0);
+
 }
+
+static int num = 0;
 
 void Aim::Update()
 {
@@ -59,9 +68,9 @@ void Aim::Update()
 
     //プレイヤーの位置をカメラの位置とする
     plaPos_ = pPlayer_->GetPosition();
-    cameraPos_.x = plaPos_.x + (aimDirectionY_.z * 0.5);
+    cameraPos_.x = plaPos_.x + (aimDirectionY_.z * 0.5f);
     cameraPos_.y = plaPos_.y + heightDistance_ * pPlayer_->GetCameraHeight(); //目線高さ
-    cameraPos_.z = plaPos_.z - (aimDirectionY_.x * 0.5);
+    cameraPos_.z = plaPos_.z - (aimDirectionY_.x * 0.5f);
 
     //カメラ焦点
     XMVECTOR caTarget = XMLoadFloat3(&cameraPos_);
@@ -72,25 +81,63 @@ void Aim::Update()
     XMStoreFloat3(&aimDirectionXY_, -camPos);
 
     if (isShaking_) {
-        //シェイク中にカメラ位置をランダムに変動させるロジック
-        const float shakeValue = 0.03f;
-        shakeAmplitude_ -= shakeValue;
-
-        //シェイクの経過時間を進める
-        float deltaTime = 1.0f / 60.0f;
-        shakeTimer_ -= deltaTime;
+        shakeAmplitude_ -= shakeStrength_;
+        shakeTimer_--;
 
         //シェイクが終了したら元の位置に戻すアニメーションを開始
-        if (shakeTimer_ <= 0.0f) {
-            shakeAmplitude_ += shakeValue + shakeValue;
+        if (shakeTimer_ <= 0) {
+            shakeAmplitude_ += shakeStrength_ + shakeStrength_;
 
-            //owari
+            //おわり
             if (shakeAmplitude_ >= 1.0f) {
                 isShaking_ = false;
                 shakeAmplitude_ = 1.0f;
             }
         }
     }
+
+    int plahModel = pPlayer_->GetModelHandle();
+    XMFLOAT3 weapTop = Model::GetBoneAnimPosition(plahModel, "MeleeTop");
+    XMFLOAT3 weapRoot = Model::GetBoneAnimPosition(plahModel, "Melee");
+
+    XMVECTOR vTop = XMLoadFloat3(&weapTop);
+    XMVECTOR vRoot = XMLoadFloat3(&weapRoot);
+    XMVECTOR vMove = vTop - vRoot;
+    vMove = XMVector3Normalize(vMove);
+    vMove *= 0.5f;
+    XMFLOAT3 move;
+    XMStoreFloat3(&move, vMove);
+
+    EmitterData data1;
+    data1.textureFileName = "cloudA.png";
+    data1.position = XMFLOAT3(weapRoot.x, weapRoot.y, weapRoot.z);
+    data1.delay = 0;
+    data1.number = 1;
+    data1.lifeTime = 1;
+    data1.size = XMFLOAT2(0.5, 0.5);
+    data1.color = XMFLOAT4(0, 0.7, 1, 1);
+    VFX::Start(data1);
+
+    EmitterData data2;
+    data2.textureFileName = "cloudA.png";
+    data2.position = XMFLOAT3(weapRoot.x + move.x, weapRoot.y + move.y, weapRoot.z + move.z);
+    data2.delay = 0;
+    data2.number = 1;
+    data2.lifeTime = 1;
+    data2.size = XMFLOAT2(0.5, 0.5);
+    data2.color = XMFLOAT4(0.5, 1, 0.5, 1);
+    VFX::Start(data2);
+
+    EmitterData data3;
+    data3.textureFileName = "cloudA.png";
+    data3.position = XMFLOAT3(weapRoot.x + move.x + move.x, weapRoot.y + move.y + move.y, weapRoot.z + move.z + move.z);
+    data3.delay = 0;
+    data3.number = 1;
+    data3.lifeTime = 1;
+    data3.size = XMFLOAT2(0.5, 0.5);
+    data3.color = XMFLOAT4(1, 1, 0, 1);
+    VFX::Start(data3);
+
     
     //プレイヤーの半径を考慮して回転を適用します
     //ここAimの近さの値をプレイヤーから取得して計算もしてる
@@ -108,6 +155,7 @@ void Aim::Draw()
 {
     Image::SetTransform(hPict_, cross_);
     Image::Draw(hPict_);
+
 }
 
 void Aim::Release()
