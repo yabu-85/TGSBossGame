@@ -112,8 +112,6 @@ void Player::Update()
         }
     }
 
-
-
     if(Input::IsMouseButtonUp(1)) {
         isDecelerating_ = false;
     }
@@ -140,10 +138,9 @@ void Player::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-//    pText_->Draw(30, 30, (int)( (abs(playerMovement_.x) + abs(playerMovement_.z)) * 100.0f ) );
-//    pText_->Draw(30, 70, (int)( (maxMoveSpeed_ * 100.0f)));
-//    pText_->Draw(30, 110, (int)(pAim_->GetAimDirectionXY().y * 100.0f));
-//    pText_->Draw(30, 150, (int)(decelerationTime_ * 100.0f));
+    XMVECTOR v = XMLoadFloat3(&playerMovement_);
+    pText_->Draw(30, 70, (int)( Length(v) * 100.0f ) );
+    pText_->Draw(30, 110, (int)( (maxMoveSpeed_ * 100.0f)));
 
     pText_->Draw(30, 190, (int)(pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z) ));
     pText_->Draw(30, 250, (int)(transform_.position_.x));
@@ -215,6 +212,17 @@ void Player::UpdateDead()
 
 /*--------------------------------------private-----------------------------------------*/
 
+void Player::HandleInput()
+{
+    // 入力に応じてアクションを実行する
+    if (Input::IsMouseButtonDown(0)) {
+    }
+    if (Input::IsKeyDown(DIK_SPACE)) {
+    }
+
+    
+}
+
 void Player::CalcMove()
 {
     fMove_ = { 0,0,0 };
@@ -238,11 +246,6 @@ void Player::CalcMove()
         fMove_.z -= aimDirection.x;
     }
 
-    //fMove_の正規化と数値調整
-    
-    //Normalizeの事をちゃんと理解しよう
-    //平方根の定理を使ったやつね
-
     XMVECTOR vMove = XMLoadFloat3(&fMove_);
     vMove = XMVector3Normalize(vMove);
     
@@ -258,20 +261,13 @@ void Player::CalcMove()
         fMove_ = { ((fMove_.x - playerMovement_.x) * 0.004f) , 0.0f , ((fMove_.z - playerMovement_.z) * 0.004f ) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z};
 
+        XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
+        float max = XMVectorGetX(XMVector3Length(vMax));
 
-
-        float max = ( abs(playerMovement_.x) + abs(playerMovement_.z) );
         if (max > maxMoveSpeed_) {
-
-
             vMove = XMLoadFloat3(&playerMovement_);
             vMove = XMVector3Normalize(vMove);
             vMove *= maxMoveSpeed_;
-
-            // もしmaxMoveSpeed_が1.0を超える場合は、再度正規化する
-            if (XMVectorGetX(XMVector3Length(vMove)) > 1.0f) {
-                vMove = XMVector3Normalize(vMove);
-            }
 
             XMStoreFloat3(&playerMovement_, vMove);
 
@@ -438,7 +434,8 @@ void Player::Jump()
         playerMovement_ = { aimDirection.x * buJumpXZ, 0.0f , aimDirection.z * buJumpXZ};
 
         //maxSpeed
-        float a = abs(playerMovement_.x) + abs(playerMovement_.z);
+        XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
+        float a = XMVectorGetX(XMVector3Length(vMax));
         maxMoveSpeed_ = a;
         if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
 
@@ -454,19 +451,11 @@ void Player::Jump()
         secondJump_ = true;
         transform_.position_.y += gravity_;
 
-        // 移動速度のx方向とz方向の成分を取得
-        float xSpeed = std::abs(playerMovement_.x);
-        float zSpeed = std::abs(playerMovement_.z);
-
-        // 前に移動する場合のMaxSpeedを計算
-        maxMoveSpeed_ = max(xSpeed, zSpeed);
-
-        XMVECTOR v = { 0.5f, 0, 0.5f,0 };
-        v = XMVector3Normalize(v) * 0.1f;
-        XMFLOAT3 f;
-        XMStoreFloat3(&f, v);
-        // = abs(f.x) + abs(f.z);
-
+        //maxSpeed
+        XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
+        float a = XMVectorGetX(XMVector3Length(vMax));
+        maxMoveSpeed_ = a;
+        if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
 
         return;
     }
@@ -478,11 +467,11 @@ void Player::Jump()
         firstJump_ = true;
         transform_.position_.y += gravity_;
 
-        XMVECTOR v = { 0.5f, 0, 0.5f,0 };
-        v = XMVector3Normalize(v) * 0.1f;
-        XMFLOAT3 f;
-        XMStoreFloat3(&f, v);
-        maxMoveSpeed_ = abs(f.x) + abs(f.z);
+        //maxSpeed
+        XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
+        float a = XMVectorGetX(XMVector3Length(vMax));
+        maxMoveSpeed_ = a;
+        if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
 
         return;
 

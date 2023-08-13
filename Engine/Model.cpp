@@ -184,7 +184,6 @@ namespace Model
 		return pos;
 	}
 
-
 	//ƒ[ƒ‹ƒhs—ñ‚ğİ’è
 	void SetTransform(int handle, Transform & transform)
 	{
