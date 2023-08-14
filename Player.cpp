@@ -51,7 +51,6 @@ void Player::Update()
 {
     if (!isActive_) return;
 
-
     previousPosition_ = transform_.position_;
 
     switch (state_) {
@@ -83,10 +82,25 @@ void Player::Update()
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
 
+    static const int attackAnime = 320 - 280;
+    static int animTime = 0;
     //攻撃
     //フルオートはKey、単発||近接
-    if (Input::IsMouseButtonDown(0)) {
-        pAim_->TriggerCameraShake(5, 0.03f, 1.0f);
+    if (Input::IsMouseButtonDown(0) && animTime <= 10) {
+        Model::SetAnimFrame(hModel_, 280, 320, 1);
+        animTime = attackAnime;
+    }
+
+    if (animTime > 0) {
+        animTime--;
+
+        if(animTime == 20)
+            pAim_->TriggerCameraShake(10, 0.1f);
+
+        if (animTime <= 0) {
+            Model::SetAnimFrame(hModel_, 0, 0, 1);
+
+        }
     }
 
     //graYにかけて値を出すんじゃなくてgraY自体を計算する
@@ -97,11 +111,12 @@ void Player::Update()
     //こっちは最初に押したらのやつ
     if (Input::IsMouseButtonDown(1) && !IsPlayerOnGround()) {
         isDecelerating_ = true;
+        pAim_->TriggerCameraShake(10, 0.1f);
 
         if (!isDecelerated_) {
             //上へ移動している場合は0に
-            if (graY_ > 0.0f)graY_ = 0.0f;
-            else graY_ *= 0.3f;
+            if (graY_ > 0.0f)graY_ = -gravity_ * 0.5f;
+            else graY_ *= 0.2f;
 
             decelerationTime_ = 0.0f;
             isDecelerated_ = true;
@@ -119,11 +134,9 @@ void Player::Update()
     //減速している
     if (isDecelerating_ ) {
         const float noDe = 0.8f; //減速をやめる時間
-        const float deTime = 0.005f;
+        const float deTime = 0.0055f; //時間の速さ
 
-        //float ag = ((1.0f - decelerationTime_) * gravity_);
-        //graY_ = graY_ + ag;
-        decelerationTime_ += deTime * decelerationTime_;
+        decelerationTime_ += deTime;
 
         //減速時間終わったよの処理
         if (decelerationTime_ > noDe) isDecelerating_ = false;
@@ -146,6 +159,8 @@ void Player::Draw()
     pText_->Draw(30, 250, (int)(transform_.position_.x));
     pText_->Draw(30, 290, (int)(transform_.position_.y));
     pText_->Draw(30, 340, (int)(transform_.position_.z));
+
+    pText_->Draw(30, 400, (int)((decelerationTime_ * 100.0f)));
 
 }
 
@@ -171,11 +186,16 @@ XMVECTOR Player::GetPlaVector() {
 
 float Player::IsAiming()
 {
-    if (IsPlayerOnGround()) {
-        if (Input::IsMouseButton(1)) return 0.4f;
-    }
-    else if (isDecelerating_) return 0.75f;
-        
+    //減速時カメラ位置近くなるのは遠距離武器を持っているときのみ
+    //だから今は無しに
+    if (false) {
+        if (IsPlayerOnGround()) {
+            if (Input::IsMouseButton(1)) return 0.4f;
+        }
+        else if (isDecelerating_) return 0.75f;
+
+    }   
+
     return 1.0f;
 }
 
@@ -183,7 +203,6 @@ float Player::IsAiming()
 
 void Player::UpdateIdle()
 {
-    //--------state----------
     if (IsMovementKeyPressed()) {
         if (anime_ == false) {
             anime_ = true;
@@ -198,7 +217,6 @@ void Player::UpdateMove()
 {
     CalcMove();
 
-    //--------state----------
     if (!IsMovementKeyPressed()) {
         anime_ = false;
         Model::SetAnimFrame(hModel_, 0, 0, 1);
@@ -257,8 +275,10 @@ void Player::CalcMove()
     else  {
         XMStoreFloat3(&fMove_, vMove);
 
+        static const float airMoveSpeed = 0.002f;
+
         //fMove_
-        fMove_ = { ((fMove_.x - playerMovement_.x) * 0.004f) , 0.0f , ((fMove_.z - playerMovement_.z) * 0.004f ) };
+        fMove_ = { ((fMove_.x - playerMovement_.x) * airMoveSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * airMoveSpeed) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z};
 
         XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
@@ -345,13 +365,15 @@ void Player::GradualRotate()
 
 void Player::Gravity()
 {
-    transform_.position_.y += graY_;
 
-    if(isDecelerating_) graY_ -= gravity_ * 0.5f;
+    if (isDecelerating_) graY_ -= (decelerationTime_ * 0.2f * gravity_);
     else graY_ -= gravity_;
 
     const float maxGra = -1.0f;
     if (graY_ < maxGra) graY_ = maxGra;
+
+    transform_.position_.y += graY_;
+
 
     //空中にいるなら一回目のジャンプは不可に
     firstJump_ = true;

@@ -9,6 +9,7 @@ class Aim :
 {
     int hPict_;                     //画像番号
     int shakeTimer_;                //シェイクに使う時間
+    int shakeTimerSub_;             //シェイクの強さ計算用
     float shakeAmplitude_;          //カメラシェイクの振幅（0～1）
     float shakeStrength_;           //シェイクの強さ
     float mouseSensitivity;         //マウス感度
@@ -40,10 +41,9 @@ public:
     void SetAimDraw(bool b) { aimDraw_ = b; };
     void SetAimMove(bool b) { aimMove_ = b; };
 
-    //シェイクに使う時間用
+    //シェイクに使う時間(60＝1秒）
     //カメラシェイクの強さ
-    //カメラシェイクの振幅（初期値：0～1）
-    void TriggerCameraShake(int t, float s, float a);
+    void TriggerCameraShake(int t, float s);
 
 };
 

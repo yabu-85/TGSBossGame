@@ -12,7 +12,7 @@
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }, plaPos_{ 0,0,0 },
     pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f),
-    pStage_(nullptr)
+    pStage_(nullptr), shakeTimerSub_(0)
 
 {
     mouseSensitivity = 2.5f;
@@ -81,12 +81,13 @@ void Aim::Update()
     XMStoreFloat3(&aimDirectionXY_, -camPos);
 
     if (isShaking_) {
-        shakeAmplitude_ -= shakeStrength_;
+        float shakeStr = shakeStrength_ / (float)shakeTimerSub_;
+        shakeAmplitude_ -= shakeStr;
         shakeTimer_--;
 
         //シェイクが終了したら元の位置に戻すアニメーションを開始
         if (shakeTimer_ <= 0) {
-            shakeAmplitude_ += shakeStrength_ + shakeStrength_;
+            shakeAmplitude_ += shakeStr * 2;
 
             //おわり
             if (shakeAmplitude_ >= 1.0f) {
@@ -104,40 +105,38 @@ void Aim::Update()
     XMVECTOR vRoot = XMLoadFloat3(&weapRoot);
     XMVECTOR vMove = vTop - vRoot;
     vMove = XMVector3Normalize(vMove);
-    vMove *= 0.5f;
+    vMove *= 0.3f;
     XMFLOAT3 move;
     XMStoreFloat3(&move, vMove);
+
+    XMFLOAT3 emitPos2 = XMFLOAT3(weapRoot.x + move.x, weapRoot.y + move.y, weapRoot.z + move.z);
+    XMFLOAT3 emitPos3 = XMFLOAT3(weapRoot.x + move.x + move.x, weapRoot.y + move.y + move.y, weapRoot.z + move.z + move.z);
+    XMFLOAT3 emitPos4 = XMFLOAT3(weapRoot.x + move.x + move.x + move.x, weapRoot.y + move.y + move.y + move.y, weapRoot.z + move.z + move.z + move.z);
 
     EmitterData data1;
     data1.textureFileName = "cloudA.png";
     data1.position = XMFLOAT3(weapRoot.x, weapRoot.y, weapRoot.z);
+    data1.positionRnd = XMFLOAT3(0.01f, 0.01f, 0.01f);
+    data1.direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
     data1.delay = 0;
+    data1.gravity = 0.0f;
     data1.number = 1;
-    data1.lifeTime = 1;
-    data1.size = XMFLOAT2(0.5, 0.5);
-    data1.color = XMFLOAT4(0, 0.7, 1, 1);
+    data1.lifeTime = 3;
+    data1.size = XMFLOAT2(0.3f, 0.3f);
+    data1.color = XMFLOAT4(0.0f, 0.7f, 1.0f, 1.0f);
     VFX::Start(data1);
 
-    EmitterData data2;
-    data2.textureFileName = "cloudA.png";
-    data2.position = XMFLOAT3(weapRoot.x + move.x, weapRoot.y + move.y, weapRoot.z + move.z);
-    data2.delay = 0;
-    data2.number = 1;
-    data2.lifeTime = 1;
-    data2.size = XMFLOAT2(0.5, 0.5);
-    data2.color = XMFLOAT4(0.5, 1, 0.5, 1);
+    EmitterData data2 = data1;
+    data2.position = emitPos2;
     VFX::Start(data2);
 
-    EmitterData data3;
-    data3.textureFileName = "cloudA.png";
-    data3.position = XMFLOAT3(weapRoot.x + move.x + move.x, weapRoot.y + move.y + move.y, weapRoot.z + move.z + move.z);
-    data3.delay = 0;
-    data3.number = 1;
-    data3.lifeTime = 1;
-    data3.size = XMFLOAT2(0.5, 0.5);
-    data3.color = XMFLOAT4(1, 1, 0, 1);
+    EmitterData data3 = data1;
+    data3.position = emitPos3;
     VFX::Start(data3);
 
+    EmitterData data4 = data1;
+    data4.position = emitPos4;
+    VFX::Start(data4);
     
     //プレイヤーの半径を考慮して回転を適用します
     //ここAimの近さの値をプレイヤーから取得して計算もしてる
@@ -162,11 +161,17 @@ void Aim::Release()
 {
 }
 
-void Aim::TriggerCameraShake(int t, float s, float a)
+void Aim::TriggerCameraShake(int t, float s)
 {
     isShaking_ = true;
-    shakeTimer_ = t;
+    shakeTimer_ = t / 2;
+    shakeTimerSub_ = shakeTimer_;
+    if (shakeTimer_ == 0) {
+        shakeTimer_ = 1;
+        shakeTimerSub_ = 1;
+    }
+
     shakeStrength_ = s;
-    shakeAmplitude_ = a;
+    shakeAmplitude_ = 1.0f;
     
 }
