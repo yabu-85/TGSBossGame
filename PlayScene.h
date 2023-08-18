@@ -11,4 +11,6 @@ public:
 	void Draw() override;
 	void Release() override;
 
+	//タイマー
+	void TimeProcess();
 };

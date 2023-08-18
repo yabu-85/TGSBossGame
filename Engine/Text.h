@@ -38,5 +38,11 @@ public:
 
 	//解放
 	void Release();
+
+	//サイズの設定
+	//引数:サイズ
+	void SetScale(float sc) { scale = sc; }
+private:
+	float scale;
 };
 
