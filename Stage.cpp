@@ -2,11 +2,9 @@
 #include "Engine/Model.h"
 #include "Engine/CsvReader.h"
 
-const int startX = 10;
-const int startZ = 10;
 
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1, -1, -1 }, table_(nullptr)
+    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1, -1, -1}, table_(nullptr)
 {
     //CSVファイル読み込み
     CsvReader csv;
@@ -88,22 +86,20 @@ void Stage::Release()
 
 float Stage::GetFloorHeight(int x, int z)
 {
+    //無効な座標:床上ではない､早期リターンする
     if (x < 0 || z < 0 || x >= width_ || z >= height_)
-    {
-        return -10.0f;      //無効な座標の場合早期リターン
-    }
+        return -10.0f;      
 
     int type = table_[x][z];
-
     switch (type)
     {
-    case 0:
+    case TYPE_FLOOR:
         return 0.0f;
-    case 1:
+    case TYPE_WALL:
         return 1.0f;
-    case 2:
+    case TYPE_WALL2:
         return 2.0f;
-    case 3:
+    case TYPE_HIGHTWALL:
         return 5.0f;
     default:
         return -10.0f;
@@ -112,25 +108,30 @@ float Stage::GetFloorHeight(int x, int z)
 
 bool Stage::IsWall(int x, int z)
 {
-    if (x >= 0 && z >= 0 && x < width_ && z < height_)
-    {
-        int type = table_[x][z];
+    //無効な座標:壁ではない､早期リターンする
+    if (x < 0 || z < 0 || x >= width_ || z >= height_) return false;       
 
-        if (type == 1 || type == 2 || type == 3)
-        {
-            return true;
-        }
+    int type = table_[x][z];
+    switch (type)
+    {
+    case TYPE_WALL:
+    case TYPE_WALL2:
+    case TYPE_HIGHTWALL:
+        return true;
+    default:
+        return false;
     }
-    return false;
 }
 
 XMFLOAT3 Stage::GetPlaPos()
 {
+    //フィールドを走査する
     for (int x = 0; x < width_; x++) 
     {
         for (int y = 0; y < height_; y++) 
         {
-            if (table_[x][y] == 10) 
+            //目的のナンバーを持つセル(Player)が見つかった
+            if (table_[x][y] == TYPE_PLAYER)
             {
                 table_[x][y] = 0;
                 return XMFLOAT3((float)x + 0.5f, 0.0f, (float)y + 0.5f);

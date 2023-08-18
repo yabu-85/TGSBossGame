@@ -3,7 +3,7 @@
 #include "Player.h"
 
 //オブジェクトの種類を判別する番号
-enum 
+enum OBJ
 {
     TYPE_FLOOR,         //床
     TYPE_WALL,          //壁
@@ -11,6 +11,11 @@ enum
     TYPE_HIGHTWALL,     //壁(特大)
     TYPE_SLOPE,         //傾斜
     TYPE_MAX            //最大値
+};
+
+enum CHARACTER
+{
+    TYPE_PLAYER = 10    //プレイヤー
 };
 
 //ステージを管理するクラス
@@ -44,11 +49,11 @@ public:
     //床の高さを取得する関数
     float GetFloorHeight(int x, int z);
 
-    //セルが壁であるか判定する関数
+    //壁であるか判定する関数
     bool IsWall(int x, int z);
 
     //モデル番号を取得する関数
-    int GetModelHandle(int i) { return hModel_[i]; };
+    int GetModelHandle(int i) { return hModel_[i]; }
 
     //CSV上でのプレイヤー座標を取得する関数
     XMFLOAT3 GetPlaPos(); 
