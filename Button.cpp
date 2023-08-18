@@ -21,18 +21,21 @@ void Button::Initialize()
 void Button::Update()
 {
 
-	if (isButtonInactive_) {
-		XMFLOAT3 mouse = Input::GetMousePositionSub();
+	if (!isButtonInactive_)
+		return;
 
-		if (-mouse.y < widePos_.y + 80 && -mouse.y > widePos_.y - 80) {
-			transform_.scale_.x = 0.65f;
-			transform_.scale_.y = 0.7f;
-		}
-		else {
-			transform_.scale_.x = 0.6f;
-			transform_.scale_.y = 0.6f;
-		}
+	XMFLOAT3 mouse = Input::GetMousePositionSub();
+	if (-mouse.y < widePos_.y + 80 && -mouse.y > widePos_.y - 80) {
+		transform_.scale_.x = 0.65f;
+		transform_.scale_.y = 0.7f;
+		alpha_ = 255;
 	}
+	else {
+		transform_.scale_.x = 0.6f;
+		transform_.scale_.y = 0.6f;
+		alpha_ = 150;
+	}
+
 }
 
 void Button::Draw()

@@ -34,10 +34,9 @@ class Player : public GameObject
 
     //---------------privateメンバ関数---------------
 
-    void HandleInput();                 //ボタンを押したか調べる
     void CalcMove();                    //移動方向計算・normalize
-    void InstantRotate();               //即座に回転
-    void GradualRotate();               //徐々に振り向く
+    void InstantRotate(float x, float z);               //即座に回転
+    void GradualRotate(float x, float z);               //徐々に振り向く
     void Gravity();                     //重力うけます
     void Crouch();                      //しゃがみ関係です
     void Jump();                        //ジャンプするよん

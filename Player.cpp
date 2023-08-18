@@ -3,11 +3,15 @@
 #include "Engine/Model.h"
 #include "Aim.h"
 #include "Stage.h"
-
 #include <thread>
 #include <chrono>
-
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
+
+static const std::vector <std::pair<int, int>> atkTime = { {320 , 280}, { 365 , 320 }, { 395 , 365 } };
+static const std::vector <int> nextAttackTime = { 10, 10, 10 , 10 }; //最後のは1コンボ目（最初の数字）
+static int animeTime = 0;
+static int combo = 0;
+static bool nextCombo = false;
 
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
@@ -69,7 +73,7 @@ void Player::Update()
     transform_.position_.z += (playerMovement_.z * moveSpeed_); // z
 
     //移動するなら向きを変える
-    if (IsMovementKeyPressed()) GradualRotate();
+    if (IsMovementKeyPressed()) GradualRotate(playerMovement_.x, playerMovement_.z);
 
     //重力
     if (!IsPlayerOnGround()) Gravity();
@@ -77,36 +81,79 @@ void Player::Update()
     //しゃがみ
     Crouch();
 
+    if(IsPlayerMove())
     IsInWall();
 
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
 
-    static const int attackAnime = 320 - 280;
-    static int animTime = 0;
-    //攻撃
+    static XMFLOAT3 aimDirection2 = { 0,0,0 };
     //フルオートはKey、単発||近接
-    if (Input::IsMouseButtonDown(0) && animTime <= 10) {
-        Model::SetAnimFrame(hModel_, 280, 320, 1);
-        animTime = attackAnime;
+    if (Input::IsMouseButtonDown(0)) nextCombo = true;
+
+    if (nextCombo && animeTime <= nextAttackTime[combo]) {
+        if (combo >= 3) combo = 0;
+        combo++;
+        nextCombo = false;
+
+        aimDirection2 = pAim_->GetAimDirectionY();
+        InstantRotate(aimDirection2.x, aimDirection2.z);
+
+        Model::SetAnimFrame(hModel_, atkTime[combo - 1].second, atkTime[combo - 1].first, 1);
+        animeTime = atkTime[combo - 1].first - atkTime[combo - 1].second;
     }
 
-    if (animTime > 0) {
-        animTime--;
+    if (animeTime > 0) {
+        animeTime--;
 
-        if(animTime == 20)
-            pAim_->TriggerCameraShake(10, 0.1f);
+        //ここ各コンボの処理
+        if (combo == 1){
+            if (animeTime >= 10) {
+                fMove_ = { 0,0,0 };
+                fMove_.x += aimDirection2.x;
+                fMove_.z += aimDirection2.z;
+                
+                XMVECTOR vMove = XMLoadFloat3(&fMove_);
+                XMStoreFloat3(&fMove_, vMove * 0.05f);
+                transform_.position_.x += fMove_.x;
+                transform_.position_.z += fMove_.z;
+                
+                if (animeTime >= 20) {
+                    vMove = XMVector3Normalize(vMove);
+                    XMStoreFloat3(&fMove_, vMove * 0.025f);
+                    transform_.position_.x += fMove_.x;
+                    transform_.position_.z += fMove_.z;
 
-        if (animTime <= 0) {
+                }
+            }
+        } 
+        else if (combo == 2) {
+            if (animeTime >= 10) {
+                fMove_ = { 0,0,0 };
+                fMove_.x += aimDirection2.x;
+                fMove_.z += aimDirection2.z;
+
+                XMVECTOR vMove = XMLoadFloat3(&fMove_);
+                XMStoreFloat3(&fMove_, vMove * 0.05f);
+                transform_.position_.x += fMove_.x;
+                transform_.position_.z += fMove_.z;
+
+                if (animeTime >= 20) {
+                    vMove = XMVector3Normalize(vMove);
+                    XMStoreFloat3(&fMove_, vMove * 0.025f);
+                    transform_.position_.x += fMove_.x;
+                    transform_.position_.z += fMove_.z;
+
+                }
+            }
+        }
+
+        if (!nextCombo && animeTime <= 0) {
             Model::SetAnimFrame(hModel_, 0, 0, 1);
-
+            combo = 0;
         }
     }
 
-    //graYにかけて値を出すんじゃなくてgraY自体を計算する
-    //そうすれば減速した後の速度から始められる
-    //今のやり方だと出来ない！（多分
-    
     //覗き込み||近接ガード||slow（落下速度低下）
     //こっちは最初に押したらのやつ
     if (Input::IsMouseButtonDown(1) && !IsPlayerOnGround()) {
@@ -161,6 +208,11 @@ void Player::Draw()
     pText_->Draw(30, 340, (int)(transform_.position_.z));
 
     pText_->Draw(30, 400, (int)((decelerationTime_ * 100.0f)));
+
+
+    pText_->Draw(30, 470, combo);
+    pText_->Draw(30, 510, animeTime);
+    if(nextCombo) pText_->Draw(30, 550, "Yes");
 
 }
 
@@ -230,17 +282,6 @@ void Player::UpdateDead()
 
 /*--------------------------------------private-----------------------------------------*/
 
-void Player::HandleInput()
-{
-    // 入力に応じてアクションを実行する
-    if (Input::IsMouseButtonDown(0)) {
-    }
-    if (Input::IsKeyDown(DIK_SPACE)) {
-    }
-
-    
-}
-
 void Player::CalcMove()
 {
     fMove_ = { 0,0,0 };
@@ -305,20 +346,20 @@ float Player::NormalizeAngle(float angle) {
     return angle;
 }
 
-void Player::InstantRotate() {
-    float tx = transform_.position_.x + playerMovement_.x;
-    float tz = transform_.position_.z + playerMovement_.z;
+void Player::InstantRotate(float x, float z) {
+    float tx = transform_.position_.x + x;
+    float tz = transform_.position_.z + z;
 
     const XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
-    XMVECTOR vAimPos_ = XMLoadFloat3(&fAimPos);
-    vAimPos_ = XMVector3Normalize(vAimPos_);
-    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos_);
+    XMVECTOR vAimPos = XMLoadFloat3(&fAimPos);
+    vAimPos = XMVector3Normalize(vAimPos);
+    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos);
     float dot = XMVectorGetX(vDot);
     float angle = (float)acos(dot);
 
     // 外積を求めて半回転だったら angle に -1 を掛ける
-    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos_);
+    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos);
     if (XMVectorGetY(vCross) < 0) {
         angle *= -1;
     }
@@ -328,21 +369,21 @@ void Player::InstantRotate() {
 
 }
 
-void Player::GradualRotate()
+void Player::GradualRotate(float x, float z)
 {
-    float tx = transform_.position_.x + playerMovement_.x;
-    float tz = transform_.position_.z + playerMovement_.z;
+    float tx = transform_.position_.x + x;
+    float tz = transform_.position_.z + z;
 
     const XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
-    XMVECTOR vAimPos_ = XMLoadFloat3(&fAimPos);
-    vAimPos_ = XMVector3Normalize(vAimPos_);
-    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos_);
+    XMVECTOR vAimPos = XMLoadFloat3(&fAimPos);
+    vAimPos = XMVector3Normalize(vAimPos);
+    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos);
     float dot = XMVectorGetX(vDot);
     float angle = (float)acos(dot);
 
     // 外積を求めて半回転だったら angle に -1 を掛ける
-    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos_);
+    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos);
     if (XMVectorGetY(vCross) < 0) {
         angle *= -1;
     }
@@ -461,7 +502,7 @@ void Player::Jump()
         maxMoveSpeed_ = a;
         if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
 
-        InstantRotate();
+        InstantRotate(playerMovement_.x, playerMovement_.z);
 
         return;
     }
@@ -498,7 +539,6 @@ void Player::Jump()
         return;
 
     }
-
 }
 
 bool Player::IsPlayerOnGround() {
@@ -566,7 +606,9 @@ bool Player::IsMovementKeyPressed()
 }
 
 bool Player::IsPlayerMove() {
-    if (graY_ != 0.0f || playerMovement_.x != 0.0f || playerMovement_.z != 0.0f)
+    XMVECTOR v = XMLoadFloat3(&previousPosition_) - XMLoadFloat3(&transform_.position_);
+    float a = XMVectorGetX(XMVector3Length(v));
+    if (a != 0.0f)
         return true;
 
     return false;

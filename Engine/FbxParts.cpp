@@ -626,36 +626,29 @@ void FbxParts::DrawBlendedSkinAnime(Transform& transform, FbxTime time1, FbxTime
 		XMStoreFloat3(&pVertexData_[i].normal, XMVector3TransformCoord(Normal, matrix));
     }
 
-    for (DWORD i = 0; i < vertexCount_; i++)
-    {
-        // ブレンディングを行う（タイム1とタイム2のフレームの結果をもとに、最終的なフレームの位置を計算）
-        XMFLOAT3 blendedPosition;
-        blendedPosition.x = pWeightArray_[i].posOrigin.x * (1.0f - blendFactor) + pWeightArray_[i].posOrigin.x * blendFactor;
-        blendedPosition.y = pWeightArray_[i].posOrigin.y * (1.0f - blendFactor) + pWeightArray_[i].posOrigin.y * blendFactor;
-        blendedPosition.z = pWeightArray_[i].posOrigin.z * (1.0f - blendFactor) + pWeightArray_[i].posOrigin.z * blendFactor;
+	for (DWORD i = 0; i < vertexCount_; i++)
+	{
+		// 各ボーンの影響を足し合わせて最終的な変形行列を計算
+		XMMATRIX matrix = pBoneArray_[pWeightArray_[i].pBoneIndex[0]].diffPose1 + pBoneArray_[pWeightArray_[i].pBoneIndex[0]].diffPose2;
+		for (int m = 1; m < numBone_; m++)
+		{
+			if (pWeightArray_[i].pBoneIndex[m] < 0)
+			{
+				break;
+			}
+			matrix += pBoneArray_[pWeightArray_[i].pBoneIndex[m]].diffPose1 + pBoneArray_[pWeightArray_[i].pBoneIndex[m]].diffPose2;
+		}
 
-        // ブレンディングを適用
-        XMMATRIX matrix = pBoneArray_[pWeightArray_[i].pBoneIndex[0]].diffPose1 * (1.0f - blendFactor) + pBoneArray_[pWeightArray_[i].pBoneIndex[0]].diffPose2;
-        for (int m = 1; m < numBone_; m++)
-        {
-            if (pWeightArray_[i].pBoneIndex[m] < 0)
-            {
-                break;
-            }
-            matrix += pBoneArray_[pWeightArray_[i].pBoneIndex[m]].diffPose1 * (1.0f - blendFactor) + pBoneArray_[pWeightArray_[i].pBoneIndex[m]].diffPose2 * blendFactor;
-        }
+		// 頂点変形を計算
+		XMVECTOR Pos = XMLoadFloat3(&pWeightArray_[i].posOrigin);
+		XMVECTOR Normal = XMLoadFloat3(&pWeightArray_[i].normalOrigin);
 
-        XMVECTOR Pos = XMLoadFloat3(&pWeightArray_[i].posOrigin);
-        XMVECTOR Normal = XMLoadFloat3(&pWeightArray_[i].normalOrigin);
+		Pos = XMVector3TransformCoord(Pos, matrix);
+		Normal = XMVector3TransformCoord(Normal, matrix);
 
-        Pos = XMVector3TransformCoord(Pos, matrix);
-        Pos = Pos + (XMLoadFloat3(&blendedPosition) - Pos) * blendFactor;
-        Normal = XMVector3TransformCoord(Normal, matrix);
-
-        // 作成された関節行列を使って、頂点を変形する
-        XMStoreFloat3(&pVertexData_[i].position, Pos);
-        XMStoreFloat3(&pVertexData_[i].normal, Normal);
-    }
+		XMStoreFloat3(&pVertexData_[i].position, Pos);
+		XMStoreFloat3(&pVertexData_[i].normal, Normal);
+	}
 
 
     // 頂点バッファをロックして、変形させた後の頂点情報で上書きする
