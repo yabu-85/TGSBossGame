@@ -12,7 +12,7 @@ Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false)
+    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false), stateEnter_(true)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -56,9 +56,19 @@ void Player::Update()
     case STATE::S_MOVE:
         UpdateMove();
         break;
+    case STATE::S_CROUCH:
+        UpdateCrouch();
+        break;
     case STATE::S_DEAD:
         UpdateDead();
         break;
+    }
+    //しゃがんでない時カメラの高さリセット
+    if (state_ != S_CROUCH) {
+        if (cameraHeight_ < 1.0f)cameraHeight_ += 0.02f;
+
+        if (Input::IsKey(DIK_F)) isCrouching_ = true;
+        else isCrouching_ = false;
     }
 
     transform_.position_.x += (playerMovement_.x * moveSpeed_); // 移動！
@@ -69,9 +79,6 @@ void Player::Update()
 
     //重力
     if (!IsPlayerOnGround()) Gravity();
-
-    //しゃがみ
-    Crouch();
 
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
@@ -168,15 +175,21 @@ float Player::IsAiming()
 
 /*--------------------------------State------------------------*/
 
+void Player::ChangeState(STATE s)
+{
+    state_ = s;
+    stateEnter_ = true;
+}
+
 void Player::UpdateIdle()
 {
     if (IsMovementKeyPressed()) {
-        if (anime_ == false) {
-            anime_ = true;
+        if (stateEnter_) {
             Model::SetAnimFrame(hModel_, 30, 60, 1);
-
+            stateEnter_ = false;
         }
-        state_ = S_MOVE;
+        
+        ChangeState(S_MOVE);
     }
 }
 
@@ -185,9 +198,94 @@ void Player::UpdateMove()
     CalcMove();
 
     if (!IsMovementKeyPressed()) {
-        anime_ = false;
         Model::SetAnimFrame(hModel_, 0, 0, 1);
-        state_ = S_IDLE;
+        ChangeState(S_IDLE);
+    }
+    if (Input::IsKeyDown(DIK_F) && IsPlayerOnGround()) {
+        ChangeState(S_CROUCH);
+    }
+}
+
+void Player::UpdateCrouch()
+{
+    if (stateEnter_) {
+        if(IsPlayerOnGround()) Model::SetAnimFrame(hModel_, 200, 220, 1);
+        stateEnter_ = false;
+        isCrouching_ = true;
+    }
+
+    //jump
+    if (Input::IsKeyDown(DIK_SPACE)) {
+        bool j = false;
+        if (isCrouching_ == true && !bulletJump_ && (!firstJump_ || !secondJump_))
+            j = true;
+        if (!IsPlayerOnGround() && firstJump_ && !secondJump_)
+            j = true;
+        if (IsPlayerOnGround())
+            j = true;
+        //ジャンプできたわ
+        if (j) {
+            Model::SetAnimFrame(hModel_, 0, 0, 1);
+        }
+    }
+
+    if (isCrouching_) {
+        if (cameraHeight_ > 0.8f)
+            cameraHeight_ -= 0.02f;
+
+        fMove_ = { 0,0,0 };
+        XMFLOAT3 aimDirection = pAim_->GetAimDirectionY();
+        if (Input::IsKey(DIK_W)) {
+            fMove_.x += aimDirection.x;
+            fMove_.z += aimDirection.z;
+        }
+        if (Input::IsKey(DIK_A)) {
+            fMove_.x -= aimDirection.z;
+            fMove_.z += aimDirection.x;
+        }
+        if (Input::IsKey(DIK_S)) {
+            fMove_.x -= aimDirection.x;
+            fMove_.z -= aimDirection.z;
+        }
+        if (Input::IsKey(DIK_D)) {
+            fMove_.x += aimDirection.z;
+            fMove_.z -= aimDirection.x;
+        }
+        XMVECTOR vMove = XMLoadFloat3(&fMove_);
+        vMove = XMVector3Normalize(vMove);
+        XMStoreFloat3(&fMove_, vMove);
+        static const float airMoveSpeed = 0.0004f;
+        fMove_ = { ((fMove_.x - playerMovement_.x) * airMoveSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * airMoveSpeed) };
+        playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z };
+        playerMovement_ = { playerMovement_.x - (playerMovement_.x * 0.01f) , 0.0f , playerMovement_.z - (playerMovement_.z * 0.01f) };
+        XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
+        float max = XMVectorGetX(XMVector3Length(vMax));
+        if (max > maxMoveSpeed_) {
+            vMove = XMLoadFloat3(&playerMovement_);
+            vMove = XMVector3Normalize(vMove);
+            vMove *= maxMoveSpeed_;
+            XMStoreFloat3(&playerMovement_, vMove);
+        }
+
+        InstantRotate(playerMovement_.x, playerMovement_.z);
+
+        vMax = XMLoadFloat3(&playerMovement_);
+        float a = XMVectorGetX(XMVector3Length(vMax));
+        if (a <= 0.04) {
+            isCrouching_ = false;
+            playerMovement_ = XMFLOAT3(0, 0, 0);
+        }
+        if (Input::IsKeyUp(DIK_F)) {
+            isCrouching_ = false;
+        }
+
+    }
+    else {
+        if (IsMovementKeyPressed()) Model::SetAnimFrame(hModel_, 30, 60, 1);
+        else Model::SetAnimFrame(hModel_, 0, 0, 1);
+
+        isCrouching_ = false;
+        ChangeState(S_IDLE);
     }
 }
 
@@ -344,30 +442,6 @@ void Player::Gravity()
         return;
     }
 
-}
-
-void Player::Crouch()
-{
-    if (Input::IsKey(DIK_F)) {
-        isCrouching_ = true;
-        
-        if (Input::IsKeyDown(DIK_F))
-        Model::SetAnimFrame(hModel_, 120, 160, 1);
-
-        if (cameraHeight_ > 0.8f)
-            cameraHeight_ -= 0.02f;
-
-    }
-    else {
-        isCrouching_ = false;
-
-        if(Input::IsKeyUp(DIK_F))
-        Model::SetAnimFrame(hModel_, 0, 0, 1);
-
-        if (cameraHeight_ < 1.0f)
-            cameraHeight_ += 0.02f;
-
-    }
 }
 
 void Player::Jump()
