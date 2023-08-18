@@ -54,7 +54,7 @@ void PlayScene ::Release()
 void PlayScene::TimeProcess()
 {
 	//タイマー起動
-	if (Input::IsKeyDown(DIK_T))
+	if (Input::IsKeyDown(DIK_W))
 	{
 		Timer* t = (Timer*)FindObject("Timer");
 		t->Start();

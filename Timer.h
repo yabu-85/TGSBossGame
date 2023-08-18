@@ -20,7 +20,7 @@ public:
     void Release() override;        //開放
 
     //タイマー設定
-    void SetLimit(float seconds);
+    void SetLimit(float sec);
 
     //タイマー開始
     void Start();
