@@ -2,32 +2,50 @@
 #include "Engine/Text.h"
 #include "Engine/GameObject.h"
 
+//フレームレート
+static const int FPS = 60;
+
 //タイマー管理するクラス
 class Timer : public GameObject
 {
-    bool Active;        //起動しているかどうか
-    int Frame;          //一秒間に何回更新されるか
-    Text* pNum;         //秒数テキスト
-    float drawX;        //描画位置(左右)
-    float drawY;        //描画高さ
+    bool active_;        //起動しているかどうか
+    int frame_;          //一秒間に何回更新されるか
+    Text* pNum_;         //秒数テキスト
+    float drawX_;        //描画位置(左右)
+    float drawY_;        //描画位置(上下)
 
 public:
-    Timer(GameObject* parent);      //コンストラクタ
-    ~Timer();                       //デストラクタ
-    void Initialize() override;     //初期化
-    void Update() override;         //更新
-    void Draw() override;           //描画
-    void Release() override;        //開放
+    //コンストラクタ
+    Timer(GameObject* parent);
+
+    //デストラクタ
+    ~Timer();
+
+    //初期化
+    void Initialize() override;
+
+    //更新
+    void Update() override;
+
+    //描画
+    void Draw() override;
+
+    //開放
+    void Release() override;
+
 
     //タイマー設定
-    void SetLimit(float sec);
+    void SetLimit(float _sec) { frame_ = (int)(_sec * FPS); }
 
     //タイマー開始
-    void Start();
+    void Start() { active_ = true; }
 
-    //タイマー終了
-    void Stop();
+    //タイマー停止
+    void Stop() { active_ = false; }
 
-    //タイマー処理終了
-    bool IsFinished();
+    //タイマー終了判定
+    bool IsFinished() {return (frame_ == 0); }
+
+    //タイム取得
+    int GetTime() { return frame_ / FPS; }
 };

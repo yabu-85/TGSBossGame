@@ -5,10 +5,9 @@
 #include "PauseMenu.h"
 #include "Engine/Input.h"
 #include "ExitMenu.h"
-
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
-	: GameObject(parent, "PlayScene")
+	: GameObject(parent, "PlayScene"), pText_(nullptr), clearTime_(0), count_(0)
 {
 }
 
@@ -21,14 +20,15 @@ void PlayScene::Initialize()
 	pPlayer->SetPosition(pStage->GetPlaPos());
 	pPlayer->SetActiveWithDelay(true);
 
-	//※テキストは前面になるように描画
-	//タイマー設定
+	//※テキスト類はモデルよりも前面に描画(後に呼ぶ)
 	Timer* pTimer = Instantiate<Timer>(this);
-	pTimer->SetLimit(15);
+	pTimer->SetLimit(5);		//タイマーを設定
+	pText_ = new Text;			//テキスト
+	pText_->Initialize();
 }
 
 //更新
-void PlayScene ::Update()
+void PlayScene::Update()
 {
 	if (Input::IsKeyDown(DIK_E)) {
 		Instantiate<PauseMenu>(this);
@@ -43,6 +43,9 @@ void PlayScene ::Update()
 //描画
 void PlayScene ::Draw()
 {
+	//描画
+	pText_->SetScale(3.0f);
+	pText_->Draw(300, 200, clearTime_);
 }
 
 //開放
@@ -53,16 +56,28 @@ void PlayScene ::Release()
 //タイマー
 void PlayScene::TimeProcess()
 {
-	//タイマー起動
-	if (Input::IsKeyDown(DIK_W))
+	Timer* pTimer = (Timer*)FindObject("Timer");
+
+	//タイマーを起動(初回押下時のみ)
+	if (Input::IsKeyDown(DIK_W)&& count_==0)
 	{
-		Timer* t = (Timer*)FindObject("Timer");
-		t->Start();
+		pTimer->Start();
+		count_++;
 	}
-	//タイマー停止
+
+	//ゲームをクリアした場合
 	if (Input::IsKeyDown(DIK_Y))
 	{
-		Timer* t = (Timer*)FindObject("Timer");
-		t->Stop();
+		//タイマー停止
+		pTimer->Stop();
+		clearTime_ = pTimer->GetTime();////////クリアタイム取得確認用｡ここじゃなくてオーバーシーンで使うと思う
+	}
+	
+	//タイマーが終了した場合
+	if (pTimer->IsFinished())
+	{
+		////////(ゲームオーバー)ダウンアニメ再生して､シーン切り替えとかやるところ
+		//Player* pPlayer = (Player*)FindObject("Player");
+		//pPlayer->KillMe();
 	}
 }
