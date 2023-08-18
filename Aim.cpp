@@ -5,8 +5,6 @@
 #include "Engine/Image.h"
 #include "Engine/Global.h"
 #include "Stage.h"
-#include "Engine/Model.h"
-#include "Engine/VFX.h"
 #include <map>
 
 Aim::Aim(GameObject* parent)
@@ -96,33 +94,6 @@ void Aim::Update()
             }
         }
     }
-
-    int plahModel = pPlayer_->GetModelHandle();
-    XMFLOAT3 weapTop = Model::GetBoneAnimPosition(plahModel, "MeleeTop");
-    XMFLOAT3 weapRoot = Model::GetBoneAnimPosition(plahModel, "Melee");
-    XMVECTOR vTop = XMLoadFloat3(&weapTop);
-    XMVECTOR vRoot = XMLoadFloat3(&weapRoot);
-    XMVECTOR vMove = vTop - vRoot;
-    vMove = XMVector3Normalize(vMove) * 0.9f;
-    XMFLOAT3 move;
-    XMStoreFloat3(&move, vMove);
-    weapRoot = XMFLOAT3(weapRoot.x + (move.x * 0.1f), weapRoot.y + (move.y * 0.1f), weapRoot.z + (move.z * 0.1f));
-    
-    float randomPos = (float)(rand() % 99 + 1) * 0.01f;
-
-    EmitterData data1;
-    data1.textureFileName = "cloudA.png";
-    data1.position = XMFLOAT3(weapRoot.x + move.x * randomPos, weapRoot.y + move.y * randomPos, weapRoot.z + move.z * randomPos);
-    //data1.position = XMFLOAT3(weapRoot.x + move.x, weapRoot.y + move.y, weapRoot.z + move.z);
-    data1.positionRnd = XMFLOAT3(0.01f, 0.01f, 0.01f);
-    data1.direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
-    data1.delay = 0;
-    data1.gravity = 0.001f;
-    data1.number = 1;
-    data1.lifeTime = 10;
-    data1.size = XMFLOAT2(0.3f, 0.3f);
-    data1.color = XMFLOAT4(0.0f, 0.7f, 1.0f, 1.0f);
-    VFX::Start(data1);
 
     //プレイヤーの半径を考慮して回転を適用します
     //ここAimの近さの値をプレイヤーから取得して計算もしてる
