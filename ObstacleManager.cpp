@@ -1,5 +1,6 @@
 #include "ObstacleManager.h"
 #include "TestObstacle.h"
+#include "WallObstacle.h"
 #include "Engine/CsvReader.h"
 
 ObstacleManager::ObstacleManager(GameObject* parent)
@@ -46,9 +47,11 @@ void ObstacleManager::Initialize()
     }
 #endif
 
-    createAndAddObstacle(XMFLOAT3(2, 1, 20), OBSTACLE_NORMAL);
-	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_SPIKE);
-    
+    //////////csvÇ©ÇÁà íuÇåƒÇ—èoÇ∑ó\íËÇ‚Ç¡ÇΩ°°°
+
+    createAndAddObstacle(XMFLOAT3(0, 0, 0), OBSTACLE_NORMAL);
+	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_MISSILE);
+	createAndAddObstacle(XMFLOAT3(2, 1, 30), OBSTACLE_WALL);
 }
 
 void ObstacleManager::Update()
@@ -77,8 +80,11 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     case ObstacleType::OBSTACLE_NORMAL:
         pObstacle = Instantiate<Obstacle>(this);
         break;
-    case ObstacleType::OBSTACLE_SPIKE:
+    case ObstacleType::OBSTACLE_MISSILE:
         pObstacle = Instantiate<TestObstacle>(this);
+        break;
+    case ObstacleType::OBSTACLE_WALL:
+        pObstacle = Instantiate<WallObstacle>(this);
         break;
     }
 

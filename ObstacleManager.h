@@ -7,9 +7,8 @@
 enum ObstacleType 
 {
     OBSTACLE_NORMAL = 0,
-    OBSTACLE_SPIKE,
-    OBSTACLE_WALL,
-    OBSTACLE_MAX
+    OBSTACLE_MISSILE,
+    OBSTACLE_WALL
 };
 
 class ObstacleManager : public GameObject

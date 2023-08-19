@@ -1,46 +1,46 @@
-#include "TestObstacle.h"
+#include "WallObstacle.h"
 #include "Engine/BoxCollider.h"
 #include "Engine/Model.h"
 
-TestObstacle::TestObstacle(GameObject* parent)
+WallObstacle::WallObstacle(GameObject* parent)
 	:Obstacle(parent)
 {
 }
 
-TestObstacle::~TestObstacle()
+WallObstacle::~WallObstacle()
 {
 }
 
-void TestObstacle::Initialize()
+void WallObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Wall.fbx");
+	hModel_ = Model::Load("Wall2.fbx");
 	assert(hModel_ >= 0);
 
 	//当たり判定付与
-	BoxCollider* collision = new BoxCollider(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1, 1, 1));
+	BoxCollider* collision = new BoxCollider(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1, 3, 1));
 	AddCollider(collision);
 }
 
-void TestObstacle::Update()
+void WallObstacle::Update()
 {
 	///////////////移動テスト
 	transform_.position_.z -= 0.1f;
 }
 
-void TestObstacle::Draw()
+void WallObstacle::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }
 
-void TestObstacle::Release()
+void WallObstacle::Release()
 {
 }
 
-void TestObstacle::OnCollision(GameObject* pTarget)
+void WallObstacle::OnCollision(GameObject* pTarget)
 {
-	XMFLOAT3 position = {0,0,0};
+	XMFLOAT3 position = { 0,0,0 };
 	//Playerに当たったとき
 	if (pTarget->GetObjectName() == "Player")
 	{
