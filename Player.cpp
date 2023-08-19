@@ -209,24 +209,9 @@ void Player::UpdateMove()
 void Player::UpdateCrouch()
 {
     if (stateEnter_) {
-        if(IsPlayerOnGround()) Model::SetAnimFrame(hModel_, 200, 220, 1);
+        Model::SetAnimFrame(hModel_, 200, 220, 1);
         stateEnter_ = false;
         isCrouching_ = true;
-    }
-
-    //jump
-    if (Input::IsKeyDown(DIK_SPACE)) {
-        bool j = false;
-        if (isCrouching_ == true && !bulletJump_ && (!firstJump_ || !secondJump_))
-            j = true;
-        if (!IsPlayerOnGround() && firstJump_ && !secondJump_)
-            j = true;
-        if (IsPlayerOnGround())
-            j = true;
-        //ƒWƒƒƒ“ƒv‚Å‚«‚½‚í
-        if (j) {
-            Model::SetAnimFrame(hModel_, 0, 0, 1);
-        }
     }
 
     if (isCrouching_) {
@@ -275,15 +260,18 @@ void Player::UpdateCrouch()
             isCrouching_ = false;
             playerMovement_ = XMFLOAT3(0, 0, 0);
         }
-        if (Input::IsKeyUp(DIK_F)) {
+        if (Input::IsKeyUp(DIK_F) || Input::IsKeyDown(DIK_SPACE)) {
             isCrouching_ = false;
         }
 
     }
     else {
         if (IsMovementKeyPressed()) Model::SetAnimFrame(hModel_, 30, 60, 1);
-        else Model::SetAnimFrame(hModel_, 0, 0, 1);
+        else {
+            Model::SetAnimFrame(hModel_, 0, 0, 1);
+            playerMovement_ = XMFLOAT3(0, 0, 0);
 
+        }
         isCrouching_ = false;
         ChangeState(S_IDLE);
     }

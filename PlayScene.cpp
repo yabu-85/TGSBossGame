@@ -4,6 +4,7 @@
 #include "PauseMenu.h"
 #include "Engine/Input.h"
 #include "ExitMenu.h"
+#include "ObstacleManager.h"
 
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
@@ -16,6 +17,7 @@ void PlayScene::Initialize()
 {
 	Stage* pStage = Instantiate<Stage>(this);
 	Player* pPlayer = Instantiate<Player>(this);
+	Instantiate<ObstacleManager>(this);
 
 	pPlayer->SetPosition(pStage->GetPlaPos());
 	pPlayer->SetActiveWithDelay(true);
