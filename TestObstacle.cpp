@@ -14,11 +14,11 @@ TestObstacle::~TestObstacle()
 void TestObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Wall.fbx");
+	hModel_ = Model::Load("Missile.fbx");
 	assert(hModel_ >= 0);
 
 	//当たり判定付与
-	BoxCollider* collision = new BoxCollider(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1, 1, 1));
+	BoxCollider* collision = new BoxCollider(XMFLOAT3(0,0,0), XMFLOAT3(0.8f, 0.8f, 1.8f));
 	AddCollider(collision);
 }
 
@@ -46,6 +46,6 @@ void TestObstacle::OnCollision(GameObject* pTarget)
 	{
 		//SetPosition(XMFLOAT3(0, 0, 30));
 		position = pTarget->GetPosition();
-		//////////////////プレイヤー減速処理
+		//////////////////プレイヤーノックバック処理	
 	}
 }

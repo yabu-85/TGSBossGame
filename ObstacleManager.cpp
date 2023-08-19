@@ -47,7 +47,7 @@ void ObstacleManager::Initialize()
     }
 #endif
 
-    //////////csvから位置を呼び出す予定やった｡｡｡
+    //////////csvから位置を呼び出す予定やったけど出来とらん｡｡｡
 
     createAndAddObstacle(XMFLOAT3(0, 0, 0), OBSTACLE_NORMAL);
 	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_MISSILE);
