@@ -38,7 +38,7 @@ void Stage::Initialize()
         "Wall.fbx",
         "Wall2.fbx",
         "HightWall.fbx",
-        "Slope.fbx"
+        "None.fbx"
     };
 
     //モデルデータのロード

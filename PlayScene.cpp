@@ -5,6 +5,7 @@
 #include "PauseMenu.h"
 #include "Engine/Input.h"
 #include "ExitMenu.h"
+#include "Engine/SceneManager.h"
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
 	: GameObject(parent, "PlayScene"), pText_(nullptr), clearTime_(0), count_(0)
@@ -35,7 +36,20 @@ void PlayScene::Update()
 		Player* pPlayer = (Player*)FindObject("Player");
 		pPlayer->SetActive(false);
 	}
-
+	if (Input::IsKeyDown(DIK_R))
+	{
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_TITLE);
+	}
+	////////////////debug
+	Player* pPlayer = (Player*)FindObject("Player");
+	XMFLOAT3 pos = pPlayer->GetPosition();
+	if (pos.y == -10)
+	{
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_TITLE);
+	}
+	////////////////////
 	//タイマー処理
 	TimeProcess();
 }
