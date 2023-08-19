@@ -8,17 +8,11 @@
 #include <chrono>
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
-static const std::vector <std::pair<int, int>> atkTime = { {320 , 280}, { 365 , 320 }, { 395 , 365 } };
-static const std::vector <int> nextAttackTime = { 10, 10, 10 , 10 }; //最後のは1コンボ目（最初の数字）
-static int animeTime = 0;
-static int combo = 0;
-static bool nextCombo = false;
-
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false)
+    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false), stateEnter_(true)
 {
     moveSpeed_ = 0.75f;
     rotationSpeed_ = 13.0f;
@@ -39,8 +33,6 @@ void Player::Initialize()
     transform_.scale_.y = 0.2f;
     transform_.scale_.z = 0.2f;
 
-    transform_.rotate_.y = 180.0f;  //Blender
-
     //モデルデータのロード
     hModel_ = Model::Load("huu.fbx");
     assert(hModel_ >= 0);
@@ -55,7 +47,6 @@ void Player::Initialize()
 void Player::Update()
 {
     if (!isActive_) return;
-
     previousPosition_ = transform_.position_;
 
     switch (state_) {
@@ -65,9 +56,19 @@ void Player::Update()
     case STATE::S_MOVE:
         UpdateMove();
         break;
+    case STATE::S_CROUCH:
+        UpdateCrouch();
+        break;
     case STATE::S_DEAD:
         UpdateDead();
         break;
+    }
+    //しゃがんでない時カメラの高さリセット
+    if (state_ != S_CROUCH) {
+        if (cameraHeight_ < 1.0f)cameraHeight_ += 0.02f;
+
+        if (Input::IsKey(DIK_F)) isCrouching_ = true;
+        else isCrouching_ = false;
     }
 
     transform_.position_.x += (playerMovement_.x * moveSpeed_); // 移動！
@@ -79,110 +80,8 @@ void Player::Update()
     //重力
     if (!IsPlayerOnGround()) Gravity();
 
-    //しゃがみ
-    Crouch();
-
-    if(IsPlayerMove())
-    IsInWall();
-
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
-
-    static XMFLOAT3 aimDirection2 = { 0,0,0 };
-    //フルオートはKey、単発||近接
-    if (Input::IsMouseButtonDown(0)) nextCombo = true;
-
-    if (nextCombo && animeTime <= nextAttackTime[combo]) {
-        if (combo >= 3) combo = 0;
-        combo++;
-        nextCombo = false;
-
-        aimDirection2 = pAim_->GetAimDirectionY();
-        InstantRotate(aimDirection2.x, aimDirection2.z);
-
-        Model::SetAnimFrame(hModel_, atkTime[combo - 1].second, atkTime[combo - 1].first, 1);
-        animeTime = atkTime[combo - 1].first - atkTime[combo - 1].second;
-    }
-
-    XMFLOAT3 weapTop = Model::GetBoneAnimPosition(hModel_, "MeleeTop");
-    XMFLOAT3 weapRoot = Model::GetBoneAnimPosition(hModel_, "Melee");
-    XMVECTOR vTop = XMLoadFloat3(&weapTop);
-    XMVECTOR vRoot = XMLoadFloat3(&weapRoot);
-    XMVECTOR vMove = vTop - vRoot;
-    vMove = XMVector3Normalize(vMove) * 0.9f;
-    XMFLOAT3 move;
-    XMStoreFloat3(&move, vMove);
-    weapRoot = XMFLOAT3(weapRoot.x + (move.x * 0.1f), weapRoot.y + (move.y * 0.1f), weapRoot.z + (move.z * 0.1f));
-
-    float randomPos = (float)(rand() % 99 + 1) * 0.01f;
-
-    EmitterData data1;
-    data1.textureFileName = "cloudA.png";
-    data1.position = XMFLOAT3(weapRoot.x + move.x * randomPos, weapRoot.y + move.y * randomPos, weapRoot.z + move.z * randomPos);
-    //data1.position = XMFLOAT3(weapRoot.x + move.x, weapRoot.y + move.y, weapRoot.z + move.z);
-    data1.positionRnd = XMFLOAT3(0.01f, 0.01f, 0.01f);
-    data1.direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
-    data1.delay = 0;
-    data1.gravity = 0.001f;
-    data1.number = 1;
-    data1.lifeTime = 10;
-    data1.size = XMFLOAT2(0.3f, 0.3f);
-    data1.color = XMFLOAT4(0.0f, 0.7f, 1.0f, 1.0f);
-
-    if (animeTime > 0) {
-        animeTime--;
-
-        //ここ各コンボの処理
-        if (combo == 1){
-            if (animeTime >= 10) {
-                fMove_ = { 0,0,0 };
-                fMove_.x += aimDirection2.x;
-                fMove_.z += aimDirection2.z;
-                
-                XMVECTOR vMove = XMLoadFloat3(&fMove_);
-                XMStoreFloat3(&fMove_, vMove * 0.05f);
-                transform_.position_.x += fMove_.x;
-                transform_.position_.z += fMove_.z;
-                
-                if (animeTime >= 20) {
-                    vMove = XMVector3Normalize(vMove);
-                    XMStoreFloat3(&fMove_, vMove * 0.025f);
-                    transform_.position_.x += fMove_.x;
-                    transform_.position_.z += fMove_.z;
-
-                }
-            }
-
-            VFX::Start(data1);
-        } 
-        else if (combo == 2) {
-            if (animeTime >= 10) {
-                fMove_ = { 0,0,0 };
-                fMove_.x += aimDirection2.x;
-                fMove_.z += aimDirection2.z;
-
-                XMVECTOR vMove = XMLoadFloat3(&fMove_);
-                XMStoreFloat3(&fMove_, vMove * 0.05f);
-                transform_.position_.x += fMove_.x;
-                transform_.position_.z += fMove_.z;
-
-                if (animeTime >= 20) {
-                    vMove = XMVector3Normalize(vMove);
-                    XMStoreFloat3(&fMove_, vMove * 0.025f);
-                    transform_.position_.x += fMove_.x;
-                    transform_.position_.z += fMove_.z;
-
-                }
-            }
-
-            VFX::Start(data1);
-        }
-
-        if (!nextCombo && animeTime <= 0) {
-            Model::SetAnimFrame(hModel_, 0, 0, 1);
-            combo = 0;
-        }
-    }
 
     //覗き込み||近接ガード||slow（落下速度低下）
     //こっちは最初に押したらのやつ
@@ -219,8 +118,6 @@ void Player::Update()
         if (decelerationTime_ > noDe) isDecelerating_ = false;
     }
 
-    //デバック用こまんど
-    if (Input::IsKey(DIK_UPARROW)) transform_.position_.y += 1.0f;
 }
 
 void Player::Draw()
@@ -238,11 +135,6 @@ void Player::Draw()
     pText_->Draw(30, 340, (int)(transform_.position_.z));
 
     pText_->Draw(30, 400, (int)((decelerationTime_ * 100.0f)));
-
-
-    pText_->Draw(30, 470, combo);
-    pText_->Draw(30, 510, animeTime);
-    if(nextCombo) pText_->Draw(30, 550, "Yes");
 
 }
 
@@ -283,15 +175,21 @@ float Player::IsAiming()
 
 /*--------------------------------State------------------------*/
 
+void Player::ChangeState(STATE s)
+{
+    state_ = s;
+    stateEnter_ = true;
+}
+
 void Player::UpdateIdle()
 {
     if (IsMovementKeyPressed()) {
-        if (anime_ == false) {
-            anime_ = true;
+        if (stateEnter_) {
             Model::SetAnimFrame(hModel_, 30, 60, 1);
-
+            stateEnter_ = false;
         }
-        state_ = S_MOVE;
+        
+        ChangeState(S_MOVE);
     }
 }
 
@@ -300,9 +198,82 @@ void Player::UpdateMove()
     CalcMove();
 
     if (!IsMovementKeyPressed()) {
-        anime_ = false;
         Model::SetAnimFrame(hModel_, 0, 0, 1);
-        state_ = S_IDLE;
+        ChangeState(S_IDLE);
+    }
+    if (Input::IsKeyDown(DIK_F) && IsPlayerOnGround()) {
+        ChangeState(S_CROUCH);
+    }
+}
+
+void Player::UpdateCrouch()
+{
+    if (stateEnter_) {
+        Model::SetAnimFrame(hModel_, 200, 220, 1);
+        stateEnter_ = false;
+        isCrouching_ = true;
+    }
+
+    if (isCrouching_) {
+        if (cameraHeight_ > 0.8f)
+            cameraHeight_ -= 0.02f;
+
+        fMove_ = { 0,0,0 };
+        XMFLOAT3 aimDirection = pAim_->GetAimDirectionY();
+        if (Input::IsKey(DIK_W)) {
+            fMove_.x += aimDirection.x;
+            fMove_.z += aimDirection.z;
+        }
+        if (Input::IsKey(DIK_A)) {
+            fMove_.x -= aimDirection.z;
+            fMove_.z += aimDirection.x;
+        }
+        if (Input::IsKey(DIK_S)) {
+            fMove_.x -= aimDirection.x;
+            fMove_.z -= aimDirection.z;
+        }
+        if (Input::IsKey(DIK_D)) {
+            fMove_.x += aimDirection.z;
+            fMove_.z -= aimDirection.x;
+        }
+        XMVECTOR vMove = XMLoadFloat3(&fMove_);
+        vMove = XMVector3Normalize(vMove);
+        XMStoreFloat3(&fMove_, vMove);
+        static const float airMoveSpeed = 0.0004f;
+        fMove_ = { ((fMove_.x - playerMovement_.x) * airMoveSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * airMoveSpeed) };
+        playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z };
+        playerMovement_ = { playerMovement_.x - (playerMovement_.x * 0.01f) , 0.0f , playerMovement_.z - (playerMovement_.z * 0.01f) };
+        XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
+        float max = XMVectorGetX(XMVector3Length(vMax));
+        if (max > maxMoveSpeed_) {
+            vMove = XMLoadFloat3(&playerMovement_);
+            vMove = XMVector3Normalize(vMove);
+            vMove *= maxMoveSpeed_;
+            XMStoreFloat3(&playerMovement_, vMove);
+        }
+
+        InstantRotate(playerMovement_.x, playerMovement_.z);
+
+        vMax = XMLoadFloat3(&playerMovement_);
+        float a = XMVectorGetX(XMVector3Length(vMax));
+        if (a <= 0.04) {
+            isCrouching_ = false;
+            playerMovement_ = XMFLOAT3(0, 0, 0);
+        }
+        if (Input::IsKeyUp(DIK_F) || Input::IsKeyDown(DIK_SPACE)) {
+            isCrouching_ = false;
+        }
+
+    }
+    else {
+        if (IsMovementKeyPressed()) Model::SetAnimFrame(hModel_, 30, 60, 1);
+        else {
+            Model::SetAnimFrame(hModel_, 0, 0, 1);
+            playerMovement_ = XMFLOAT3(0, 0, 0);
+
+        }
+        isCrouching_ = false;
+        ChangeState(S_IDLE);
     }
 }
 
@@ -436,7 +407,6 @@ void Player::GradualRotate(float x, float z)
 
 void Player::Gravity()
 {
-
     if (isDecelerating_) graY_ -= (decelerationTime_ * 0.2f * gravity_);
     else graY_ -= gravity_;
 
@@ -444,7 +414,6 @@ void Player::Gravity()
     if (graY_ < maxGra) graY_ = maxGra;
 
     transform_.position_.y += graY_;
-
 
     //空中にいるなら一回目のジャンプは不可に
     firstJump_ = true;
@@ -455,36 +424,12 @@ void Player::Gravity()
         bulletJump_ = false;
         isDecelerated_ = false;
         playerMovement_ = { 0.0f , 0.0f , 0.0f};
-        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+        transform_.position_.y = 0;
         graY_ = 0.0f;
 
         return;
     }
 
-}
-
-void Player::Crouch()
-{
-    if (Input::IsKey(DIK_F)) {
-        isCrouching_ = true;
-        
-        if (Input::IsKeyDown(DIK_F))
-        Model::SetAnimFrame(hModel_, 120, 160, 1);
-
-        if (cameraHeight_ > 0.8f)
-            cameraHeight_ -= 0.02f;
-
-    }
-    else {
-        isCrouching_ = false;
-
-        if(Input::IsKeyUp(DIK_F))
-        Model::SetAnimFrame(hModel_, 0, 0, 1);
-
-        if (cameraHeight_ < 1.0f)
-            cameraHeight_ += 0.02f;
-
-    }
 }
 
 void Player::Jump()
@@ -572,56 +517,7 @@ void Player::Jump()
 }
 
 bool Player::IsPlayerOnGround() {
-    
-    //落ちるときの瞬間移動はなくすことができるけど他がエラー出るやつ
-    /*
-    int checkX1, checkX2;
-    int checkZ1, checkZ2;
-    float ground1, ground2;
-
-    checkX1 = (int)(transform_.position_.x + 0.15f); //前
-    checkZ1 = (int)(transform_.position_.z + 0.3f);
-    checkX2 = (int)(transform_.position_.x - 0.15f);
-    checkZ2 = (int)(transform_.position_.z + 0.3f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
-        return true;
-
-    checkX1 = (int)(transform_.position_.x + 0.3f); //右
-    checkZ1 = (int)(transform_.position_.z + 0.15f);
-    checkX2 = (int)(transform_.position_.x + 0.3f);
-    checkZ2 = (int)(transform_.position_.z - 0.15f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
-        return true;
-
-    checkX1 = (int)(transform_.position_.x + 0.15f); //後ろ
-    checkZ1 = (int)(transform_.position_.z - 0.3f);
-    checkX2 = (int)(transform_.position_.x - 0.15f);
-    checkZ2 = (int)(transform_.position_.z - 0.3f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
-        return true;
-
-    checkX1 = (int)(transform_.position_.x - 0.3f); //左
-    checkZ1 = (int)(transform_.position_.z + 0.15f);
-    checkX2 = (int)(transform_.position_.x - 0.3f);
-    checkZ2 = (int)(transform_.position_.z - 0.15f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y <= ground1 || transform_.position_.y <= ground2)
-        return true;
-    */
-    
-    float ground = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
-    if (transform_.position_.y <= ground)
+    if (transform_.position_.y <= 0.0f)
         return true;
 
     return false;
@@ -642,64 +538,4 @@ bool Player::IsPlayerMove() {
         return true;
 
     return false;
-}
-
-void Player::IsInWall() {
-    //壁との判定  ここ壁だったとき
-    int checkX1, checkX2;
-    int checkZ1, checkZ2;
-    float ground1, ground2;
-
-    checkX1 = (int)(transform_.position_.x + 0.15f); //前
-    checkZ1 = (int)(transform_.position_.z + 0.3f);
-    checkX2 = (int)(transform_.position_.x - 0.15f);
-    checkZ2 = (int)(transform_.position_.z + 0.3f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
-
-    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) { //床やけやったら
-        transform_.position_.z = (float)((int)transform_.position_.z) + (1.0f - 0.3f);
-    }
-
-    checkX1 = (int)(transform_.position_.x + 0.3f); //右
-    checkZ1 = (int)(transform_.position_.z + 0.15f);
-    checkX2 = (int)(transform_.position_.x + 0.3f);
-    checkZ2 = (int)(transform_.position_.z - 0.15f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
-
-    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
-        transform_.position_.x = (float)((int)transform_.position_.x + 1) - 0.3f;  // x　だけ戻すことで斜め移動ができるようになる     
-    }
-
-    checkX1 = (int)(transform_.position_.x + 0.15f); //後ろ
-    checkZ1 = (int)(transform_.position_.z - 0.3f);
-    checkX2 = (int)(transform_.position_.x - 0.15f);
-    checkZ2 = (int)(transform_.position_.z - 0.3f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
-
-    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
-        transform_.position_.z = (float)((int)transform_.position_.z) + 0.3f;
-    }
-
-    checkX1 = (int)(transform_.position_.x - 0.3f); //左
-    checkZ1 = (int)(transform_.position_.z + 0.15f);
-    checkX2 = (int)(transform_.position_.x - 0.3f);
-    checkZ2 = (int)(transform_.position_.z - 0.15f);
-
-    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
-    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
-
-    if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
-        transform_.position_.x = (float)((int)transform_.position_.x) + 0.3f;
-    }
-
 }

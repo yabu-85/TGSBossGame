@@ -11,13 +11,13 @@ Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }, plaPos_{ 0,0,0 },
     pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f),
     pStage_(nullptr), shakeTimerSub_(0)
-
 {
     mouseSensitivity = 2.5f;
     perspectiveDistance_ = 3.2f;
     heightDistance_ = 1.5f;
     cross_.scale_ = { 0.5f, 0.5f, 0.5f };
 
+    transform_.rotate_.y = -180.0f;
 }
 
 Aim::~Aim()
@@ -35,8 +35,6 @@ void Aim::Initialize()
 
 }
 
-static int num = 0;
-
 void Aim::Update()
 {
     //マウス移動量
@@ -48,6 +46,9 @@ void Aim::Update()
         transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //縦方向の回転
         if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
         if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
+
+        if (transform_.rotate_.y <= -270.0f) transform_.rotate_.y = -270.0f;
+        if (transform_.rotate_.y >= -90.0f) transform_.rotate_.y = -90.0f;
     }
 
     //カメラの回転
@@ -95,7 +96,7 @@ void Aim::Update()
         }
     }
 
-    //プレイヤーの半径を考慮して回転を適用します
+    //プレイヤーの半径を考慮して回転を適用している
     //ここAimの近さの値をプレイヤーから取得して計算もしてる
     camPos = caTarget + (camPos * (perspectiveDistance_ * pPlayer_->IsAiming() * shakeAmplitude_));
 

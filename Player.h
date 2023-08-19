@@ -21,13 +21,14 @@ class Player : public GameObject
     XMFLOAT3 previousPosition_;     //前の座標
     XMFLOAT3 playerMovement_;       //プレイヤーの移動量
     bool firstJump_;                //ジャンプしているか
-    bool secondJump_;               //ジャンプしているか
+    bool secondJump_;               //ジャンプしているか2
     bool bulletJump_;               //バレットジャンプしているか
     bool isCrouching_;              //しゃがんでいるか
     bool anime_;                    //アニメーションしてる？
     bool isDecelerated_;            //既に減速しているか
     bool isDecelerating_;           //減速状態か
-    bool isActive_;                   //操作を受け付けるか
+    bool isActive_;                 //操作を受け付けるか
+
     Stage* pStage_;
     Text* pText_;
     Aim* pAim_;
@@ -38,9 +39,7 @@ class Player : public GameObject
     void InstantRotate(float x, float z);               //即座に回転
     void GradualRotate(float x, float z);               //徐々に振り向く
     void Gravity();                     //重力うけます
-    void Crouch();                      //しゃがみ関係です
-    void Jump();                        //ジャンプするよん
-    void IsInWall();
+    void Jump();                        //ジャンプするよ
     float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
 
     bool IsMovementKeyPressed();        //移動キーを押しているか
@@ -51,12 +50,16 @@ class Player : public GameObject
     enum STATE {
         S_IDLE,
         S_MOVE,
+        S_CROUCH,
         S_DEAD,
     };
     STATE state_;
+    bool stateEnter_; //入った時だけ呼ぶのに使う
 
+    void ChangeState(STATE s);
     void UpdateIdle();
     void UpdateMove();
+    void UpdateCrouch();
     void UpdateDead();
 
 

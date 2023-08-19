@@ -130,6 +130,15 @@
     </ClCompile>
     <ClCompile Include="ExitMenu.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ObstacleManager.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObstacle.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -227,6 +236,15 @@
     </ClInclude>
     <ClInclude Include="ExitMenu.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="ObstacleManager.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacle.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObstacle.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
