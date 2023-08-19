@@ -1,4 +1,5 @@
 #include "TestObstacle.h"
+#include "Engine/BoxCollider.h"
 #include "Engine/Model.h"
 
 TestObstacle::TestObstacle(GameObject* parent)
@@ -12,29 +13,19 @@ TestObstacle::~TestObstacle()
 
 void TestObstacle::Initialize()
 {
+	//モデルロード
 	hModel_ = Model::Load("Wall.fbx");
 	assert(hModel_ >= 0);
+
+	//当たり判定付与
+	BoxCollider* collision = new BoxCollider(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1, 1, 1));
+	AddCollider(collision);
 }
 
 void TestObstacle::Update()
 {
-	static float a = 0.0f;
-	static bool b = true;
-
+	///////////////移動テスト
 	transform_.position_.z -= 0.1f;
-	transform_.position_.x += a;
-
-	if (b) {
-		a += 0.01f;
-		if (a >= 0.1f)
-			b = false;
-	}
-	else {
-		a -= 0.01f;
-		if (a <= -0.1f)
-			b = true;
-
-	}
 }
 
 void TestObstacle::Draw()
@@ -45,4 +36,14 @@ void TestObstacle::Draw()
 
 void TestObstacle::Release()
 {
+}
+
+void TestObstacle::OnCollision(GameObject* pTarget)
+{
+	//Playerに当たったとき
+	if (pTarget->GetObjectName() == "Player")
+	{
+		SetPosition(XMFLOAT3(0, 0, 30));
+		//pTarget->SetPosition(0, 0, 30);
+	}
 }

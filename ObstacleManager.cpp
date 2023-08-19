@@ -1,5 +1,6 @@
 #include "ObstacleManager.h"
 #include "TestObstacle.h"
+#include "Engine/CsvReader.h"
 
 ObstacleManager::ObstacleManager(GameObject* parent)
 {
@@ -11,8 +12,43 @@ ObstacleManager::~ObstacleManager()
 
 void ObstacleManager::Initialize()
 {
-	createAndAddObstacle(2, 1, 20, OBSTACLE_NORMAL);
-	createAndAddObstacle(4, 1, 30, OBSTACLE_SPIKE);
+#if 0    
+    // CSVファイル読み込み
+    CsvReader csv;
+    if (csv.Load("Map.csv")) 
+    {
+        // CSVから情報を読み込んで障害物を生成
+        for (int y = 0; y < csv.GetHeight(); ++y) 
+        {
+            std::string rowData = csv.GetString(y, 0); // 1行分のデータを取得
+
+            for (int x = 0; x < rowData.size(); ++x) 
+            {
+                if (rowData[x] == '1') 
+                {
+                    XMFLOAT3 position(static_cast<float>(x), static_cast<float>(y), 0); // Z座標は0と仮定
+                    createAndAddObstacle(position, ObstacleType::OBSTACLE_NORMAL);
+                }
+            }
+        }
+    }
+#endif
+
+#if 0
+    // フィールドを走査して障害物を生成
+    for (int y = 0; y < obstacles_.size(); ++y) {
+        for (int x = 0; x < obstacles_[y].size(); ++x) {
+            if (obstacles_[y][x] == 1) {
+                XMFLOAT3 position(static_cast<float>(x), static_cast<float>(y), 0);
+                createAndAddObstacle(position, ObstacleType::OBSTACLE_NORMAL);
+            }
+        }
+    }
+#endif
+
+    createAndAddObstacle(XMFLOAT3(2, 1, 20), OBSTACLE_NORMAL);
+	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_SPIKE);
+    
 }
 
 void ObstacleManager::Update()
@@ -32,11 +68,12 @@ void ObstacleManager::addObstacle(Obstacle* _obstacle)
 	obstacles_.push_back(_obstacle);
 }
 
-void ObstacleManager::createAndAddObstacle(int _x, int _y, int _z, ObstacleType _type)
+void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type)
 {
     Obstacle* pObstacle = nullptr;
 
-    switch (_type) {
+    switch (_type) 
+    {
     case ObstacleType::OBSTACLE_NORMAL:
         pObstacle = Instantiate<Obstacle>(this);
         break;
@@ -46,8 +83,9 @@ void ObstacleManager::createAndAddObstacle(int _x, int _y, int _z, ObstacleType 
     }
 
     //nullptrじゃなければ
-    if (pObstacle) {
-        pObstacle->SetPosition(_x, _y, _z);
+    if (pObstacle) 
+    {
+        pObstacle->SetPosition(_position);
         addObstacle(pObstacle);
     }
 

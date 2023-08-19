@@ -3,17 +3,18 @@
 #include "Obstacle.h"
 #include <vector>
 
-enum ObstacleType {
+// 障害物番号
+enum ObstacleType 
+{
     OBSTACLE_NORMAL = 0,
     OBSTACLE_SPIKE,
-    OBSTACLE_WALL
-
+    OBSTACLE_WALL,
+    OBSTACLE_MAX
 };
 
-class ObstacleManager :
-    public GameObject
+class ObstacleManager : public GameObject
 {
-    std::vector<Obstacle*> obstacles_;  //Obstacle クラスのポインタのベクター
+    std::vector<Obstacle*> obstacles_;
 
 public:
     ObstacleManager(GameObject* parent);
@@ -23,10 +24,11 @@ public:
     void Draw() override;
     void Release() override;
 
+    // 障害物を追加する
     void addObstacle(Obstacle* _obstacle);
 
-    // Obstacle クラスのインスタンスを ObstacleManager から生成して追加
-    void createAndAddObstacle(int _x, int _y, int _z, ObstacleType _type);
+    // 障害物を生成して追加する
+    void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);
 
 };
 

@@ -1,8 +1,7 @@
 #pragma once
 #include "Obstacle.h"
 
-class TestObstacle :
-    public Obstacle
+class TestObstacle : public Obstacle
 {
 public:
     TestObstacle(GameObject* parent);
@@ -12,5 +11,7 @@ public:
     void Draw() override;
     void Release() override;
 
+    // Õ“Ë”»’è‚ğ•t—^
+    void OnCollision(GameObject* pTarget) override;
 };
 

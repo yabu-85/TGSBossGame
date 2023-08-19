@@ -1,3 +1,4 @@
+#include "Engine/BoxCollider.h"
 #include "Player.h"
 #include "Engine/Input.h"
 #include "Engine/VFX.h"
@@ -42,6 +43,10 @@ void Player::Initialize()
 
     pText_ = new Text;
     pText_->Initialize();
+
+    //箱型コライダー
+    BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 1, 0), XMFLOAT3(1, 2, 1));
+    AddCollider(collision);
 }
 
 void Player::Update()

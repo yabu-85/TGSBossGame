@@ -1,14 +1,11 @@
 #pragma once
 #include "Engine/GameObject.h"
-//Obstacleの基底クラス
 
-class Obstacle :
-    public GameObject
+//Obstacleの基底クラス
+class Obstacle : public GameObject
 {
 protected:
-    int x;
-    int y;
-    int z;
+    XMFLOAT3 position_;
     int hModel_;
 
 public:
@@ -19,6 +16,7 @@ public:
     void Draw() override;
     void Release() override;
 
-    void SetPosition(int _x, int _y, int _z);
+    //障害物の位置をセットする
+    void SetPosition(XMFLOAT3 _position);
 };
 
