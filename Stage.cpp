@@ -8,7 +8,7 @@ Stage::Stage(GameObject* parent)
 {
     //CSVファイル読み込み
     CsvReader csv;
-    csv.Load("Map.csv");
+    csv.Load("Map_Ran.csv");
 
     //ステージの幅と高さを設定
     width_ = (int)csv.GetWidth();
