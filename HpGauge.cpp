@@ -1,5 +1,6 @@
 #include "HpGauge.h"
 #include "Engine/Image.h"
+#include "Player.h"
 
 HpGauge::HpGauge(GameObject* parent)
 	:GameObject(parent, "HpGauge"), hPict_{ -1, -1 }, pPlayer(nullptr)
@@ -35,11 +36,11 @@ void HpGauge::Update()
 
 void HpGauge::Draw()
 {
-    //pic size 512 * 128
-    int hp = 30;
-    int hpMax = 50;
 
-    float hpGauge = ((hp * 100) / hpMax) * 0.01;  //hp50 = 1
+    int hp = pPlayer->GetHp();
+    int hpMax = pPlayer->GetMaxHp();
+
+    float hpGauge = (float)((hp * 100) / hpMax) * 0.01f;  //hp50 = 1
     pic0Pos.scale_.x = hpGauge;
 
     Image::SetTransform(hPict_[0], pic0Pos);

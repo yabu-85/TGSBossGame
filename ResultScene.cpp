@@ -58,7 +58,7 @@ void ResultScene::Update()
 void ResultScene::Draw()
 {
 	Transform pos;
-	pos.scale_ = XMFLOAT3(2.0f, 2.0f, 2.0f);
+	pos.scale_ = XMFLOAT3(2.0f, 1.6f, 2.0f);
 	Image::SetAlpha(hPict_[0], 150);
 	Image::SetTransform(hPict_[0], pos);
 	Image::Draw(hPict_[0]);

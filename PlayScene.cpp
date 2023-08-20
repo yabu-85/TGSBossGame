@@ -42,12 +42,14 @@ void PlayScene ::Update()
 		pPlayer->SetActive(false);
 	}
 
-	if (pTimer_->IsFinished()) {
+	//ゲームオーバー
+	if (pTimer_->IsFinished() || pPlayer_->GetHp() <= 0) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->SetResult(false);
 		pSceneManager->ChangeScene(SCENE_ID_RESULT);
 	}
 
+	//ゲームクリア
 	if (goal <= pPlayer_->GetPosition().z) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->SetResult(true);

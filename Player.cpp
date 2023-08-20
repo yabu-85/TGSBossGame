@@ -23,7 +23,7 @@ Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false), stateEnter_(true)
+    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false), stateEnter_(true), hp_(0), maxHp_(0)
 {
     moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
@@ -48,6 +48,9 @@ void Player::Initialize()
     //モデルデータのロード
     hModel_ = Model::Load("huu.fbx");
     assert(hModel_ >= 0);
+
+    hp_ = 50;
+    maxHp_ = 50;
 
     Model::SetAnimFrame(hModel_, 0, 0, 1);
 
@@ -133,6 +136,10 @@ void Player::Update()
 
         //減速時間終わったよの処理
         if (decelerationTime_ > noDe) isDecelerating_ = false;
+    }
+
+    if (Input::IsKey(DIK_UPARROW)) {
+        hp_--;
     }
 }
 
