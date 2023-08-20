@@ -2,9 +2,12 @@
 #include "Engine/GameObject.h"
 #include "Obstacle.h"
 #include <vector>
+#include "Engine/CsvReader.h"
+
+class Player;
 
 // è·äQï®î‘çÜ
-enum ObstacleType 
+enum ObstacleType
 {
     OBSTACLE_NORMAL = 0,
     OBSTACLE_MISSILE,
@@ -15,6 +18,11 @@ enum ObstacleType
 class ObstacleManager : public GameObject
 {
     std::vector<Obstacle*> obstacles_;
+    CsvReader csv_;
+    int width_;
+    int height_;
+    int loadPosZ_;
+    Player* pPlayer_;
 
 public:
     ObstacleManager(GameObject* parent);
@@ -30,5 +38,6 @@ public:
     // è·äQï®Çê∂ê¨ÇµÇƒí«â¡Ç∑ÇÈ
     void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);
 
+    void LoadCsv();
 };
 

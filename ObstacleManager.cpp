@@ -3,8 +3,10 @@
 #include "WallObstacle.h"
 #include "UfoObstacle.h"
 #include "Engine/CsvReader.h"
+#include "Player.h"
 
 ObstacleManager::ObstacleManager(GameObject* parent)
+    :GameObject(parent, "ObstacleManager"), width_(0), height_(0), loadPosZ_(0), pPlayer_(nullptr)
 {
 }
 
@@ -14,39 +16,29 @@ ObstacleManager::~ObstacleManager()
 
 void ObstacleManager::Initialize()
 {
-#if 1
     // CSVファイル読み込み
-    CsvReader csv;
-    csv.Load("Obstacle.csv");
+    csv_.Load("Obstacle.csv");
 
     //ステージの幅と高さを設定
-    int w = (int)csv.GetWidth();
-    int h = (int)csv.GetHeight();
+    width_ = (int)csv_.GetWidth();
+    height_ = (int)csv_.GetHeight();
 
-    //CSVデータをテーブルに格納
-    for (int x = 0; x < w; x++)
-    {
-        for (int z = 0; z < h; z++)
-        {
-            if (csv.GetValue(x,z) != 0) 
-            {
-                XMFLOAT3 position(static_cast<float>(x), 1, static_cast<float>(z));
-                int intValue = csv.GetValue(x, z);
-                ObstacleType a = static_cast<ObstacleType>(intValue);
-                createAndAddObstacle(position, a);
-            }
-        }
-    }
-#endif
+    pPlayer_ = (Player*)FindObject("Player");
 
-    createAndAddObstacle(XMFLOAT3(0, 0, 0), OBSTACLE_NORMAL);
-	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_MISSILE);
-	createAndAddObstacle(XMFLOAT3(3, 1, 30), OBSTACLE_WALL);
-	createAndAddObstacle(XMFLOAT3(7, 1, 30), OBSTACLE_UFO);
+    loadPosZ_ = 10;
+    
 }
 
 void ObstacleManager::Update()
 {
+    int plaPosZ = pPlayer_->GetPosition().z;
+    if (loadPosZ_ < plaPosZ) {
+        loadPosZ_ = plaPosZ;
+
+        LoadCsv();
+    }
+
+
 }
 
 void ObstacleManager::Draw()
@@ -89,4 +81,19 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
         addObstacle(pObstacle);
     }
 
+}
+
+void ObstacleManager::LoadCsv()
+{
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < width_; x++)
+    {
+        if (csv_.GetValue(x, loadPosZ_) != 0)
+        {
+            XMFLOAT3 position(static_cast<float>(x), 1, static_cast<float>(loadPosZ_+loadPosZ_));
+            int intValue = csv_.GetValue(x, loadPosZ_);
+            ObstacleType a = static_cast<ObstacleType>(intValue);
+            createAndAddObstacle(position, a);
+        }
+    }
 }
