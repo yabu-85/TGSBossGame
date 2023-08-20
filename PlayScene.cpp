@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Stage.h"
 #include "PauseMenu.h"
+#include "Timer.h"
 #include "Engine/Input.h"
 #include "ExitMenu.h"
 #include "ObstacleManager.h"
@@ -18,6 +19,7 @@ void PlayScene::Initialize()
 	Stage* pStage = Instantiate<Stage>(this);
 	Player* pPlayer = Instantiate<Player>(this);
 	Instantiate<ObstacleManager>(this);
+	Instantiate<Timer>(this);
 
 	pPlayer->SetPosition(pStage->GetPlaPos());
 	pPlayer->SetActiveWithDelay(true);

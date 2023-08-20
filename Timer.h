@@ -15,24 +15,12 @@ class Timer : public GameObject
     float drawY_;        //描画位置(上下)
 
 public:
-    //コンストラクタ
     Timer(GameObject* parent);
-
-    //デストラクタ
     ~Timer();
-
-    //初期化
     void Initialize() override;
-
-    //更新
     void Update() override;
-
-    //描画
     void Draw() override;
-
-    //開放
     void Release() override;
-
 
     //タイマー設定
     void SetLimit(float _sec) { frame_ = (int)(_sec * FPS); }
