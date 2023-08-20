@@ -6,7 +6,7 @@
 
 //コンストラクタ
 ResultScene::ResultScene(GameObject* parent)
-	: GameObject(parent, "ResultScene"), hPict_{ -1, -1 }
+	: GameObject(parent, "ResultScene"), hPict_{ -1, -1, -1 }
 {
 }
 
@@ -27,16 +27,22 @@ void ResultScene::Initialize()
 {
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	if (pSceneManager->GetResult()) {
-		hPict_[0] = Image::Load("Clear.png");
+		hPict_[0] = Image::Load("ClearBG.png");
 		assert(hPict_[0] >= 0);
+
+		hPict_[1] = Image::Load("Clear.png");
+		assert(hPict_[1] >= 0);
 	}
 	else {
-		hPict_[0] = Image::Load("Over.png");
+		hPict_[0] = Image::Load("OverBG.png");
 		assert(hPict_[0] >= 0);
+
+		hPict_[1] = Image::Load("Over.png");
+		assert(hPict_[1] >= 0);
 	}
 
-	hPict_[1] = Image::Load("cross.png");
-	assert(hPict_[1] >= 0);
+	hPict_[2] = Image::Load("cross.png");
+	assert(hPict_[2] >= 0);
 
 	ButtonInitializ();
 
@@ -53,8 +59,15 @@ void ResultScene::Draw()
 {
 	Transform pos;
 	pos.position_.y = 0.2f;
+	pos.scale_ = XMFLOAT3(2.0f, 2.0f, 2.0f);
+	Image::SetAlpha(hPict_[0], 150);
 	Image::SetTransform(hPict_[0], pos);
 	Image::Draw(hPict_[0]);
+
+	pos.position_.y = 0.2f;
+	pos.scale_ = XMFLOAT3(2.0f, 2.0f, 2.0f);
+	Image::SetTransform(hPict_[1], pos);
+	Image::Draw(hPict_[1]);
 
 	DrawCursor();
 }
@@ -78,8 +91,8 @@ void ResultScene::DrawCursor()
 	aim.position_ = Input::GetMousePositionSub();
 	aim.position_ = { aim.position_.x / screenWidth, -aim.position_.y / screenHeight , 0 };
 
-	Image::SetTransform(hPict_[1], aim);
-	Image::Draw(hPict_[1]);
+	Image::SetTransform(hPict_[2], aim);
+	Image::Draw(hPict_[2]);
 }
 
 void ResultScene::ButtonInitializ()

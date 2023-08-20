@@ -33,7 +33,7 @@ void Button::Update()
 	else {
 		transform_.scale_.x = 0.6f * width_;
 		transform_.scale_.y = 0.6f * height_;
-		alpha_ = 150;
+		alpha_ = 230;
 	}
 
 }

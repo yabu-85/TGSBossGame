@@ -4,7 +4,7 @@
 
 class ResultScene : public GameObject
 {
-	int hPict_[2];
+	int hPict_[3];
 
 	void DrawCursor();
 	void ButtonInitializ();
