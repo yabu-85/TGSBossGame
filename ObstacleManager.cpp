@@ -37,39 +37,7 @@ void ObstacleManager::Initialize()
             }
         }
     }
-
-    if (csv.Load("Map.csv")) 
-    {
-        // CSVから情報を読み込んで障害物を生成
-        for (int y = 0; y < csv.GetHeight(); ++y) 
-        {
-            std::string rowData = csv.GetString(y, 0); // 1行分のデータを取得
-
-            for (int x = 0; x < rowData.size(); ++x) 
-            {
-                if (rowData[x] == '1') 
-                {
-                    XMFLOAT3 position(static_cast<float>(x), static_cast<float>(y), 0); // Z座標は0と仮定
-                    createAndAddObstacle(position, ObstacleType::OBSTACLE_NORMAL);
-                }
-            }
-        }
-    }
 #endif
-
-#if 0
-    // フィールドを走査して障害物を生成
-    for (int y = 0; y < obstacles_.size(); ++y) {
-        for (int x = 0; x < obstacles_[y].size(); ++x) {
-            if (obstacles_[y][x] == 1) {
-                XMFLOAT3 position(static_cast<float>(x), static_cast<float>(y), 0);
-                createAndAddObstacle(position, ObstacleType::OBSTACLE_NORMAL);
-            }
-        }
-    }
-#endif
-
-    //////////csvから位置を呼び出す予定やったけど出来とらん｡｡｡
 
     createAndAddObstacle(XMFLOAT3(0, 0, 0), OBSTACLE_NORMAL);
 	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_MISSILE);
