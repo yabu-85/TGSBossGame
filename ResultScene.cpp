@@ -1,4 +1,5 @@
 #include "ResultScene.h"
+#include "ExitMenu.h"	
 
 //コンストラクタ
 ResultScene::ResultScene(GameObject* parent)
@@ -9,6 +10,7 @@ ResultScene::ResultScene(GameObject* parent)
 //初期化
 void ResultScene::Initialize()
 {
+	Instantiate<ExitMenu>(this);
 }
 
 //更新

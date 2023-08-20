@@ -141,17 +141,6 @@ void Player::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-    XMVECTOR v = XMLoadFloat3(&playerMovement_);
-    pText_->Draw(30, 70, (int)( Length(v) * 100.0f ) );
-    pText_->Draw(30, 110, (int)( (maxMoveSpeed_ * 100.0f)));
-
-    pText_->Draw(30, 190, (int)(pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z) ));
-    pText_->Draw(30, 250, (int)(transform_.position_.x));
-    pText_->Draw(30, 290, (int)(transform_.position_.y));
-    pText_->Draw(30, 340, (int)(transform_.position_.z));
-
-    pText_->Draw(30, 400, (int)((decelerationTime_ * 100.0f)));
-
 }
 
 void Player::Release()

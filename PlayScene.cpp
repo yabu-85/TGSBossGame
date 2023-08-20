@@ -6,10 +6,11 @@
 #include "Engine/Input.h"
 #include "ExitMenu.h"
 #include "ObstacleManager.h"
+#include "Engine/SceneManager.h"
 
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
-	: GameObject(parent, "PlayScene")
+	: GameObject(parent, "PlayScene"), pTimer_(nullptr)
 {
 }
 
@@ -19,7 +20,9 @@ void PlayScene::Initialize()
 	Stage* pStage = Instantiate<Stage>(this);
 	Player* pPlayer = Instantiate<Player>(this);
 	Instantiate<ObstacleManager>(this);
-	Instantiate<Timer>(this);
+	pTimer_ = Instantiate<Timer>(this);
+	pTimer_->SetLimit(10);
+	pTimer_->Start();
 
 	pPlayer->SetPosition(pStage->GetPlaPos());
 	pPlayer->SetActiveWithDelay(true);
@@ -32,6 +35,11 @@ void PlayScene ::Update()
 		Instantiate<PauseMenu>(this);
 		Player* pPlayer = (Player*)FindObject("Player");
 		pPlayer->SetActive(false);
+	}
+
+	if (pTimer_->IsFinished()) {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_RESULT);
 	}
 }
 

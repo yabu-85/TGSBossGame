@@ -32,7 +32,7 @@ public:
     void Stop() { active_ = false; }
 
     //タイマー終了判定
-    bool IsFinished() { return (frame_ == 0); }
+    bool IsFinished() { return (frame_ <= 0); }
 
     //タイム取得
     int GetTime() { return frame_ / FPS; }
