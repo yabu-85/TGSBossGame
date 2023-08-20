@@ -46,7 +46,7 @@ void StageSelect::Update()
 void StageSelect::Draw()
 {
 	Transform pos;
-	pos.position_.y = 0.0f;
+	pos.position_.y = 0.1f;
 	pos.scale_ = XMFLOAT3(0.5, 0.5f, 0.5f);
 	Image::SetTransform(hPict_, pos);
 	Image::Draw(hPict_);
@@ -76,14 +76,17 @@ void StageSelect::CheckButtonPressed()
 			if (na == "Clear") {
 				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 				pSceneManager->ChangeScene(SCENE_ID_PLAY);
+
 			}
 			else if (na == "Over") {
 				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 				pSceneManager->ChangeScene(SCENE_ID_PLAY);
+
 			}
-			else if (na == "Title") {
+			else if (na == "Team") {
 				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 				pSceneManager->ChangeScene(SCENE_ID_PLAY);
+
 			}
 			else if (na == "Back") {
 				std::list<GameObject*>* gs2 = GetParent()->GetChildList();

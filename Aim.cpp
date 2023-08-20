@@ -9,7 +9,7 @@
 
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }, plaPos_{ 0,0,0 },
-    pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(true), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f),
+    pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(false), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f),
     pStage_(nullptr), shakeTimerSub_(0)
 {
     mouseSensitivity = 2.5f;

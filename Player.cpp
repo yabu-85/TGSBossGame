@@ -153,7 +153,12 @@ void Player::SetActiveWithDelay(bool isActive)
     std::thread([this, isActive]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         isActive_ = isActive;
+        Aim* pAim = (Aim*)FindObject("Aim");
+        pAim->SetAimMove(true);
+
     }).detach();    
+
+
 }
 
 XMVECTOR Player::GetPlaVector() {

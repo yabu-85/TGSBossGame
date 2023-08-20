@@ -18,8 +18,8 @@ namespace Input
 	LPDIRECTINPUTDEVICE8	pMouseDevice_;	//デバイスオブジェクト
 	DIMOUSESTATE mouseState_;				//マウスの状態
 	DIMOUSESTATE prevMouseState_;			//前フレームのマウスの状態
-	POINT mousePos_;							//マウスカーソルの位置
-	XMFLOAT3 mousePosSub_;						//マウスカーソルの位置 -screensize ～ screensize
+	POINT mousePos_;						//マウスカーソルの位置
+	XMFLOAT3 mousePosSub_;					//マウスカーソルの位置 -screensize ～ screensize
 
 	//初期化
 	void Initialize(HWND hWnd)
@@ -67,8 +67,6 @@ namespace Input
 
 	}
 
-
-
 	//開放
 	void Release()
 	{
@@ -115,7 +113,6 @@ namespace Input
 		}
 		return false;
 	}
-
 
 	/////////////////////////////　マウス情報取得　//////////////////////////////////
 
@@ -184,6 +181,5 @@ namespace Input
 		XMFLOAT3 result = XMFLOAT3((float)mouseState_.lX, (float)mouseState_.lY, (float)mouseState_.lZ);
 		return result;
 	}
-
 
 }

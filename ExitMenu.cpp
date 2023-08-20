@@ -10,8 +10,8 @@ struct ButtonInfoExit {
 	float height;
 	std::string name;
 }tbl[] = {
-	{0.0f, -300.0f, 1.0f, 1.5f, "Ok"},
-	{0.0f, -600.0f, 1.0f, 1.5f, "Back"},
+	{0.0f, -300.0f, 1.0f, 1.0f, "Ok"},
+	{0.0f, -600.0f, 1.0f, 1.0f, "Back"},
 
 };
 

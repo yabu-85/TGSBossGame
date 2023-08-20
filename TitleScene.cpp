@@ -77,8 +77,8 @@ void TitleScene::Draw()
 	if (disp_) {
 		Image::SetAlpha(hPict_[0], 150);
 		Transform pos1 = transform_;
-		pos1.scale_.x = 1.6f;
-		pos1.scale_.y = 1.2f;
+		pos1.scale_.x = 1.0f;
+		pos1.scale_.y = 1.0f;
 		Image::SetTransform(hPict_[0], pos1);
 		Image::Draw(hPict_[0]);
 
