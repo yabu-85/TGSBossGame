@@ -14,9 +14,30 @@ ObstacleManager::~ObstacleManager()
 
 void ObstacleManager::Initialize()
 {
-#if 0    
+#if 1   
     // CSVファイル読み込み
     CsvReader csv;
+    csv.Load("Obstacle.csv");
+
+    //ステージの幅と高さを設定
+    int w = (int)csv.GetWidth();
+    int h = (int)csv.GetHeight();
+
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < w; x++)
+    {
+        for (int z = 0; z < h; z++)
+        {
+            if (csv.GetValue(x,z) != 0) 
+            {
+                XMFLOAT3 position(static_cast<float>(x), 1, static_cast<float>(z));
+                int intValue = csv.GetValue(x, z);
+                ObstacleType a = static_cast<ObstacleType>(intValue);
+                createAndAddObstacle(position, a);
+            }
+        }
+    }
+
     if (csv.Load("Map.csv")) 
     {
         // CSVから情報を読み込んで障害物を生成
