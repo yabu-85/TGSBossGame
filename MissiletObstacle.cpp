@@ -1,17 +1,17 @@
-#include "TestObstacle.h"
+#include "MissileObstacle.h"
 #include "Engine/BoxCollider.h"
 #include "Engine/Model.h"
 
-TestObstacle::TestObstacle(GameObject* parent)
+MissileObstacle::MissileObstacle(GameObject* parent)
 	:Obstacle(parent)
 {
 }
 
-TestObstacle::~TestObstacle()
+MissileObstacle::~MissileObstacle()
 {
 }
 
-void TestObstacle::Initialize()
+void MissileObstacle::Initialize()
 {
 	//モデルロード
 	hModel_ = Model::Load("Missile.fbx");
@@ -20,25 +20,28 @@ void TestObstacle::Initialize()
 	//当たり判定付与
 	BoxCollider* collision = new BoxCollider(XMFLOAT3(0,0,0), XMFLOAT3(0.8f, 0.8f, 1.8f));
 	AddCollider(collision);
+
+	//揺れるアニメーション
+	Model::SetAnimFrame(hModel_, 0, 60, 1);
 }
 
-void TestObstacle::Update()
+void MissileObstacle::Update()
 {
 	///////////////移動テスト
 	transform_.position_.z -= 0.1f;
 }
 
-void TestObstacle::Draw()
+void MissileObstacle::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }
 
-void TestObstacle::Release()
+void MissileObstacle::Release()
 {
 }
 
-void TestObstacle::OnCollision(GameObject* pTarget)
+void MissileObstacle::OnCollision(GameObject* pTarget)
 {
 	XMFLOAT3 position = {0,0,0};
 	//Playerに当たったとき

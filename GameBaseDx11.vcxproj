@@ -159,9 +159,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Stage.cpp" />
-    <ClCompile Include="TestObstacle.cpp" />
+    <ClCompile Include="MissiletObstacle.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="UfoObstacle.cpp" />
     <ClCompile Include="WallObstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -199,9 +200,10 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Stage.h" />
-    <ClInclude Include="TestObstacle.h" />
+    <ClInclude Include="MissileObstacle.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="UfoObstacle.h" />
     <ClInclude Include="WallObstacle.h" />
   </ItemGroup>
   <ItemGroup>

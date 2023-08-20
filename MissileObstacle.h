@@ -1,11 +1,11 @@
 #pragma once
 #include "Obstacle.h"
 
-class TestObstacle : public Obstacle
+class MissileObstacle : public Obstacle
 {
 public:
-    TestObstacle(GameObject* parent);
-    ~TestObstacle();
+    MissileObstacle(GameObject* parent);
+    ~MissileObstacle();
     void Initialize() override;
     void Update() override;
     void Draw() override;

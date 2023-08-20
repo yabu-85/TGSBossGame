@@ -14,18 +14,17 @@ WallObstacle::~WallObstacle()
 void WallObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Wall2.fbx");
+	hModel_ = Model::Load("Wall_Stone.fbx");
 	assert(hModel_ >= 0);
 
 	//当たり判定付与
-	BoxCollider* collision = new BoxCollider(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1, 3, 1));
+	BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 3.0, 0), XMFLOAT3(8.5, 4, 0.8));
 	AddCollider(collision);
 }
 
 void WallObstacle::Update()
 {
-	///////////////移動テスト
-	transform_.position_.z -= 0.1f;
+
 }
 
 void WallObstacle::Draw()

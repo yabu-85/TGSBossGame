@@ -27,11 +27,17 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{344acb72-d4c5-4ea9-a165-39054669d290}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TitleScene">
+    <Filter Include="UI">
+      <UniqueIdentifier>{ee4d1872-9220-4d67-83d9-b317959760e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\TitleScene">
       <UniqueIdentifier>{a0504605-1fde-4791-acfd-0d52f5d90064}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PlayScene">
+    <Filter Include="Scene\PlayScene">
       <UniqueIdentifier>{36f4467b-6c3d-44d9-b2f4-0b9af523d33c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\PlayScene\Obstacle">
+      <UniqueIdentifier>{ddf9ac54-66dc-42e9-bbdc-2d2ab18d969d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -114,30 +120,43 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Logo.cpp">
-      <Filter>TitleScene</Filter>
+      <Filter>Scene\TitleScene</Filter>
     </ClCompile>
     <ClCompile Include="Aim.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="PauseMenu.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Stage.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="ExitMenu.cpp" />
-    <ClCompile Include="Button.cpp" />
     <ClCompile Include="ObstacleManager.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
     <ClCompile Include="Obstacle.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
-    <ClCompile Include="TestObstacle.cpp">
-      <Filter>PlayScene</Filter>
+    <ClCompile Include="MissiletObstacle.cpp">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="WallObstacle.cpp">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ExitMenu.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UfoObstacle.cpp">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,30 +239,43 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Logo.h">
-      <Filter>TitleScene</Filter>
+      <Filter>Scene\TitleScene</Filter>
     </ClInclude>
     <ClInclude Include="Aim.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="PauseMenu.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Stage.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="ExitMenu.h" />
-    <ClInclude Include="Button.h" />
     <ClInclude Include="ObstacleManager.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClInclude>
     <ClInclude Include="Obstacle.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClInclude>
-    <ClInclude Include="TestObstacle.h">
-      <Filter>PlayScene</Filter>
+    <ClInclude Include="MissileObstacle.h">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="WallObstacle.h">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ExitMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UfoObstacle.h">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

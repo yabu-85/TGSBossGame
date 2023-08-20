@@ -1,6 +1,7 @@
 #include "ObstacleManager.h"
-#include "TestObstacle.h"
+#include "MissileObstacle.h"
 #include "WallObstacle.h"
+#include "UfoObstacle.h"
 #include "Engine/CsvReader.h"
 
 ObstacleManager::ObstacleManager(GameObject* parent)
@@ -52,6 +53,7 @@ void ObstacleManager::Initialize()
     createAndAddObstacle(XMFLOAT3(0, 0, 0), OBSTACLE_NORMAL);
 	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_MISSILE);
 	createAndAddObstacle(XMFLOAT3(2, 1, 30), OBSTACLE_WALL);
+	createAndAddObstacle(XMFLOAT3(7, 1, 30), OBSTACLE_UFO);
 }
 
 void ObstacleManager::Update()
@@ -81,10 +83,13 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
         pObstacle = Instantiate<Obstacle>(this);
         break;
     case ObstacleType::OBSTACLE_MISSILE:
-        pObstacle = Instantiate<TestObstacle>(this);
+        pObstacle = Instantiate<MissileObstacle>(this);
         break;
     case ObstacleType::OBSTACLE_WALL:
         pObstacle = Instantiate<WallObstacle>(this);
+        break;
+    case ObstacleType::OBSTACLE_UFO:
+        pObstacle = Instantiate<UfoObstacle>(this);
         break;
     }
 
