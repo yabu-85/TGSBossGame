@@ -160,7 +160,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Stage.cpp" />
-    <ClCompile Include="Stageselect.cpp" />
+    <ClCompile Include="StageSelect.cpp" />
     <ClCompile Include="TestObstacle.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -201,7 +201,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Stage.h" />
-    <ClInclude Include="Stageselect.h" />
+    <ClInclude Include="StageSelect.h" />
     <ClInclude Include="TestObstacle.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TitleScene.h" />

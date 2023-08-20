@@ -2,14 +2,17 @@
 #include "Engine/GameObject.h"
 
 //タイマー管理するクラス
-class Stageselect : public GameObject
+class StageSelect : public GameObject
 {
+    int hPict_;
+    int time_;
+
     void CheckButtonPressed();
     void ButtonInitializ();
 
 public:
-    Stageselect(GameObject* parent);
-    ~Stageselect();
+    StageSelect(GameObject* parent);
+    ~StageSelect();
     void Initialize() override;
     void Update() override;
     void Draw() override;

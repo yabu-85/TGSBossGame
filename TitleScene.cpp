@@ -21,9 +21,8 @@ struct ButtonInfoTitle {
 	float height;
 	std::string name;
 }tbl[] = {
-	{0.0f, 100.0f, 1.0f, 1.0f, "Start"},
-	{0.0f, -200.0f, 1.0f, 1.0f, "StageSelect"},
-	{0.0f, -500.0f, 1.0f, 1.0f, "Quit"},
+	{0.0f, 0.0f, 1.0f, 1.0f, "Start"},
+	{0.0f, -300.0f, 1.0f, 1.0f, "Quit"},
 
 };
 
@@ -145,11 +144,7 @@ void TitleScene::CheckButtonPressed()
 			std::string na = pButton->GetName();
 			
 			if(na == "Start") {
-				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-				pSceneManager->ChangeScene(SCENE_ID_PLAY);
-			}
-			else if (na == "StageSelect") {
-				Instantiate<Stageselect>(this);
+				Instantiate<StageSelect>(this);
 				for (GameObject* obj : *gs) {
 					if (obj->GetObjectName() != "Button") {
 						continue;
