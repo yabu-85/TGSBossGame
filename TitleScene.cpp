@@ -7,6 +7,7 @@
 #include "Engine/Input.h"
 #include "ExitMenu.h"
 #include "Engine/Global.h"
+#include "Stageselect.h"
 
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}
@@ -20,8 +21,9 @@ struct ButtonInfoTitle {
 	float height;
 	std::string name;
 }tbl[] = {
-	{0.0f, 0.0f, 100.0f, 100.0f, "Start"},
-	{0.0f, -300.0f, 100.0f, 100.0f, "Quit"},
+	{0.0f, 100.0f, 1.0f, 1.0f, "Start"},
+	{0.0f, -200.0f, 1.0f, 1.0f, "StageSelect"},
+	{0.0f, -500.0f, 1.0f, 1.0f, "Quit"},
 
 };
 
@@ -145,6 +147,22 @@ void TitleScene::CheckButtonPressed()
 			if(na == "Start") {
 				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 				pSceneManager->ChangeScene(SCENE_ID_PLAY);
+			}
+			else if (na == "StageSelect") {
+				Instantiate<Stageselect>(this);
+				for (GameObject* obj : *gs) {
+					if (obj->GetObjectName() != "Button") {
+						continue;
+					}
+
+					Button* pButton = (Button*)obj;
+					pButton->SetActive(false);
+					pButton->SetAlpha_(10);
+					pButton->SetFrameAlpha_(10);
+
+				}
+
+				break;
 			}
 			else if (na == "Quit") {
 				Instantiate<ExitMenu>(this);

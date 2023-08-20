@@ -1,51 +1,52 @@
-#include "ExitMenu.h"
-#include "Engine/Image.h"
-#include "Button.h"
+#include "Stageselect.h"
 #include "Engine/Input.h"
+#include "Button.h"
 
-struct ButtonInfoExit {
+Stageselect::Stageselect(GameObject* parent)
+	:GameObject(parent, "Timer")
+{
+}
+
+struct ButtonInfoStage {
 	float x;
 	float y;
 	float width;
 	float height;
 	std::string name;
 }tbl[] = {
-	{0.0f, -300.0f, 1.0f, 1.5f, "Ok"},
-	{0.0f, -600.0f, 1.0f, 1.5f, "Back"},
+	{-1000.0f, 0.0f, 0.6f, 1.0f, "Clear"},
+	{0.0f, 0.0f, 0.6f, 1.0f, "Over"},
+	{1000.0f, 0.0f, 0.6f, 1.0f, "Title"},
+	{0.0f, -300.0f, 1.0f, 1.0f, "Back"},
 
 };
 
-ExitMenu::ExitMenu(GameObject* parent):
-	GameObject(parent, "ExitMenu"), hPict_(-1), time_(0)
+Stageselect::~Stageselect()
 {
 }
 
-ExitMenu::~ExitMenu()
-{
-}
-
-void ExitMenu::Initialize()
+void Stageselect::Initialize()
 {
 	ButtonInitializ();
-	time_ = 0;
 }
 
-void ExitMenu::Update()
+void Stageselect::Update()
 {
-	if(time_ > 2)
 	CheckButtonPressed();
-	time_++;
+
 }
 
-void ExitMenu::Draw()
+void Stageselect::Draw()
 {
 }
 
-void ExitMenu::Release()
+void Stageselect::Release()
 {
 }
 
-void ExitMenu::CheckButtonPressed()
+
+
+void Stageselect::CheckButtonPressed()
 {
 	if (!Input::IsMouseButtonDown(0))
 		return;
@@ -60,7 +61,11 @@ void ExitMenu::CheckButtonPressed()
 		if (pButton->IsButtonClicked()) {
 			std::string na = pButton->GetName();
 
-			if (na == "Ok") {
+			if (na == "1") {
+				PostQuitMessage(0); // プログラムを終了させるメッセージを送信
+				break;
+			}
+			else if (na == "2") {
 				PostQuitMessage(0); // プログラムを終了させるメッセージを送信
 				break;
 			}
@@ -74,14 +79,9 @@ void ExitMenu::CheckButtonPressed()
 
 					Button* pButton = (Button*)obj;
 					pButton->SetActive(true);
-					if (FindObject("PlayScene")) {
-						pButton->SetAlpha_(100);
-						pButton->SetFrameAlpha_(100);
-					}
-					else {
-						pButton->SetAlpha_(255);
-						pButton->SetFrameAlpha_(255);
-					}
+					pButton->SetAlpha_(255);
+					pButton->SetFrameAlpha_(255);
+
 				}
 
 				KillMe();
@@ -92,7 +92,7 @@ void ExitMenu::CheckButtonPressed()
 	}
 }
 
-void ExitMenu::ButtonInitializ()
+void Stageselect::ButtonInitializ()
 {
 	const int button = sizeof(tbl) / sizeof(tbl[0]);
 	for (int i = 0; i < button; i++) {

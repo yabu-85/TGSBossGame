@@ -15,9 +15,9 @@ struct ButtonInfoPause {
 	float height;
 	std::string name;
 }tbl[] = {
-	{0.0f, 300.0f, 100.0f, 100.0f, "ReturnGame"},
-	{0.0f, 0.0f, 100.0f, 100.0f, "ReturnTitle"},
-	{0.0f, -300.0f, 100.0f, 100.0f, "Quit"},
+	{0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame"},
+	{0.0f, 0.0f, 1.0f, 1.0f, "ReturnTitle"},
+	{0.0f, -300.0f, 1.0f, 1.0f, "Quit"},
 
 };
 
