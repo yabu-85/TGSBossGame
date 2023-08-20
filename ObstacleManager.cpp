@@ -12,6 +12,11 @@ ObstacleManager::~ObstacleManager()
 void ObstacleManager::Initialize()
 {
 	createAndAddObstacle(2, 1, 20, OBSTACLE_NORMAL);
+	createAndAddObstacle(1, 1, 60, OBSTACLE_NORMAL);
+	createAndAddObstacle(4, 1, 80, OBSTACLE_NORMAL);
+	createAndAddObstacle(2, 1, 90, OBSTACLE_NORMAL);
+	createAndAddObstacle(3, 1, 91, OBSTACLE_NORMAL);
+	createAndAddObstacle(4, 1, 92, OBSTACLE_NORMAL);
 	createAndAddObstacle(4, 1, 30, OBSTACLE_SPIKE);
 }
 

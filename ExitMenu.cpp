@@ -74,8 +74,14 @@ void ExitMenu::CheckButtonPressed()
 
 					Button* pButton = (Button*)obj;
 					pButton->SetActive(true);
-					pButton->SetAlpha_(255);
-
+					if (FindObject("TitleScene")) {
+						pButton->SetAlpha_(255);
+						pButton->SetFrameAlpha_(255);
+					}
+					if (FindObject("PlayScene")) {
+						pButton->SetAlpha_(100);
+						pButton->SetFrameAlpha_(100);
+					}
 				}
 
 				KillMe();
@@ -93,5 +99,7 @@ void ExitMenu::ButtonInitializ()
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
 		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+		pButton->SetAlpha_(100);
+		pButton->SetFrameAlpha_(100);
 	}
 }

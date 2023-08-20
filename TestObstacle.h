@@ -4,6 +4,7 @@
 class TestObstacle :
     public Obstacle
 {
+    int aa;
 public:
     TestObstacle(GameObject* parent);
     ~TestObstacle();

@@ -37,7 +37,7 @@ void PauseMenu::Initialize()
 	Aim* pAim = (Aim*)FindObject("Aim");
 	pAim->SetAimMove(false);
 
-	hPict_[0] = Image::Load("Black.png");
+	hPict_[0] = Image::Load("White.png");
 	assert(hPict_[0] >= 0);
 
 	hPict_[1] = Image::Load("cross.png");
@@ -53,7 +53,7 @@ void PauseMenu::Update()
 void PauseMenu::Draw()
 {
 
-	Image::SetAlpha(hPict_[0], 50);
+	Image::SetAlpha(hPict_[0], 20);
 	Image::SetTransform(hPict_[0], transform_);
 	Image::Draw(hPict_[0]);
 
@@ -78,6 +78,7 @@ void PauseMenu::ButtonInitializ()
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
 		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+		pButton->SetFrameAlpha_(100);
 	}
 }
 
@@ -104,9 +105,6 @@ void PauseMenu::CheckButtonPressed()
 				KillMe();
 				break;
 			}
-			else if (na == "Setting") {
-
-			}
 			else if (na == "ReturnTitle") {
 				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 				pSceneManager->ChangeScene(SCENE_ID_TITLE);
@@ -123,6 +121,7 @@ void PauseMenu::CheckButtonPressed()
 					Button* pButton = (Button*)obj;
 					pButton->SetActive(false);
 					pButton->SetAlpha_(10);
+					pButton->SetFrameAlpha_(10);
 
 				}
 				break;

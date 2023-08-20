@@ -26,7 +26,7 @@ void PlayScene::Initialize()
 //çXêV
 void PlayScene ::Update()
 {
-	if (Input::IsKeyDown(DIK_E)) {
+	if (Input::IsKeyDown(DIK_E) && !FindObject("PauseMenu")) {
 		Instantiate<PauseMenu>(this);
 		Player* pPlayer = (Player*)FindObject("Player");
 		pPlayer->SetActive(false);

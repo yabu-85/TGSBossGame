@@ -2,10 +2,10 @@
 #include "Engine/GameObject.h"
 #include "Engine/Text.h"
 
-class GameOverScene : public GameObject
+class ResultScene : public GameObject
 {
 public:
-	GameOverScene(GameObject* parent);
+	ResultScene(GameObject* parent);
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;

@@ -21,8 +21,7 @@ struct ButtonInfoTitle {
 	std::string name;
 }tbl[] = {
 	{0.0f, 0.0f, 100.0f, 100.0f, "Start"},
-	{0.0f, -200.0f, 100.0f, 100.0f, "Setting"},
-	{0.0f, -400.0f, 100.0f, 100.0f, "Quit"},
+	{0.0f, -300.0f, 100.0f, 100.0f, "Quit"},
 
 };
 
@@ -76,7 +75,7 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	if (disp_) {
-		Image::SetAlpha(hPict_[0], 0);
+		Image::SetAlpha(hPict_[0], 20);
 		Transform pos1 = transform_;
 		pos1.scale_.x = 1.6f;
 		pos1.scale_.y = 1.2f;
@@ -92,7 +91,6 @@ void TitleScene::Draw()
 		Image::SetTransform(hPict_[2], pos);
 		Image::Draw(hPict_[2]);
 	}
-
 }
 
 void TitleScene::Release()
@@ -125,6 +123,8 @@ void TitleScene::ButtonInitializ()
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
 		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+		pButton->SetAlpha_(255);
+		pButton->SetFrameAlpha_(255);
 	}
 }
 
@@ -147,9 +147,6 @@ void TitleScene::CheckButtonPressed()
 				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 				pSceneManager->ChangeScene(SCENE_ID_PLAY);
 			}
-			else if (na == "Setting") {
-				break;
-			}
 			else if (na == "Quit") {
 				Instantiate<ExitMenu>(this);
 				for (GameObject* obj : *gs) {
@@ -160,6 +157,7 @@ void TitleScene::CheckButtonPressed()
 					Button* pButton = (Button*)obj;
 					pButton->SetActive(false);
 					pButton->SetAlpha_(10);
+					pButton->SetFrameAlpha_(10);
 
 				}
 
