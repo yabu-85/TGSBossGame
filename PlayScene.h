@@ -3,10 +3,12 @@
 #include "Engine/Text.h"
 
 class Timer;
+class Player;
 
 class PlayScene  : public GameObject
 {
 	Timer* pTimer_;
+	Player* pPlayer_;
 
 public:
 	PlayScene (GameObject* parent);

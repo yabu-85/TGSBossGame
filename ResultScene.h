@@ -4,6 +4,12 @@
 
 class ResultScene : public GameObject
 {
+	int hPict_[2];
+
+	void DrawCursor();
+	void ButtonInitializ();
+	void CheckButtonPressed();	//ƒ{ƒ^ƒ“‰Ÿ‚³‚ê‚½‚©’²‚×‚é
+
 public:
 	ResultScene(GameObject* parent);
 	void Initialize() override;

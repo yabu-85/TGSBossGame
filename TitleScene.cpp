@@ -52,7 +52,6 @@ void TitleScene::Initialize()
 		disp_ = true;
 		ButtonInitializ();
 	}
-
 }
 
 void TitleScene::Update()

@@ -8,9 +8,11 @@
 #include "ObstacleManager.h"
 #include "Engine/SceneManager.h"
 
+static int goal;
+
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
-	: GameObject(parent, "PlayScene"), pTimer_(nullptr)
+	: GameObject(parent, "PlayScene"), pTimer_(nullptr), pPlayer_(nullptr)
 {
 }
 
@@ -18,14 +20,17 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	Stage* pStage = Instantiate<Stage>(this);
-	Player* pPlayer = Instantiate<Player>(this);
+	goal = pStage->GetHeight();
+
+	pPlayer_ = Instantiate<Player>(this);
 	Instantiate<ObstacleManager>(this);
+
 	pTimer_ = Instantiate<Timer>(this);
 	pTimer_->SetLimit(10);
 	pTimer_->Start();
 
-	pPlayer->SetPosition(pStage->GetPlaPos());
-	pPlayer->SetActiveWithDelay(true);
+	pPlayer_->SetPosition(pStage->GetPlaPos());
+	pPlayer_->SetActiveWithDelay(true);
 }
 
 //更新
@@ -39,6 +44,13 @@ void PlayScene ::Update()
 
 	if (pTimer_->IsFinished()) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->SetResult(false);
+		pSceneManager->ChangeScene(SCENE_ID_RESULT);
+	}
+
+	if (goal <= pPlayer_->GetPosition().z) {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->SetResult(true);
 		pSceneManager->ChangeScene(SCENE_ID_RESULT);
 	}
 }

@@ -32,5 +32,7 @@ public:
     int GetModelHandle(int i) { return hModel_[i]; }; //モデル番号取得
     XMFLOAT3 GetPlaPos(); //CSVでのプレイヤー座標
 
+    int GetHeight() { return height_; };
+
 };
 
