@@ -7,6 +7,7 @@ class Button : public GameObject
 {
 	int hPict_[2];
 	int alpha_;				//透明度
+	int frameAlpha_;		//透明度
 	float width_;			//ボタンの幅
 	float height_;			//ボタンの高さ
 	bool isButtonInactive_; //ボタンを押す感知しない
@@ -23,6 +24,7 @@ public:
 
 	void SetValue(float x, float y, float w, float h, std::string n);
 	void SetAlpha_(int i) { alpha_ = i; }; //0（透明）～255（表示）
+	void SetFrameAlpha_(int i) { frameAlpha_ = i; }; //0（透明）～255（表示）
 	void SetActive(bool b) { isButtonInactive_ = b; };
 	bool IsButtonClicked();
 	std::string GetName() { return name_; };

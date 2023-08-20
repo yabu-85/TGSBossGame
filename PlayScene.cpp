@@ -6,10 +6,13 @@
 #include "Engine/Input.h"
 #include "ExitMenu.h"
 #include "ObstacleManager.h"
+#include "Engine/SceneManager.h"
+
+static int goal;
 
 //コンストラクタ
 PlayScene::PlayScene(GameObject* parent)
-	: GameObject(parent, "PlayScene"), pText_(nullptr), clearTime_(0), count_(0)
+	: GameObject(parent, "PlayScene"), pTimer_(nullptr), pPlayer_(nullptr)
 {
 }
 
@@ -17,38 +20,46 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	Stage* pStage = Instantiate<Stage>(this);
-	Player* pPlayer = Instantiate<Player>(this);
+	goal = pStage->GetHeight();
+
+	pPlayer_ = Instantiate<Player>(this);
 	Instantiate<ObstacleManager>(this);
 
-	pPlayer->SetPosition(pStage->GetPlaPos());
-	pPlayer->SetActiveWithDelay(true);
+	pTimer_ = Instantiate<Timer>(this);
+	pTimer_->SetLimit(10);
+	pTimer_->Start();
 
-	//※テキスト類はモデルよりも前面に描画(後に呼ぶ)
-	Timer* pTimer = Instantiate<Timer>(this);
-	pTimer->SetLimit(5);		//タイマーを設定
-	pText_ = new Text;			//テキスト
-	pText_->Initialize();
+	pPlayer_->SetPosition(pStage->GetPlaPos());
+	pPlayer_->SetActiveWithDelay(true);
 }
 
 //更新
 void PlayScene::Update()
 {
-	if (Input::IsKeyDown(DIK_E)) {
+	if (Input::IsKeyDown(DIK_E) && !FindObject("PauseMenu")) {
 		Instantiate<PauseMenu>(this);
 		Player* pPlayer = (Player*)FindObject("Player");
 		pPlayer->SetActive(false);
 	}
 
-	//タイマー処理
-	TimeProcess();
+	//ゲームオーバー
+	if (pTimer_->IsFinished() || pPlayer_->GetHp() <= 0) {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->SetResult(false);
+		pSceneManager->ChangeScene(SCENE_ID_RESULT);
+	}
+
+	//ゲームクリア
+	if (goal <= pPlayer_->GetPosition().z) {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->SetResult(true);
+		pSceneManager->ChangeScene(SCENE_ID_RESULT);
+	}
 }
 
 //描画
 void PlayScene ::Draw()
 {
-	//描画
-	pText_->SetScale(3.0f);
-	pText_->Draw(300, 200, clearTime_);
 }
 
 //開放
@@ -56,31 +67,3 @@ void PlayScene ::Release()
 {
 }
 
-//タイマー
-void PlayScene::TimeProcess()
-{
-	Timer* pTimer = (Timer*)FindObject("Timer");
-
-	//タイマーを起動(初回押下時のみ)
-	if (Input::IsKeyDown(DIK_W)&& count_==0)
-	{
-		pTimer->Start();
-		count_++;
-	}
-
-	//ゲームをクリアした場合
-	if (Input::IsKeyDown(DIK_Y))
-	{
-		//タイマー停止
-		pTimer->Stop();
-		clearTime_ = pTimer->GetTime();////////クリアタイム取得確認用｡ここじゃなくてオーバーシーンで使うと思う
-	}
-	
-	//タイマーが終了した場合
-	if (pTimer->IsFinished())
-	{
-		////////(ゲームオーバー)ダウンアニメ再生して､シーン切り替えとかやるところ
-		//Player* pPlayer = (Player*)FindObject("Player");
-		//pPlayer->KillMe();
-	}
-}

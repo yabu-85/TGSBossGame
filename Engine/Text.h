@@ -8,6 +8,7 @@ class Text
 	unsigned int width_, height_;	//1文字分の幅と高さ
 	char fileName_[MAX_PATH];
 	unsigned int rowLength_;
+	float scale;
 
 public:
 	Text();
@@ -41,8 +42,6 @@ public:
 
 	//サイズの設定
 	//引数:サイズ
-	void SetScale(float sc) { scale = sc; }
-private:
-	float scale;
-};
+	void SetScale(float sc) { scale = sc; };
 
+};

@@ -7,7 +7,7 @@ enum SCENE_ID
 {
 	SCENE_ID_TITLE = 0,
 	SCENE_ID_PLAY = 1,
-	SCENE_ID_GAMEOVER = 2,
+	SCENE_ID_RESULT = 2,
 };
 
 //-----------------------------------------------------------
@@ -33,10 +33,13 @@ public:
 	//すでにロゴを表示したか/falseまだ
 	bool IsLogoShown() { return logoShown_; };
 	void SetLogoShown(bool b) { logoShown_ = b; };
+	void SetResult(bool b) { result_ = b; };
+	bool GetResult() { return result_; };
 
 private:
 	SCENE_ID currentSceneID_;	//現在のシーン
 	SCENE_ID nextSceneID_;		//次のシーン
 
-	bool logoShown_;				//ロゴ表示したか（falseまだ
+	bool logoShown_;			//ロゴ表示したか（falseまだ
+	bool result_;				//クリアの場合はtrue
 };

@@ -151,7 +151,8 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="ExitMenu.cpp" />
-    <ClCompile Include="GameOverScene.cpp" />
+    <ClCompile Include="ResultScene.cpp" />
+    <ClCompile Include="HpGauge.cpp" />
     <ClCompile Include="Logo.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ObstacleManager.cpp" />
@@ -159,7 +160,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Stage.cpp" />
-    <ClCompile Include="MissiletObstacle.cpp" />
+    <ClCompile Include="TestObstacle.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="UfoObstacle.cpp" />
@@ -192,7 +193,8 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="ExitMenu.h" />
-    <ClInclude Include="GameOverScene.h" />
+    <ClInclude Include="ResultScene.h" />
+    <ClInclude Include="HpGauge.h" />
     <ClInclude Include="Logo.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="ObstacleManager.h" />
@@ -200,7 +202,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Stage.h" />
-    <ClInclude Include="MissileObstacle.h" />
+    <ClInclude Include="TestObstacle.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="UfoObstacle.h" />

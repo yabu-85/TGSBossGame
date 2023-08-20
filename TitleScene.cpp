@@ -7,6 +7,7 @@
 #include "Engine/Input.h"
 #include "ExitMenu.h"
 #include "Engine/Global.h"
+#include "Stageselect.h"
 
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}
@@ -20,9 +21,8 @@ struct ButtonInfoTitle {
 	float height;
 	std::string name;
 }tbl[] = {
-	{0.0f, 0.0f, 100.0f, 100.0f, "Start"},
-	{0.0f, -200.0f, 100.0f, 100.0f, "Setting"},
-	{0.0f, -400.0f, 100.0f, 100.0f, "Quit"},
+	{0.0f, 0.0f, 1.0f, 1.0f, "Start"},
+	{0.0f, -300.0f, 1.0f, 1.0f, "Quit"},
 
 };
 
@@ -32,7 +32,7 @@ void TitleScene::Initialize()
 	pText_ = new Text;
 	pText_->Initialize();
 
-	const char* fileName[] = { "Title.png", "cross.png", "GameTitle.png"};
+	const char* fileName[] = { "TitleBG.png", "cross.png", "Title.png"};
 	const int png = sizeof(fileName) / sizeof(fileName[0]);
 	for (int i = 0; i < png; i++) {
 		hPict_[i] = Image::Load(fileName[i]);
@@ -53,7 +53,6 @@ void TitleScene::Initialize()
 		disp_ = true;
 		ButtonInitializ();
 	}
-
 }
 
 void TitleScene::Update()
@@ -76,10 +75,10 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	if (disp_) {
-		Image::SetAlpha(hPict_[0], 0);
+		Image::SetAlpha(hPict_[0], 150);
 		Transform pos1 = transform_;
-		pos1.scale_.x = 1.6f;
-		pos1.scale_.y = 1.2f;
+		pos1.scale_.x = 0.8f;
+		pos1.scale_.y = 0.8f;
 		Image::SetTransform(hPict_[0], pos1);
 		Image::Draw(hPict_[0]);
 
@@ -92,7 +91,6 @@ void TitleScene::Draw()
 		Image::SetTransform(hPict_[2], pos);
 		Image::Draw(hPict_[2]);
 	}
-
 }
 
 void TitleScene::Release()
@@ -125,6 +123,8 @@ void TitleScene::ButtonInitializ()
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
 		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+		pButton->SetAlpha_(255);
+		pButton->SetFrameAlpha_(255);
 	}
 }
 
@@ -144,10 +144,19 @@ void TitleScene::CheckButtonPressed()
 			std::string na = pButton->GetName();
 			
 			if(na == "Start") {
-				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-				pSceneManager->ChangeScene(SCENE_ID_PLAY);
-			}
-			else if (na == "Setting") {
+				Instantiate<StageSelect>(this);
+				for (GameObject* obj : *gs) {
+					if (obj->GetObjectName() != "Button") {
+						continue;
+					}
+
+					Button* pButton = (Button*)obj;
+					pButton->SetActive(false);
+					pButton->SetAlpha_(10);
+					pButton->SetFrameAlpha_(10);
+
+				}
+
 				break;
 			}
 			else if (na == "Quit") {
@@ -160,6 +169,7 @@ void TitleScene::CheckButtonPressed()
 					Button* pButton = (Button*)obj;
 					pButton->SetActive(false);
 					pButton->SetAlpha_(10);
+					pButton->SetFrameAlpha_(10);
 
 				}
 

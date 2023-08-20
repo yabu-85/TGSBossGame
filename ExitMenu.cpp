@@ -10,8 +10,8 @@ struct ButtonInfoExit {
 	float height;
 	std::string name;
 }tbl[] = {
-	{0.0f, -300.0f, 100.0f, 100.0f, "Ok"},
-	{0.0f, -500.0f, 100.0f, 100.0f, "Back"},
+	{0.0f, -300.0f, 1.0f, 1.0f, "Ok"},
+	{0.0f, -600.0f, 1.0f, 1.0f, "Back"},
 
 };
 
@@ -74,8 +74,14 @@ void ExitMenu::CheckButtonPressed()
 
 					Button* pButton = (Button*)obj;
 					pButton->SetActive(true);
-					pButton->SetAlpha_(255);
-
+					if (FindObject("PlayScene")) {
+						pButton->SetAlpha_(100);
+						pButton->SetFrameAlpha_(100);
+					}
+					else {
+						pButton->SetAlpha_(255);
+						pButton->SetFrameAlpha_(255);
+					}
 				}
 
 				KillMe();
@@ -93,5 +99,7 @@ void ExitMenu::ButtonInitializ()
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
 		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+		pButton->SetAlpha_(100);
+		pButton->SetFrameAlpha_(100);
 	}
 }

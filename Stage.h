@@ -57,5 +57,7 @@ public:
 
     //CSV上でのプレイヤー座標を取得する関数
     XMFLOAT3 GetPlaPos(); 
+    int GetHeight() { return height_; };
+
 };
 

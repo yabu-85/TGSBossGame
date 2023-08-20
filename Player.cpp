@@ -5,17 +5,28 @@
 #include "Engine/Model.h"
 #include "Aim.h"
 #include "Stage.h"
+#include "HpGauge.h"
 #include <thread>
 #include <chrono>
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
+
+static const float airMoveSpeed = 0.002f;
+static const float crouchSpeed = 0.0005f;
+
+static const float noDe = 0.8f; //減速をやめる時間
+static const float deTime = 0.0055f; //時間の速さ
+
+//バレットジャンプの強さ
+static const float buJumpY = 1.65f;
+static const float buJumpXZ = 0.28f;
 
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false), stateEnter_(true)
+    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false), stateEnter_(true), hp_(0), maxHp_(0)
 {
-    moveSpeed_ = 0.75f;
+    moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
     gravity_ = 0.0075f;
     initVy_ = 0.17f;
@@ -33,12 +44,20 @@ void Player::Initialize()
     transform_.scale_.x = 0.2f;
     transform_.scale_.y = 0.2f;
     transform_.scale_.z = 0.2f;
+    transform_.rotate_.y = 0.0f;
 
     //モデルデータのロード
     hModel_ = Model::Load("huu.fbx");
     assert(hModel_ >= 0);
 
+    hp_ = 50;
+    maxHp_ = 50;
+
+    Model::SetAnimFrame(hModel_, 0, 0, 1);
+
     pAim_ = Instantiate<Aim>(this);
+    Instantiate<HpGauge>(this);
+
     pStage_ = (Stage*)FindObject("Stage");
 
     pText_ = new Text;
@@ -68,16 +87,12 @@ void Player::Update()
         UpdateDead();
         break;
     }
-    //しゃがんでない時カメラの高さリセット
-    if (state_ != S_CROUCH) {
-        if (cameraHeight_ < 1.0f)cameraHeight_ += 0.02f;
-
-        if (Input::IsKey(DIK_F)) isCrouching_ = true;
-        else isCrouching_ = false;
-    }
 
     transform_.position_.x += (playerMovement_.x * moveSpeed_); // 移動！
     transform_.position_.z += (playerMovement_.z * moveSpeed_); // z
+
+    if (transform_.position_.x <= 0.0f) transform_.position_.x = 0.0f;
+    if (transform_.position_.x >= 7.0f) transform_.position_.x = 7.0f;
 
     //移動するなら向きを変える
     if (IsMovementKeyPressed()) GradualRotate(playerMovement_.x, playerMovement_.z);
@@ -87,6 +102,14 @@ void Player::Update()
 
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
+
+    //しゃがんでない時カメラの高さリセット
+    if (state_ != S_CROUCH) {
+        if (cameraHeight_ < 1.0f)cameraHeight_ += 0.02f;
+
+        if (Input::IsKey(DIK_F) && !IsPlayerOnGround()) isCrouching_ = true;
+        else isCrouching_ = false;
+    }
 
     //覗き込み||近接ガード||slow（落下速度低下）
     //こっちは最初に押したらのやつ
@@ -114,32 +137,21 @@ void Player::Update()
 
     //減速している
     if (isDecelerating_ ) {
-        const float noDe = 0.8f; //減速をやめる時間
-        const float deTime = 0.0055f; //時間の速さ
-
         decelerationTime_ += deTime;
 
         //減速時間終わったよの処理
         if (decelerationTime_ > noDe) isDecelerating_ = false;
     }
 
+    if (Input::IsKey(DIK_UPARROW)) {
+        hp_--;
+    }
 }
 
 void Player::Draw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
-
-    XMVECTOR v = XMLoadFloat3(&playerMovement_);
-    pText_->Draw(30, 70, (int)( Length(v) * 100.0f ) );
-    pText_->Draw(30, 110, (int)( (maxMoveSpeed_ * 100.0f)));
-
-    pText_->Draw(30, 190, (int)(pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z) ));
-    pText_->Draw(30, 250, (int)(transform_.position_.x));
-    pText_->Draw(30, 290, (int)(transform_.position_.y));
-    pText_->Draw(30, 340, (int)(transform_.position_.z));
-
-    pText_->Draw(30, 400, (int)((decelerationTime_ * 100.0f)));
 
 }
 
@@ -153,7 +165,12 @@ void Player::SetActiveWithDelay(bool isActive)
     std::thread([this, isActive]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         isActive_ = isActive;
+        Aim* pAim = (Aim*)FindObject("Aim");
+        pAim->SetAimMove(true);
+
     }).detach();    
+
+
 }
 
 XMVECTOR Player::GetPlaVector() {
@@ -244,8 +261,7 @@ void Player::UpdateCrouch()
         XMVECTOR vMove = XMLoadFloat3(&fMove_);
         vMove = XMVector3Normalize(vMove);
         XMStoreFloat3(&fMove_, vMove);
-        static const float airMoveSpeed = 0.0004f;
-        fMove_ = { ((fMove_.x - playerMovement_.x) * airMoveSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * airMoveSpeed) };
+        fMove_ = { ((fMove_.x - playerMovement_.x) * crouchSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * crouchSpeed) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z };
         playerMovement_ = { playerMovement_.x - (playerMovement_.x * 0.01f) , 0.0f , playerMovement_.z - (playerMovement_.z * 0.01f) };
         XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
@@ -265,8 +281,13 @@ void Player::UpdateCrouch()
             isCrouching_ = false;
             playerMovement_ = XMFLOAT3(0, 0, 0);
         }
-        if (Input::IsKeyUp(DIK_F) || Input::IsKeyDown(DIK_SPACE)) {
+        if (Input::IsKeyUp(DIK_F)) {
             isCrouching_ = false;
+        }
+        if (Input::IsKeyDown(DIK_SPACE)) {
+            Model::SetAnimFrame(hModel_, 0, 0, 1);
+
+            ChangeState(S_IDLE);
         }
 
     }
@@ -275,9 +296,8 @@ void Player::UpdateCrouch()
         else {
             Model::SetAnimFrame(hModel_, 0, 0, 1);
             playerMovement_ = XMFLOAT3(0, 0, 0);
-
         }
-        isCrouching_ = false;
+
         ChangeState(S_IDLE);
     }
 }
@@ -321,8 +341,6 @@ void Player::CalcMove()
     }
     else  {
         XMStoreFloat3(&fMove_, vMove);
-
-        static const float airMoveSpeed = 0.002f;
 
         //fMove_
         fMove_ = { ((fMove_.x - playerMovement_.x) * airMoveSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * airMoveSpeed) };
@@ -450,8 +468,6 @@ void Player::Jump()
         bulletJump_ = true;
 
         //XZ,Y軸の移動量計算
-        const float buJumpY = 1.65f;
-        const float buJumpXZ = 0.3f;
         float aimDirectionY = 1.0f + pAim_->GetAimDirectionXY().y;
 
         XMFLOAT3 aimDirection = pAim_->GetAimDirectionXY();

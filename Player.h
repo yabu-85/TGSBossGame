@@ -8,6 +8,8 @@ class Stage;
 class Player : public GameObject
 {
     int hModel_;                    //モデル番号
+    int hp_;                        //今のHP
+    int maxHp_;                     //最大HP
     float moveSpeed_;               //移動
     float targetRotation_;          //目標の回転角度
     float rotationSpeed_;           //回転速度
@@ -32,8 +34,6 @@ class Player : public GameObject
     Stage* pStage_;
     Text* pText_;
     Aim* pAim_;
-
-    //---------------privateメンバ関数---------------
 
     void CalcMove();                    //移動方向計算・normalize
     void InstantRotate(float x, float z);               //即座に回転
@@ -73,12 +73,13 @@ public:
 
     void SetActiveWithDelay(bool isActive);
     void SetActive(bool b) { isActive_ = b; };
+    void DecreaseHp(int i) { hp_ -= i; };
 
-    //ーーーーーーゲッターーーーーーーー
     XMVECTOR GetPlaVector();                            //移動方向取得
     float GetCameraHeight() { return cameraHeight_; };  //カメラの高さ0.8f ～ 1.0f
     float IsAiming();                                   //ズーム値：地上（近い！）,空中（中くらい）,覗いてない（1.0）
     bool IsDecelerating() { return isDecelerating_; };
     int GetModelHandle() { return hModel_; }
-
+    int GetHp() { return hp_; };
+    int GetMaxHp() { return maxHp_; };
 };

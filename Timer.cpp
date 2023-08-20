@@ -23,7 +23,7 @@ void Timer::Update()
     if (active_)
     {
         //カウントダウン
-        if (frame_ > 0) 
+        if (frame_ > 0)
             frame_--;
     }
 }
