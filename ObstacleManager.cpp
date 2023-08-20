@@ -14,7 +14,7 @@ ObstacleManager::~ObstacleManager()
 
 void ObstacleManager::Initialize()
 {
-#if 1   
+#if 0
     // CSVƒtƒ@ƒCƒ‹“Ç‚İ‚İ
     CsvReader csv;
     csv.Load("Obstacle.csv");
