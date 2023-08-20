@@ -26,7 +26,7 @@ void PlayScene::Initialize()
 	Instantiate<ObstacleManager>(this);
 
 	pTimer_ = Instantiate<Timer>(this);
-	pTimer_->SetLimit(10);
+	pTimer_->SetLimit(30);
 	pTimer_->Start();
 
 	pPlayer_->SetPosition(pStage->GetPlaPos());

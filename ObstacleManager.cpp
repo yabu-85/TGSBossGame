@@ -25,7 +25,7 @@ void ObstacleManager::Initialize()
 
     pPlayer_ = (Player*)FindObject("Player");
 
-    loadPosZ_ = 10;
+    loadPosZ_ = 30;
     
 }
 
