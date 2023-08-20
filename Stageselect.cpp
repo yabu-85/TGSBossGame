@@ -16,9 +16,9 @@ struct ButtonInfoStage {
 	float height;
 	std::string name;
 }tbl[] = {
-	{-1000.0f, -200.0f, 0.6f, 1.0f, "Clear"},
-	{0.0f, -200.0f, 0.6f, 1.0f, "Over"},
-	{1000.0f, -200.0f, 0.6f, 1.0f, "Team"},
+	{-1000.0f, -200.0f, 0.6f, 1.2f, "Clear"},
+	{0.0f, -200.0f, 0.6f, 1.2f, "Over"},
+	{1000.0f, -200.0f, 0.6f, 1.2f, "Team"},
 	{0.0f, -500.0f, 1.0f, 1.0f, "Back"},
 
 };

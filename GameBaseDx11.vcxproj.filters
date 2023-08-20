@@ -142,8 +142,10 @@
     <ClCompile Include="HpGauge.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="StageSelect.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="StageSelect.cpp">
+      <Filter>TitleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -253,8 +255,10 @@
     <ClInclude Include="HpGauge.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="StageSelect.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="StageSelect.h">
+      <Filter>TitleScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

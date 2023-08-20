@@ -32,7 +32,7 @@ void TitleScene::Initialize()
 	pText_ = new Text;
 	pText_->Initialize();
 
-	const char* fileName[] = { "Title.png", "cross.png", "GameTitle.png"};
+	const char* fileName[] = { "TitleBG.png", "cross.png", "Title.png"};
 	const int png = sizeof(fileName) / sizeof(fileName[0]);
 	for (int i = 0; i < png; i++) {
 		hPict_[i] = Image::Load(fileName[i]);
