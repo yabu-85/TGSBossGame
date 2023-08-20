@@ -20,6 +20,13 @@ void WallObstacle::Initialize()
 	//当たり判定付与
 	BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 3.0, 0), XMFLOAT3(8.5, 4, 0.8));
 	AddCollider(collision);
+
+	//落ちるアニメーション(初回のみ表示)
+	//Model::SetAnimFrame(hModel_, 0, 20, 1);
+
+	//揺れるアニメーション
+	Model::SetAnimFrame(hModel_, 20, 60, 1);
+	
 }
 
 void WallObstacle::Update()

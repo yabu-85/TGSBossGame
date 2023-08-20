@@ -52,7 +52,7 @@ void ObstacleManager::Initialize()
 
     createAndAddObstacle(XMFLOAT3(0, 0, 0), OBSTACLE_NORMAL);
 	createAndAddObstacle(XMFLOAT3(4, 1, 30), OBSTACLE_MISSILE);
-	createAndAddObstacle(XMFLOAT3(2, 1, 30), OBSTACLE_WALL);
+	createAndAddObstacle(XMFLOAT3(3, 1, 30), OBSTACLE_WALL);
 	createAndAddObstacle(XMFLOAT3(7, 1, 30), OBSTACLE_UFO);
 }
 
