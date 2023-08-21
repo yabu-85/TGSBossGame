@@ -57,6 +57,9 @@ void RobotObstacle::Update()
 		return;
 	}
 
+	if (transform_.position_.z < pPlayer_->GetPosition().z + 8.0f)
+		backMove_ = true;
+
 	static float moveSpeed = 0.05f;
 	static float moveStop = -50;
 	count_--;

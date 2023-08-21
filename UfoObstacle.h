@@ -6,6 +6,10 @@ class UfoObstacle : public Obstacle
     int hModelLa_;
     float firstMoveZ_;
     bool first_;
+    float move_;
+    float maxMoveX_;
+    bool x_;
+    bool firstAct_;
 
     float EaseOutExpo(float x) { return 1.0f - pow(1 - x, 5); };
 

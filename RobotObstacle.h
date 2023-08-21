@@ -9,8 +9,8 @@ class RobotObstacle :
     bool backMove_;
     int hModelHead_;
     int nearestLocation_;
-    Player* pPlayer_;
     float count_;
+    Player* pPlayer_;
 
     void Rotate();
 
