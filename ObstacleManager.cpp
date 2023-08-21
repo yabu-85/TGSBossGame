@@ -1,5 +1,4 @@
 #include "ObstacleManager.h"
-#include "MissileObstacle.h"
 #include "WallObstacle.h"
 #include "UfoObstacle.h"
 #include "RobotObstacle.h"
@@ -39,6 +38,13 @@ void ObstacleManager::Initialize()
                 ObstacleType a = static_cast<ObstacleType>(intValue);
                 createAndAddObstacle(position, a);
             }
+        }
+    }
+
+    for (Obstacle* e : obstacles_) {
+        if (e->GetObjectName() == "RobotObstacle") {
+            RobotObstacle* pRobotObstacle = dynamic_cast<RobotObstacle*>(e);
+            pRobotObstacle->SetLearestLocation();
         }
     }
 
@@ -90,9 +96,6 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     {
     case ObstacleType::OBSTACLE_NORMAL:
         pObstacle = Instantiate<Obstacle>(this);
-        break;
-    case ObstacleType::OBSTACLE_MISSILE:
-        pObstacle = Instantiate<MissileObstacle>(this);
         break;
     case ObstacleType::OBSTACLE_WALL:
         pObstacle = Instantiate<WallObstacle>(this);

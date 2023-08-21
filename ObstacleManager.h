@@ -11,7 +11,6 @@ class Player;
 enum ObstacleType
 {
     OBSTACLE_NORMAL = 0,
-    OBSTACLE_MISSILE,
     OBSTACLE_WALL,
     OBSTACLE_UFO,
     OBSTACLE_ROBOT,

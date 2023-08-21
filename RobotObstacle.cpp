@@ -4,9 +4,10 @@
 #include "Player.h"
 #include "ObstacleManager.h"
 #include <vector>
+#include "Missile.h"
 
 RobotObstacle::RobotObstacle(GameObject* parent)
-	:Obstacle(parent), pPlayer_(nullptr), backMove_(false), nearestLocation_(0), hModelHead_(-1)
+	:Obstacle(parent), pPlayer_(nullptr), backMove_(false), nearestLocation_(0), hModelHead_(-1), count_(0)
 {
 	SetObjectName("RobotObstacle");
 }
@@ -32,16 +33,9 @@ void RobotObstacle::Initialize()
 	pPlayer_ = (Player*)FindObject("Player");
 	transform_.rotate_.y = 180;
 
-	nearestLocation_ = 99999;
-	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
-	std::vector<Obstacle*> obj = pObstacleManager->GetObstacleList();
-	for (Obstacle* e : obj) {
-		if (e->GetObjectName() == "WallObstacle" && (int)e->GetPosition().z < nearestLocation_) {
-			nearestLocation_ = (int)e->GetPosition().z;
-		}
-	}
-
 	Model::SetAnimFrame(hModel_, 61, 240, 1);
+
+	count_ = 90;
 }
 
 void RobotObstacle::Update()
@@ -64,17 +58,23 @@ void RobotObstacle::Update()
 	}
 
 	static float moveSpeed = 0.05f;
-	static float count = 90;
 	static float moveStop = -50;
-	count--;
-	if (count > 0)
+	count_--;
+	if (count_ > 0)
 	{
-		transform_.position_.z += moveSpeed;
+		//transform_.position_.z += moveSpeed;
 		moveStop;
 	}
-	if (count <= moveStop)
+	if (count_ <= moveStop)
 	{
-		count = 90;
+		Missile* pMissile1 = Instantiate<Missile>(GetParent()->GetParent());
+		pMissile1->SetPosition(transform_.position_.x + 0.6f, transform_.position_.y + 2.2f, transform_.position_.z);
+		pMissile1->SetRotateY(transform_.rotate_.y);
+		Missile* pMissile2 = Instantiate<Missile>(GetParent()->GetParent());
+		pMissile2->SetPosition(transform_.position_.x - 0.6f, transform_.position_.y + 2.2f, transform_.position_.z);
+		pMissile2->SetRotateY(transform_.rotate_.y);
+
+		count_ = 90;
 	}
 	transform_.position_.y = 0.0f;
 
@@ -112,6 +112,19 @@ void RobotObstacle::OnCollision(GameObject* pTarget)
 		//SetPosition(XMFLOAT3(0, 0, 30));
 		position = pTarget->GetPosition();
 		//////////////////プレイヤーノックバック処理	
+	}
+}
+
+void RobotObstacle::SetLearestLocation()
+{
+	nearestLocation_ = 99999;
+	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
+	std::vector<Obstacle*> obj = pObstacleManager->GetObstacleList();
+	for (Obstacle* e : obj) {
+		if (e->GetObjectName() == "WallObstacle" && e->GetPosition().z > transform_.position_.z &&
+			e->GetPosition().z < nearestLocation_) {
+			nearestLocation_ = (int)e->GetPosition().z;
+		}
 	}
 }
 

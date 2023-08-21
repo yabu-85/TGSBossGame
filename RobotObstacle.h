@@ -10,6 +10,7 @@ class RobotObstacle :
     int hModelHead_;
     int nearestLocation_;
     Player* pPlayer_;
+    float count_;
 
     void Rotate();
 
@@ -23,6 +24,8 @@ public:
 
     // Õ“Ë”»’è‚ğ•t—^
     void OnCollision(GameObject* pTarget) override;
+
+    void SetLearestLocation();
 
 };
 
