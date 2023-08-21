@@ -1,17 +1,20 @@
 #pragma once
 #include "Obstacle.h"
 
-class UfoObstacle : public Obstacle
-{
-    int hModelLa_;
-    float firstMoveZ_;
-    bool first_;
+class Player;
 
-    float EaseOutExpo(float x) { return 1.0f - pow(1 - x, 5); };
+class RobotObstacle :
+    public Obstacle
+{
+    bool backMove_;
+    int nearestLocation_;
+    Player* pPlayer_;
+
+    void Rotate();
 
 public:
-    UfoObstacle(GameObject* parent);
-    ~UfoObstacle();
+    RobotObstacle(GameObject* parent);
+    ~RobotObstacle();
     void Initialize() override;
     void Update() override;
     void Draw() override;
@@ -19,5 +22,6 @@ public:
 
     // è’ìÀîªíËÇïtó^
     void OnCollision(GameObject* pTarget) override;
+
 };
 

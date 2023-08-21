@@ -2,6 +2,7 @@
 #include "MissileObstacle.h"
 #include "WallObstacle.h"
 #include "UfoObstacle.h"
+#include "RobotObstacle.h"
 #include "Engine/CsvReader.h"
 #include "Player.h"
 
@@ -50,7 +51,7 @@ static bool flag = false;
 
 void ObstacleManager::Update()
 {
-    int plaPosZ = pPlayer_->GetPosition().z;
+    int plaPosZ = (int)pPlayer_->GetPosition().z;
     if (loadPosZSub_ < loadPosZ_ + plaPosZ) {
         loadPosZSub_ = loadPosZ_ + plaPosZ;
         flag = true;
@@ -98,6 +99,9 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
         break;
     case ObstacleType::OBSTACLE_UFO:
         pObstacle = Instantiate<UfoObstacle>(this);
+        break;
+    case ObstacleType::OBSTACLE_ROBOT:
+        pObstacle = Instantiate<RobotObstacle>(this);
         break;
     }
 

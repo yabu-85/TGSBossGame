@@ -13,7 +13,8 @@ enum ObstacleType
     OBSTACLE_NORMAL = 0,
     OBSTACLE_MISSILE,
     OBSTACLE_WALL,
-    OBSTACLE_UFO
+    OBSTACLE_UFO,
+    OBSTACLE_ROBOT,
 };
 
 class ObstacleManager : public GameObject
@@ -43,5 +44,8 @@ public:
     void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);
 
     void LoadCsv();
+
+    std::vector<Obstacle*> GetObstacleList() { return obstacles_; }
+
 };
 

@@ -4,7 +4,7 @@
 
 
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1, -1, -1}, table_(nullptr)
+    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1, -1}, table_(nullptr)
 {
     //CSVファイル読み込み
     CsvReader csv;
@@ -34,11 +34,10 @@ void Stage::Initialize()
 {
     const char* fileName[] = 
     { 
-        "Floor2.fbx",
+        "Floor.fbx",
         "Wall.fbx",
         "Wall2.fbx",
         "HightWall.fbx",
-        "Slope.fbx"
     };
 
     //モデルデータのロード

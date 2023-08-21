@@ -160,6 +160,7 @@
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="RobotObstacle.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Stageselect.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="RobotObstacle.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Stageselect.h" />
     <ClInclude Include="Timer.h" />

@@ -9,7 +9,6 @@ enum OBJ
     TYPE_WALL,          //Х«
     TYPE_WALL2,         //Х«(Се)
     TYPE_HIGHTWALL,     //Х«(УЅСе)
-    TYPE_SLOPE,         //МXОќ
     TYPE_MAX            //Н≈СеТl
 };
 
