@@ -65,7 +65,7 @@ void RobotObstacle::Update()
 	count_--;
 	if (count_ > 0)
 	{
-		//transform_.position_.z += moveSpeed;
+		transform_.position_.z += moveSpeed;
 		moveStop;
 	}
 	if (count_ <= moveStop)
