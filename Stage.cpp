@@ -34,7 +34,7 @@ void Stage::Initialize()
 {
     const char* fileName[] = 
     { 
-        "Floor.fbx",
+        "StagePit.fbx",
         "Wall.fbx",
         "Wall2.fbx",
         "HightWall.fbx",
