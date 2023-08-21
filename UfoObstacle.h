@@ -3,6 +3,12 @@
 
 class UfoObstacle : public Obstacle
 {
+    int hModelLa_;
+    float firstMoveZ_;
+    bool first_;
+
+    float EaseOutExpo(float x) { return 1 - pow(1 - x, 5); };
+
 public:
     UfoObstacle(GameObject* parent);
     ~UfoObstacle();

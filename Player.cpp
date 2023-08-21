@@ -17,7 +17,7 @@ static const float noDe = 0.8f; //減速をやめる時間
 static const float deTime = 0.0055f; //時間の速さ
 
 //バレットジャンプの強さ
-static const float buJumpY = 1.65f;
+static const float buJumpY = 1.6f;
 static const float buJumpXZ = 0.28f;
 
 Player::Player(GameObject* parent)

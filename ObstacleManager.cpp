@@ -25,7 +25,7 @@ void ObstacleManager::Initialize()
 
     pPlayer_ = (Player*)FindObject("Player");
 
-    loadPosZ_ = 30;
+    loadPosZ_ = 50;
     loadPosZSub_ = loadPosZ_;
 
     //CSVデータをテーブルに格納
