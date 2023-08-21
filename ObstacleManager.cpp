@@ -25,8 +25,21 @@ void ObstacleManager::Initialize()
 
     pPlayer_ = (Player*)FindObject("Player");
 
-    loadPosZ_ = 30;
-    
+    loadPosZ_ = 10;
+
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < width_; x++) {
+        for (int y = 0; y < height_; y++) {
+            if (csv_.GetValue(x, y) != 0)
+            {
+                XMFLOAT3 position(x, 10, y);
+                int intValue = csv_.GetValue(x, y);
+                ObstacleType a = static_cast<ObstacleType>(intValue);
+                createAndAddObstacle(position, a);
+            }
+        }
+    }
+
 }
 
 void ObstacleManager::Update()
@@ -51,14 +64,14 @@ void ObstacleManager::Release()
 
 void ObstacleManager::addObstacle(Obstacle* _obstacle)
 {
-	obstacles_.push_back(_obstacle);
+    obstacles_.push_back(_obstacle);
 }
 
 void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type)
 {
     Obstacle* pObstacle = nullptr;
 
-    switch (_type) 
+    switch (_type)
     {
     case ObstacleType::OBSTACLE_NORMAL:
         pObstacle = Instantiate<Obstacle>(this);
@@ -75,7 +88,7 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     }
 
     //nullptrじゃなければ
-    if (pObstacle) 
+    if (pObstacle)
     {
         pObstacle->SetPosition(_position);
         addObstacle(pObstacle);
@@ -85,15 +98,4 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
 
 void ObstacleManager::LoadCsv()
 {
-    //CSVデータをテーブルに格納
-    for (int x = 0; x < width_; x++)
-    {
-        if (csv_.GetValue(x, loadPosZ_) != 0)
-        {
-            XMFLOAT3 position(static_cast<float>(x), 1, static_cast<float>(loadPosZ_+loadPosZ_));
-            int intValue = csv_.GetValue(x, loadPosZ_);
-            ObstacleType a = static_cast<ObstacleType>(intValue);
-            createAndAddObstacle(position, a);
-        }
-    }
 }

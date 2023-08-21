@@ -23,12 +23,16 @@ void MissileObstacle::Initialize()
 
 	//揺れるアニメーション
 	Model::SetAnimFrame(hModel_, 0, 60, 1);
+
+	transform_.position_.y = 0.0f;
 }
 
 void MissileObstacle::Update()
 {
 	///////////////移動テスト
 	transform_.position_.z -= 0.1f;
+
+
 }
 
 void MissileObstacle::Draw()
