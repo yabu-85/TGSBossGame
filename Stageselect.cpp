@@ -15,11 +15,12 @@ struct ButtonInfoStage {
 	float width;
 	float height;
 	std::string name;
+	std::string frame;
 }tbl[] = {
 	{-1000.0f, -200.0f, 0.6f, 1.2f, "Clear"},
 	{0.0f, -200.0f, 0.6f, 1.2f, "Over"},
 	{1000.0f, -200.0f, 0.6f, 1.2f, "Team"},
-	{0.0f, -500.0f, 1.0f, 1.0f, "Back"},
+	{0.0f, -500.0f, 1.0f, 1.0f, "Back", "GameOver"},
 
 };
 
@@ -116,7 +117,12 @@ void StageSelect::ButtonInitializ()
 	for (int i = 0; i < button; i++) {
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
-		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+
+		if(tbl[i].frame != "")
+			pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name, tbl[i].frame);
+		else			
+			pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
+
 		pButton->SetAlpha_(100);
 		pButton->SetFrameAlpha_(100);
 	}
