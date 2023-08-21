@@ -18,11 +18,11 @@ RobotObstacle::~RobotObstacle()
 void RobotObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Mob_Robot.fbx");
+	hModel_ = Model::Load("Robot_body.fbx");
 	assert(hModel_ >= 0);
 
 	//モデルロード
-	hModelHead_ = Model::Load("Mob_Robot_Head.fbx");
+	hModelHead_ = Model::Load("Robot_Head.fbx");
 	assert(hModelHead_ >= 0);
 
 	//当たり判定付与
@@ -40,6 +40,8 @@ void RobotObstacle::Initialize()
 			nearestLocation_ = (int)e->GetPosition().z;
 		}
 	}
+
+	Model::SetAnimFrame(hModel_, 61, 240, 1);
 }
 
 void RobotObstacle::Update()
@@ -62,21 +64,32 @@ void RobotObstacle::Update()
 	}
 
 	static float moveSpeed = 0.05f;
+	static float count = 90;
+	static float moveStop = -70;
+	count--;
+	if (count > 0)
+	{
+		transform_.position_.z += moveSpeed;
+	}
+	if (count <= moveStop)
+	{
+		count = 90;
+	}
 	transform_.position_.y = 0.0f;
-	transform_.position_.z += moveSpeed;
-	Rotate();
 
+	Rotate();
 }
 
 void RobotObstacle::Draw()
 {
 	if (!active_) return;
 
-	Model::SetTransform(hModel_, transform_);
+	Transform body = transform_;
+	body.rotate_.y = 180;
+	Model::SetTransform(hModel_, body);
 	Model::Draw(hModel_);
 
 	Transform head = transform_;
-	head.position_.y += 0.2f;
 	Model::SetTransform(hModelHead_, head);
 	Model::Draw(hModelHead_);
 }
