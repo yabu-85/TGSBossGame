@@ -6,7 +6,7 @@
 #include <vector>
 
 RobotObstacle::RobotObstacle(GameObject* parent)
-	:Obstacle(parent), pPlayer_(nullptr), backMove_(false), nearestLocation_(0)
+	:Obstacle(parent), pPlayer_(nullptr), backMove_(false), nearestLocation_(0), hModelHead_(-1)
 {
 	SetObjectName("RobotObstacle");
 }
@@ -20,6 +20,10 @@ void RobotObstacle::Initialize()
 	//モデルロード
 	hModel_ = Model::Load("Mob_Robot.fbx");
 	assert(hModel_ >= 0);
+
+	//モデルロード
+	hModelHead_ = Model::Load("Mob_Robot_Head.fbx");
+	assert(hModelHead_ >= 0);
 
 	//当たり判定付与
 	BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(3.0f, 1.0f, 3.0f));
@@ -71,6 +75,10 @@ void RobotObstacle::Draw()
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 
+	Transform head = transform_;
+	head.position_.y += 0.2f;
+	Model::SetTransform(hModelHead_, head);
+	Model::Draw(hModelHead_);
 }
 
 void RobotObstacle::Release()

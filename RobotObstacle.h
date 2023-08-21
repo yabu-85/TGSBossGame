@@ -7,6 +7,7 @@ class RobotObstacle :
     public Obstacle
 {
     bool backMove_;
+    int hModelHead_;
     int nearestLocation_;
     Player* pPlayer_;
 
