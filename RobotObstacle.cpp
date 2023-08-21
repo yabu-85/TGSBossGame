@@ -64,20 +64,25 @@ void RobotObstacle::Update()
 	}
 
 	static float moveSpeed = 0.05f;
-	static float count = 88;
-	static float moveStop = -67;
+	static float count = 90;
+	static float moveStop = -50;
 	count--;
 	if (count > 0)
 	{
 		transform_.position_.z += moveSpeed;
+		moveStop;
 	}
 	if (count <= moveStop)
 	{
-		count = 88;
+		count = 90;
 	}
 	transform_.position_.y = 0.0f;
 
 	Rotate();
+
+
+
+		
 }
 
 void RobotObstacle::Draw()
