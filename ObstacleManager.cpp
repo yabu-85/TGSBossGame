@@ -114,14 +114,13 @@ void ObstacleManager::LoadCsv()
 {
     //CSVデータをテーブルに格納
     for (int x = 0; x < width_; x++) {
-        if (csv_.GetValue(x, loadPosZSub_) != 0)
-        {
-            for (Obstacle* obj : obstacles_) {
-                Obstacle* pObstacle = (Obstacle*)obj;
-                if (pObstacle->GetPosition().z <= loadPosZSub_) {
-                    pObstacle->SetActive(true);
-                }
+
+        for (Obstacle* obj : obstacles_) {
+            Obstacle* pObstacle = (Obstacle*)obj;
+            if (pObstacle->GetPosition().z <= loadPosZSub_) {
+                pObstacle->SetActive(true);
             }
         }
+        
     }
 }
