@@ -123,8 +123,8 @@ void TitleScene::ButtonInitializ()
 		Button* pButton = nullptr;
 		pButton = Instantiate<Button>(this);
 		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
-		pButton->SetAlpha_(255);
-		pButton->SetFrameAlpha_(255);
+		pButton->SetAlpha_(100);
+		pButton->SetFrameAlpha_(100);
 	}
 }
 

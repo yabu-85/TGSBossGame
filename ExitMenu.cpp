@@ -74,14 +74,9 @@ void ExitMenu::CheckButtonPressed()
 
 					Button* pButton = (Button*)obj;
 					pButton->SetActive(true);
-					if (FindObject("PlayScene")) {
-						pButton->SetAlpha_(100);
-						pButton->SetFrameAlpha_(100);
-					}
-					else {
-						pButton->SetAlpha_(255);
-						pButton->SetFrameAlpha_(255);
-					}
+					pButton->SetAlpha_(100);
+					pButton->SetFrameAlpha_(100);
+
 				}
 
 				KillMe();

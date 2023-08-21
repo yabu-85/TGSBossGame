@@ -2,7 +2,7 @@
 #include "Engine/Model.h"
 
 Obstacle::Obstacle(GameObject* parent)
-	:GameObject(parent, "Obstacle"), hModel_(-1)
+	:GameObject(parent, "Obstacle"), hModel_(-1), active_(false)
 {
 }
 

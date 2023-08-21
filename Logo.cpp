@@ -31,7 +31,7 @@ namespace {
 }
 
 Logo::Logo(GameObject* parent):
-	GameObject(parent, "Logo"), hPict_(-1), end_(false)
+	GameObject(parent, "Logo"), hPict_{-1, -1}, end_(false)
 {
 }
 
@@ -41,14 +41,17 @@ Logo::~Logo()
 
 void Logo::Initialize()
 {
-	hPict_ = Image::Load("Team.png");
-	assert(hPict_ >= 0);
+	hPict_[0] = Image::Load("Team.png");
+	assert(hPict_[0] >= 0);
+
+	hPict_[1] = Image::Load("Black.png");
+	assert(hPict_[1] >= 0);
 
 	totalTime = tbl[seq_line+1].time;
 	currentTime = 0.0f;
 	seq_line = 0;
 
-	Image::SetAlpha(hPict_, 0);
+	Image::SetAlpha(hPict_[0], 0);
 	end_ = false;
 }
 
@@ -95,7 +98,7 @@ void Logo::Update()
 	if (seq_line + 1 == A_SLIDEIN || seq_line + 1 == A_SLIDEOUT) {
 		float t = currentTime / totalTime;
 		if (tbl[seq_line].alpha == 0.0f) t = 1.0f - t;
-		Image::SetAlpha(hPict_, 255 * t );
+		Image::SetAlpha(hPict_[0], 255 * t );
 	}
 
 
@@ -104,8 +107,15 @@ void Logo::Update()
 
 void Logo::Draw()
 {
-	Image::SetTransform(hPict_, transform_);
-	Image::Draw(hPict_);
+	Image::SetTransform(hPict_[0], transform_);
+	Image::Draw(hPict_[0]);
+
+	Transform pos;
+	pos.scale_.x = 2;
+	pos.scale_.y = 2;
+	Image::SetAlpha(hPict_[1], 011);
+	Image::SetTransform(hPict_[1], pos);
+	Image::Draw(hPict_[1]);
 }
 
 void Logo::Release()

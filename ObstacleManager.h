@@ -3,6 +3,7 @@
 #include "Obstacle.h"
 #include <vector>
 #include "Engine/CsvReader.h"
+#include "Engine/Text.h"
 
 class Player;
 
@@ -22,7 +23,10 @@ class ObstacleManager : public GameObject
     int width_;
     int height_;
     int loadPosZ_;
+    int loadPosZSub_;
     Player* pPlayer_;
+    Text* pText_;
+
 
 public:
     ObstacleManager(GameObject* parent);

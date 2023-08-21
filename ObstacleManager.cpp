@@ -6,7 +6,7 @@
 #include "Player.h"
 
 ObstacleManager::ObstacleManager(GameObject* parent)
-    :GameObject(parent, "ObstacleManager"), width_(0), height_(0), loadPosZ_(0), pPlayer_(nullptr)
+    :GameObject(parent, "ObstacleManager"), width_(0), height_(0), loadPosZ_(0), loadPosZSub_(0), pPlayer_(nullptr), pText_(nullptr)
 {
 }
 
@@ -25,14 +25,15 @@ void ObstacleManager::Initialize()
 
     pPlayer_ = (Player*)FindObject("Player");
 
-    loadPosZ_ = 10;
+    loadPosZ_ = 30;
+    loadPosZSub_ = loadPosZ_;
 
     //CSVデータをテーブルに格納
     for (int x = 0; x < width_; x++) {
         for (int y = 0; y < height_; y++) {
             if (csv_.GetValue(x, y) != 0)
             {
-                XMFLOAT3 position(x, 10, y);
+                XMFLOAT3 position((float)x + 0.5f, 50,(float)(height_ - y) - 0.5f );
                 int intValue = csv_.GetValue(x, y);
                 ObstacleType a = static_cast<ObstacleType>(intValue);
                 createAndAddObstacle(position, a);
@@ -40,22 +41,35 @@ void ObstacleManager::Initialize()
         }
     }
 
+    pText_ = new Text;
+    pText_->Initialize();
+
 }
+
+static bool flag = false;
 
 void ObstacleManager::Update()
 {
     int plaPosZ = pPlayer_->GetPosition().z;
-    if (loadPosZ_ < plaPosZ) {
-        loadPosZ_ = plaPosZ;
+    if (loadPosZSub_ < loadPosZ_ + plaPosZ) {
+        loadPosZSub_ = loadPosZ_ + plaPosZ;
+        flag = true;
 
         LoadCsv();
+
     }
-
-
+    
 }
 
 void ObstacleManager::Draw()
 {
+    pText_->Draw(30, 240, loadPosZSub_);
+
+    if (flag) {
+        pText_->Draw(30, 280, "LoadCSV");
+        flag = false;
+    }
+
 }
 
 void ObstacleManager::Release()
@@ -98,4 +112,16 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
 
 void ObstacleManager::LoadCsv()
 {
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < width_; x++) {
+        if (csv_.GetValue(x, loadPosZSub_) != 0)
+        {
+            for (Obstacle* obj : obstacles_) {
+                Obstacle* pObstacle = (Obstacle*)obj;
+                if (pObstacle->GetPosition().z <= loadPosZSub_) {
+                    pObstacle->SetActive(true);
+                }
+            }
+        }
+    }
 }

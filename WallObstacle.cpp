@@ -31,11 +31,17 @@ void WallObstacle::Initialize()
 
 void WallObstacle::Update()
 {
+	if (!active_) return;
+
+	transform_.position_.y = 0.0f;
+
 
 }
 
 void WallObstacle::Draw()
 {
+	if (!active_) return;
+
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }

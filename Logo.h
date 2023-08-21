@@ -2,7 +2,7 @@
 #include "Engine/GameObject.h"
 class Logo : public GameObject
 {
-	int hPict_;
+	int hPict_[2];
 	bool end_;		//ƒƒS‚Ì•\¦I‚í‚Á‚½‚©
 
 public:

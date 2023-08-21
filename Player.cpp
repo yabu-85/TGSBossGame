@@ -153,6 +153,9 @@ void Player::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
+    pText_->Draw(30, 100, transform_.position_.x);
+    pText_->Draw(30, 140, transform_.position_.y);
+    pText_->Draw(30, 180, transform_.position_.z);
 }
 
 void Player::Release()

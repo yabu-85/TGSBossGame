@@ -24,12 +24,18 @@ void UfoObstacle::Initialize()
 
 void UfoObstacle::Update()
 {
+	if (!active_) return;
+
 	///////////////ˆÚ“®ƒeƒXƒg
 	transform_.position_.z -= 0.1f;
+	transform_.position_.y = 3.0f;
+
 }
 
 void UfoObstacle::Draw()
 {
+	if (!active_) return;
+
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }

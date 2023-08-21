@@ -6,6 +6,7 @@ class Obstacle : public GameObject
 {
 protected:
     int hModel_;
+    bool active_;
 
 public:
     Obstacle(GameObject* parent);
@@ -17,5 +18,9 @@ public:
 
     //障害物の位置をセットする
     void SetPosition(XMFLOAT3 _position);
+
+    void SetActive(bool b) { active_ = b; };
+    bool IsActive() { return active_; };
+
 };
 
