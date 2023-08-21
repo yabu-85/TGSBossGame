@@ -31,9 +31,8 @@ void MissileObstacle::Update()
 	if (!active_) return;
 
 	///////////////ˆÚ“®ƒeƒXƒg
-	transform_.position_.z -= 0.1f;
+	transform_.position_.z -= 1.0f;
 	transform_.position_.y = 1.0f;
-
 
 }
 

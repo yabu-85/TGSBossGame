@@ -34,6 +34,7 @@ void UfoObstacle::Update()
 	static float moveSpeedX = 0.5f;
 	static float moveSpeedZ = 0.5f;
 	static float move = 0.0f;
+	static float maxMoveX = 0.7f;
 	static bool x = true;
 
 	transform_.position_.y = 9.0f;
@@ -51,11 +52,11 @@ void UfoObstacle::Update()
 
 	if (x) {
 		move += 0.01f;
-		if (move >= 0.5) x = false;
+		if (move >= maxMoveX) x = false;
 	}
 	else {
 		move -= 0.01f;
-		if (move <= -0.5) x = true;
+		if (move <= -maxMoveX) x = true;
 	}
 	transform_.position_.x += (move * moveSpeedX);
 
