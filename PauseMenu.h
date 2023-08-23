@@ -1,13 +1,13 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+class ButtonFactory;
+
 class PauseMenu :
     public GameObject
 {
     int hPict_[2];
-
-    void ButtonInitializ(); 
-    void CheckButtonPressed();
+    ButtonFactory* pButtonFactory_;
 
 public:
     PauseMenu(GameObject* parent);

@@ -60,7 +60,7 @@ void RobotObstacle::Update()
 	if (transform_.position_.z < pPlayer_->GetPosition().z + 8.0f)
 		backMove_ = true;
 
-	static float moveSpeed = 0.05f;
+	static float moveSpeed = 0.1f;
 	static float moveStop = -50;
 	count_--;
 	if (count_ > 0)
@@ -72,10 +72,10 @@ void RobotObstacle::Update()
 	{
 		Missile* pMissile1 = Instantiate<Missile>(GetParent()->GetParent());
 		pMissile1->SetPosition(transform_.position_.x + 0.6f, transform_.position_.y + 2.2f, transform_.position_.z);
-		pMissile1->SetRotateY(transform_.rotate_.y);
+		pMissile1->SetTarget(0.3f, 0.3f, 0.0f);
 		Missile* pMissile2 = Instantiate<Missile>(GetParent()->GetParent());
 		pMissile2->SetPosition(transform_.position_.x - 0.6f, transform_.position_.y + 2.2f, transform_.position_.z);
-		pMissile2->SetRotateY(transform_.rotate_.y);
+		pMissile2->SetTarget(-0.3f, 0.3f, 0.0f);
 
 		count_ = 90;
 	}

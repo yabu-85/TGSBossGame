@@ -28,7 +28,7 @@ void Button::Update()
 		return;
 
 	XMFLOAT3 mouse = Input::GetMousePositionSub();
-	if (IsButtonClicked()) {
+	if (IsWithinBound()) {
 		transform_.scale_.x = iSize.x * width_;
 		transform_.scale_.y = iSize.y * height_;
 		alpha_ = 255;
@@ -119,14 +119,13 @@ void Button::SetValue(float x, float y, float w, float h, std::string n, std::st
 	frameSize_ = Image::GetTextureSize(hPict_[1]);
 }
 
-bool Button::IsButtonClicked()
+bool Button::IsWithinBound()
 {
 	if (!isButtonInactive_)
 		return false;
 
 	XMFLOAT3 mouse = Input::GetMousePositionSub();
 	mouse.x = -mouse.x;
-	
 
 	if (-mouse.y < (widePos_.y + (frameSize_.y * iSize.y) * height_) && -mouse.y > (widePos_.y - (frameSize_.y * iSize.y) * height_) &&
 		-mouse.x < (widePos_.x + (frameSize_.x * iSize.x) * width_) && -mouse.x > (widePos_.x - (frameSize_.x * iSize.x) * width_))

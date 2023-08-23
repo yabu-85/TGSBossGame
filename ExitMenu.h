@@ -1,13 +1,13 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+class ButtonFactory;
+
 class ExitMenu : public GameObject
 {
 	int hPict_;
 	int time_;
-
-	void CheckButtonPressed();
-	void ButtonInitializ();
+	ButtonFactory* pButtonFactory_;
 
 public:
 	ExitMenu(GameObject* parent);
@@ -16,7 +16,6 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
-
 
 };
 

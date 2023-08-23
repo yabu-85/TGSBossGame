@@ -2,6 +2,7 @@
 #include "Engine/Image.h"
 #include "Engine/SceneManager.h"
 #include "Logo.h"
+#include "ButtonFactory.h"
 #include "Button.h"
 #include "Engine/Text.h"
 #include "Engine/Input.h"
@@ -10,21 +11,10 @@
 #include "Stageselect.h"
 
 TitleScene::TitleScene(GameObject* parent)
-	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}
+	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0},
+	pButtonFactory_(nullptr)
 {
 }
-
-struct ButtonInfoTitle {
-	float x;
-	float y;
-	float width;
-	float height;
-	std::string name;
-}tbl[] = {
-	{0.0f, 0.0f, 1.0f, 1.0f, "Start"},
-	{0.0f, -300.0f, 1.0f, 1.0f, "Quit"},
-
-};
 
 void TitleScene::Initialize()
 {
@@ -51,24 +41,41 @@ void TitleScene::Initialize()
 	} else {
 		//ÉçÉSï\é¶ÇµÇ»Ç¢
 		disp_ = true;
-		ButtonInitializ();
+		pButtonFactory_ = Instantiate<ButtonFactory>(this);
+		pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Start");
+		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
 	}
 }
 
 void TitleScene::Update()
 {
-	if (disp_) {
-		CheckButtonPressed();
-
-	}
-	else {
+	if (!disp_) {
 		//LogoÇÃèàóù
 		Logo* pLogo = (Logo*)FindObject("Logo");
 		if (pLogo->IsEndDraw()) {
 			disp_ = true;
 			pLogo->KillMe();
-			ButtonInitializ();
+			pButtonFactory_ = Instantiate<ButtonFactory>(this);
+			pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Start");
+			pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
 		}
+	}
+
+	if (pButtonFactory_->CheckButtonPressed() == "Start") {
+		Instantiate<StageSelect>(this);
+
+		pButtonFactory_->SetActive(false);
+		pButtonFactory_->SetAlpha(10);
+		pButtonFactory_->SetFrameAlpha(10);
+
+	}
+	else if (pButtonFactory_->CheckButtonPressed() == "Quit") {
+		Instantiate<ExitMenu>(this);
+
+		pButtonFactory_->SetActive(false);
+		pButtonFactory_->SetAlpha(10);
+		pButtonFactory_->SetFrameAlpha(10);
+		
 	}
 }
 
@@ -114,67 +121,4 @@ void TitleScene::DrawCursor()
 
 	Image::SetTransform(hPict_[1], aim);
 	Image::Draw(hPict_[1]);
-}
-
-void TitleScene::ButtonInitializ()
-{
-	const int button = sizeof(tbl) / sizeof(tbl[0]);
-	for (int i = 0; i < button; i++) {
-		Button* pButton = nullptr;
-		pButton = Instantiate<Button>(this);
-		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
-		pButton->SetAlpha_(100);
-		pButton->SetFrameAlpha_(100);
-	}
-}
-
-void TitleScene::CheckButtonPressed()
-{
-	if (!Input::IsMouseButtonDown(0))
-		return;
-
-	std::list<GameObject*>* gs = GetChildList();
-	for (GameObject* obj : *gs) {
-		if (obj->GetObjectName() != "Button") {
-			continue;
-		}
-
-		Button* pButton = (Button*)obj;
-		if (pButton->IsButtonClicked()){
-			std::string na = pButton->GetName();
-			
-			if(na == "Start") {
-				Instantiate<StageSelect>(this);
-				for (GameObject* obj : *gs) {
-					if (obj->GetObjectName() != "Button") {
-						continue;
-					}
-
-					Button* pButton = (Button*)obj;
-					pButton->SetActive(false);
-					pButton->SetAlpha_(10);
-					pButton->SetFrameAlpha_(10);
-
-				}
-
-				break;
-			}
-			else if (na == "Quit") {
-				Instantiate<ExitMenu>(this);
-				for (GameObject* obj : *gs) {
-					if (obj->GetObjectName() != "Button") {
-						continue;
-					}
-
-					Button* pButton = (Button*)obj;
-					pButton->SetActive(false);
-					pButton->SetAlpha_(10);
-					pButton->SetFrameAlpha_(10);
-
-				}
-
-				break;
-			}
-		}
-	}
 }

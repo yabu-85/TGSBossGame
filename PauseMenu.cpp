@@ -1,6 +1,7 @@
 #include "PauseMenu.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
+#include "ButtonFactory.h"
 #include "Button.h"
 #include "PlayScene.h"
 #include "Aim.h"
@@ -8,21 +9,8 @@
 #include "Player.h"
 #include "Engine/SceneManager.h"
 
-struct ButtonInfoPause {
-	float x;
-	float y;
-	float width;
-	float height;
-	std::string name;
-}tbl[] = {
-	{0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame"},
-	{0.0f, 0.0f, 1.0f, 1.0f, "ReturnTitle"},
-	{0.0f, -300.0f, 1.0f, 1.0f, "Quit"},
-
-};
-
 PauseMenu::PauseMenu(GameObject* parent)
-	:GameObject(parent, "PauseMenu"), hPict_{-1,-1}
+	:GameObject(parent, "PauseMenu"), hPict_{-1,-1}, pButtonFactory_(nullptr)
 {
 }
 
@@ -32,7 +20,10 @@ PauseMenu::~PauseMenu()
 
 void PauseMenu::Initialize()
 {
-	ButtonInitializ();
+	pButtonFactory_ = Instantiate<ButtonFactory>(this);
+	pButtonFactory_->ButtonCreate(0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame");
+	pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "ReturnTitle");
+	pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
 
 	Aim* pAim = (Aim*)FindObject("Aim");
 	pAim->SetAimMove(false);
@@ -46,7 +37,29 @@ void PauseMenu::Initialize()
 
 void PauseMenu::Update()
 {
-	CheckButtonPressed();
+	if (pButtonFactory_->CheckButtonPressed() == "ReturnGame") {
+		Aim* pAim = (Aim*)FindObject("Aim");
+		pAim->SetAimMove(true);
+		Player* pPlayer = (Player*)FindObject("Player");
+		pPlayer->SetActive(true);
+		KillMe();
+
+	}
+	else if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_TITLE);
+
+	}
+	else if (pButtonFactory_->CheckButtonPressed() == "Quit") {
+		Instantiate<ExitMenu>(this);
+
+		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
+		ButtonFactory* pB = (ButtonFactory*)gs2;
+		pB->SetActive(false);
+		pB->SetAlpha(10);
+		pB->SetFrameAlpha(10);
+	
+	}
 
 }
 
@@ -69,63 +82,4 @@ void PauseMenu::Draw()
 
 void PauseMenu::Release()
 {
-}
-
-void PauseMenu::ButtonInitializ()
-{
-	const int button = sizeof(tbl) / sizeof(tbl[0]);
-	for (int i = 0; i < button; i++) {
-		Button* pButton = nullptr;
-		pButton = Instantiate<Button>(this);
-		pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
-		pButton->SetFrameAlpha_(100);
-	}
-}
-
-void PauseMenu::CheckButtonPressed()
-{
-	if (!Input::IsMouseButtonDown(0))
-		return;
-
-	std::list<GameObject*>* gs = GetChildList();
-	for (GameObject* obj : *gs) {
-		if (obj->GetObjectName() != "Button") {
-			continue;
-		}
-
-		Button* pButton = (Button*)obj;
-		if (pButton->IsButtonClicked()) {
-			std::string na = pButton->GetName();
-
-			if (na == "ReturnGame") {
-				Aim* pAim = (Aim*)FindObject("Aim");
-				pAim->SetAimMove(true);
-				Player* pPlayer = (Player*)FindObject("Player");
-				pPlayer->SetActive(true);
-				KillMe();
-				break;
-			}
-			else if (na == "ReturnTitle") {
-				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-				pSceneManager->ChangeScene(SCENE_ID_TITLE);
-				break;
-			}
-			else if (na == "Quit") {
-				Instantiate<ExitMenu>(this);	
-
-				for (GameObject* obj : *gs) {
-					if (obj->GetObjectName() != "Button") {
-						continue;
-					}
-
-					Button* pButton = (Button*)obj;
-					pButton->SetActive(false);
-					pButton->SetAlpha_(10);
-					pButton->SetFrameAlpha_(10);
-
-				}
-				break;
-			}
-		}
-	}
 }

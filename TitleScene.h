@@ -2,6 +2,8 @@
 #include "Engine/GameObject.h"
 #include "Engine/Text.h"
 
+class ButtonFactory;
+
 class TitleScene : public GameObject
 {
 	Text* pText_;		//
@@ -9,10 +11,9 @@ class TitleScene : public GameObject
 	int hPict_[3];		//画像番号
 	bool disp_;			//表示するかどうか
 	XMFLOAT3 mousePos_;	//マウス座標
+	ButtonFactory* pButtonFactory_;
 
 	void DrawCursor();
-	void ButtonInitializ();
-	void CheckButtonPressed();	//ボタン押されたか調べる
 
 public:
 

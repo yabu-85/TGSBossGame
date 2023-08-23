@@ -28,10 +28,10 @@ public:
 	//因数:座標x,y,サイズx.y, 画像の名前, フレームの名前
 	void SetValue(float x, float y, float w, float h, std::string n, std::string frame);
 
-	void SetAlpha_(int i) { alpha_ = i; }; //0（透明）～255（表示）
-	void SetFrameAlpha_(int i) { frameAlpha_ = i; }; //0（透明）～255（表示）
+	void SetAlpha(int i) { alpha_ = i; }; //0（透明）～255（表示）
+	void SetFrameAlpha(int i) { frameAlpha_ = i; }; //0（透明）～255（表示）
 	void SetActive(bool b) { isButtonInactive_ = b; };
-	bool IsButtonClicked();
+	bool IsWithinBound();
 	std::string GetName() { return name_; };
 };
 

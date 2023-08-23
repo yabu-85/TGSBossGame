@@ -1,28 +1,14 @@
 #include "Stageselect.h"
 #include "Engine/Input.h"
+#include "ButtonFactory.h"
 #include "Button.h"
 #include "Engine/SceneManager.h"
 #include "Engine/Image.h"
 
 StageSelect::StageSelect(GameObject* parent)
-	:GameObject(parent, "StageSelect"), hPict_(-1), time_(0)
+	:GameObject(parent, "StageSelect"), hPict_(-1), time_(0), pButtonFactory_(nullptr)
 {
 }
-
-struct ButtonInfoStage {
-	float x;
-	float y;
-	float width;
-	float height;
-	std::string name;
-	std::string frame;
-}tbl[] = {
-	{-1000.0f, -200.0f, 0.5f, 0.5f, "Clear","Stage01"},
-	{0.0f, -200.0f, 0.6f, 1.2f, "Over"},
-	{1000.0f, -200.0f, 0.6f, 1.2f, "Clear", "Team"},
-	{0.0f, -500.0f, 1.0f, 1.0f, "Back", "GameOver"},
-
-};
 
 StageSelect::~StageSelect()
 {
@@ -33,14 +19,41 @@ void StageSelect::Initialize()
 	hPict_ = Image::Load("StageSelect.png");
 	assert(hPict_ >= 0);
 
-	ButtonInitializ();
+	pButtonFactory_ = Instantiate<ButtonFactory>(this);
+	pButtonFactory_->ButtonCreate(-1000.0f, -200.0f, 0.5f, 0.5f, "Clear", "Stage01");
+	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.6f, 1.2f, "Over");
+	pButtonFactory_->ButtonCreate(1000.0f, -200.0f, 0.6f, 1.2f, "Clear", "Team");
+	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "Back", "GameOver");
+
 }
 
 void StageSelect::Update()
 {
-	if (time_ > 2)
-		CheckButtonPressed();
 	time_++;
+	if (time_ < 2) return;
+
+	if (pButtonFactory_->CheckButtonPressed() == "Clear") {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
+	}
+	else if (pButtonFactory_->CheckButtonPressed() == "Over") {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
+	}
+	else if (pButtonFactory_->CheckButtonPressed() == "Clear") {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
+	}
+	else if (pButtonFactory_->CheckButtonPressed() == "Back") {
+		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
+		ButtonFactory* pB = (ButtonFactory*)gs2;
+		pB->SetActive(true);
+		pB->SetAlpha(100);
+		pB->SetFrameAlpha(100);
+
+		KillMe();
+		return;
+	}
 
 }
 
@@ -55,75 +68,4 @@ void StageSelect::Draw()
 
 void StageSelect::Release()
 {
-}
-
-
-
-void StageSelect::CheckButtonPressed()
-{
-	if (!Input::IsMouseButtonDown(0))
-		return;
-
-	std::list<GameObject*>* gs = GetChildList();
-	for (GameObject* obj : *gs) {
-		if (obj->GetObjectName() != "Button") {
-			continue;
-		}
-
-		Button* pButton = (Button*)obj;
-		if (pButton->IsButtonClicked()) {
-			std::string na = pButton->GetName();
-
-			if (na == "Clear") {
-				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-				pSceneManager->ChangeScene(SCENE_ID_PLAY);
-
-			}
-			else if (na == "Over") {
-				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-				pSceneManager->ChangeScene(SCENE_ID_PLAY);
-
-			}
-			else if (na == "Team") {
-				SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-				pSceneManager->ChangeScene(SCENE_ID_PLAY);
-
-			}
-			else if (na == "Back") {
-				std::list<GameObject*>* gs2 = GetParent()->GetChildList();
-				for (GameObject* obj : *gs2) {
-					if (obj->GetObjectName() != "Button") {
-						continue;
-					}
-
-					Button* pButton = (Button*)obj;
-					pButton->SetActive(true);
-					pButton->SetAlpha_(255);
-					pButton->SetFrameAlpha_(255);
-
-				}
-
-				KillMe();
-				break;
-			}
-
-		}
-	}
-}
-
-void StageSelect::ButtonInitializ()
-{
-	const int button = sizeof(tbl) / sizeof(tbl[0]);
-	for (int i = 0; i < button; i++) {
-		Button* pButton = nullptr;
-		pButton = Instantiate<Button>(this);
-
-		if(tbl[i].frame != "")
-			pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name, tbl[i].frame);
-		else			
-			pButton->SetValue(tbl[i].x, tbl[i].y, tbl[i].width, tbl[i].height, tbl[i].name);
-
-		pButton->SetAlpha_(100);
-		pButton->SetFrameAlpha_(100);
-	}
 }
