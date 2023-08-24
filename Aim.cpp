@@ -8,9 +8,9 @@
 #include <map>
 
 Aim::Aim(GameObject* parent)
-    : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 }, plaPos_{ 0,0,0 },
-    pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(false), isShaking_(false), shakeTimer_(0), shakeAmplitude_(1.0f), shakeStrength_(0.0f),
-    pStage_(nullptr), shakeTimerSub_(0)
+    : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 },
+    plaPos_{ 0,0,0 }, pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(false), isShaking_(false), shakeTimer_(0),
+    shakeAmplitude_(1.0f), shakeStrength_(0.0f), pStage_(nullptr), shakeTimerSub_(0)
 {
     mouseSensitivity = 2.5f;
     perspectiveDistance_ = 3.2f;
@@ -98,7 +98,7 @@ void Aim::Update()
 
     //プレイヤーの半径を考慮して回転を適用している
     //ここAimの近さの値をプレイヤーから取得して計算もしてる
-    camPos = caTarget + (camPos * (perspectiveDistance_ * pPlayer_->IsAiming() * shakeAmplitude_));
+    camPos = caTarget + (camPos * (perspectiveDistance_ * shakeAmplitude_));
 
     XMStoreFloat3(&cameraPos_, camPos);
     XMStoreFloat3(&cameraTarget_, caTarget);

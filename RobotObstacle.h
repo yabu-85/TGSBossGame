@@ -14,14 +14,14 @@ class RobotObstacle :
         S_LEAVING,   //‹Ž‚é
     }
     state_;
+    bool stateEnter_;
     void UpdateEnter();
     void UpdateCharging();
     void UpdateShot();
     void UpdateIdle();
     void UpdateLeaving();
+    void ChangeState(STATE s);
 
-    bool backMove_;
-    bool attack_;
     int hModelHead_;
     int nearestLocation_;
     float count_;

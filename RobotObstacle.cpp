@@ -7,8 +7,8 @@
 #include "Missile.h"
 
 RobotObstacle::RobotObstacle(GameObject* parent)
-	:Obstacle(parent), pPlayer_(nullptr), backMove_(false), nearestLocation_(0), hModelHead_(-1), count_(0), attack_(false),
-	state_(S_ENTER)
+	:Obstacle(parent), pPlayer_(nullptr), nearestLocation_(0), hModelHead_(-1), count_(0),
+	state_(S_ENTER), stateEnter_(true)
 {
 	SetObjectName("RobotObstacle");
 }
@@ -59,38 +59,7 @@ void RobotObstacle::Update()
 		break;
 	}
 
-	if (backMove_) {
-		transform_.position_.y += 0.2f;
-		if (transform_.position_.y > 10.0f) {
-			KillMe();
-		}
-
-		return;
-	}
-
-	static int leng = 2.0f;
-	if (nearestLocation_ - (int)leng <= (int)transform_.position_.z) {
-		backMove_ = true;
-		return;
-	}
-
-	if (transform_.position_.z < pPlayer_->GetPosition().z + 8.0f)
-		backMove_ = true;
-
-	count_--;
-	if (!attack_ && count_ <= 0)
-	{
-		attack_ = true;
-		ShotMissile();
-	}
-
-	if (count_ <= -100) backMove_ = true;
-	transform_.position_.y = 0.0f;
-
 	Rotate();
-
-
-
 		
 }
 
@@ -140,22 +109,55 @@ void RobotObstacle::SetLearestLocation()
 
 void RobotObstacle::UpdateEnter()
 {
+	if (stateEnter_) {
+		stateEnter_ = false;
+		transform_.position_.y = 40.0f;
+	}
+
+	transform_.position_.y -= 2.0f;
+	if (transform_.position_.y <= 0.0f) {
+		transform_.position_.y = 0.0f;
+		ChangeState(S_CHARGING);
+
+	}
+
 }
 
 void RobotObstacle::UpdateCharging()
 {
+	count_--;
+	if (count_ <= 0)
+		ChangeState(S_SHOT);
 }
 
 void RobotObstacle::UpdateShot()
 {
+	ShotMissile();
+
+	ChangeState(S_IDLE);
 }
 
 void RobotObstacle::UpdateIdle()
 {
+	//プレイヤーが跳ね返したら死亡、しなければLeavingへ移行にする
+
+
+	if (count_ <= -100) ChangeState(S_LEAVING);
 }
 
 void RobotObstacle::UpdateLeaving()
 {
+	transform_.position_.y += 0.2f;
+	if (transform_.position_.y > 10.0f) {
+		KillMe();
+	}
+
+}
+
+void RobotObstacle::ChangeState(STATE s)
+{
+	state_ = s;
+	stateEnter_ = true;
 }
 
 void RobotObstacle::Rotate()

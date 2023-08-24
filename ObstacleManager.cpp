@@ -6,7 +6,8 @@
 #include "Player.h"
 
 ObstacleManager::ObstacleManager(GameObject* parent)
-    :GameObject(parent, "ObstacleManager"), width_(0), height_(0), loadPosZ_(0), loadPosZSub_(0), pPlayer_(nullptr), pText_(nullptr)
+    :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),
+    pPlayer_(nullptr), pText_(nullptr)
 {
 }
 
@@ -25,8 +26,8 @@ void ObstacleManager::Initialize()
 
     pPlayer_ = (Player*)FindObject("Player");
 
-    loadPosZ_ = 70;
-    loadPosZSub_ = loadPosZ_;
+    activationZone_ = 70;
+    activationZoneSub_ = activationZone_;
 
     //CSVデータをテーブルに格納
     for (int x = 0; x < width_; x++) {
@@ -53,15 +54,11 @@ void ObstacleManager::Initialize()
 
 }
 
-static bool flag = false;
-
 void ObstacleManager::Update()
 {
     int plaPosZ = (int)pPlayer_->GetPosition().z;
-    if (loadPosZSub_ < loadPosZ_ + plaPosZ) {
-        loadPosZSub_ = loadPosZ_ + plaPosZ;
-        flag = true;
-
+    if (activationZoneSub_ < activationZone_ + plaPosZ) {
+        activationZoneSub_ = activationZone_ + plaPosZ;
         LoadCsv();
 
     }
@@ -70,12 +67,7 @@ void ObstacleManager::Update()
 
 void ObstacleManager::Draw()
 {
-    pText_->Draw(30, 240, loadPosZSub_);
-
-    if (flag) {
-        pText_->Draw(30, 280, "LoadCSV");
-        flag = false;
-    }
+    pText_->Draw(30, 240, activationZoneSub_);
 
 }
 
@@ -124,7 +116,7 @@ void ObstacleManager::LoadCsv()
 
         for (Obstacle* obj : obstacles_) {
             Obstacle* pObstacle = (Obstacle*)obj;
-            if (pObstacle->GetPosition().z <= loadPosZSub_) {
+            if (pObstacle->GetPosition().z <= activationZoneSub_) {
                 pObstacle->SetActive(true);
             }
         }

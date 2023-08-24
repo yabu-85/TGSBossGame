@@ -17,7 +17,6 @@ class Player : public GameObject
     float gravity_;                 //重力の値
     float initVy_;                  //初期ジャンプ力
     float cameraHeight_;            //カメラの高さ (しゃがみとかにしか使わない？)
-    float decelerationTime_;        //落下の減速時間(def=1.0->0.0
     float maxMoveSpeed_;            //最大移動速度
     XMFLOAT3 fMove_;                //移動方向
     XMFLOAT3 previousPosition_;     //前の座標
@@ -27,8 +26,6 @@ class Player : public GameObject
     bool bulletJump_;               //バレットジャンプしているか
     bool isCrouching_;              //しゃがんでいるか
     bool anime_;                    //アニメーションしてる？
-    bool isDecelerated_;            //既に減速しているか
-    bool isDecelerating_;           //減速状態か
     bool isActive_;                 //操作を受け付けるか
 
     Stage* pStage_;
@@ -77,8 +74,6 @@ public:
 
     XMVECTOR GetPlaVector();                            //移動方向取得
     float GetCameraHeight() { return cameraHeight_; };  //カメラの高さ0.8f ～ 1.0f
-    float IsAiming();                                   //ズーム値：地上（近い！）,空中（中くらい）,覗いてない（1.0）
-    bool IsDecelerating() { return isDecelerating_; };
     int GetModelHandle() { return hModel_; }
     int GetHp() { return hp_; };
     int GetMaxHp() { return maxHp_; };

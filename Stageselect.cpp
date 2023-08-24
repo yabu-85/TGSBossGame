@@ -25,15 +25,13 @@ void StageSelect::Initialize()
 	//1 = AddModeÇ≈â¡éZçáê¨ÅAèdÇÀÇÈÇ∆ñæÇÈÇ≠Ç»ÇÈê›íË
 
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
-	pButtonFactory_->ButtonCreate(-1000.0f, -200.0f, 0.5f, 0.5f, "Clear", "Stage01");
-	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.6f, 1.2f, "Over");
-	pButtonFactory_->ButtonCreate(1000.0f, -200.0f, 0.6f, 1.2f, "Quit", "Team");
-	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 0.5f, "Back", "GameOver");
-	pButtonFactory_->SetAlpha(50);
+	pButtonFactory_->ButtonCreate(-1000.0f, -200.0f, 0.4f, 0.4f, "Clear", "Stage01");
+	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.4f, 0.4f, "Over", "Stage01");
+	pButtonFactory_->ButtonCreate(1000.0f, -200.0f, 0.4f, 0.4f, "Quit", "Stage01");
+	pButtonFactory_->ButtonCreate(0.0f, -700.0f, 1.0f, 1.0f, "Back");
+	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
-	pButtonFactory_->SetBlendMode(0, "Clear");
-	pButtonFactory_->SetBlendMode(0, "Back");
-	pButtonFactory_->SetBlendMode(0, "Quit");
+	pButtonFactory_->SetBlendMode(0);
 
 }
 
@@ -70,7 +68,7 @@ void StageSelect::Update()
 void StageSelect::Draw()
 {
 	Transform pos;
-	pos.position_.y = 0.1f;
+	pos.position_.y = 0.2f;
 	pos.scale_ = XMFLOAT3(0.5, 0.5f, 0.5f);
 	Image::SetTransform(hPict_, pos);
 	Image::Draw(hPict_);

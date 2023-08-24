@@ -31,6 +31,10 @@ public:
 	void SetActive(bool b);
 
 	//Default=0, Add = 1
+	//名前を指定して
 	void SetBlendMode(int mode, std::string name);
+	//Default=0, Add = 1
+	//ButtonFactoryクラスにあるボタンすべてに適応
+	void SetBlendMode(int mode);
 };
 

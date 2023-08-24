@@ -22,8 +22,8 @@ class ObstacleManager : public GameObject
     CsvReader csv_;
     int width_;
     int height_;
-    int loadPosZ_;
-    int loadPosZSub_;
+    int activationZone_;
+    int activationZoneSub_;
     Player* pPlayer_;
     Text* pText_;
 

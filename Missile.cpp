@@ -1,6 +1,7 @@
 #include "Missile.h"
 #include "Engine/Model.h"
 #include "Player.h"
+#include "Engine/VFX.h"
 
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
@@ -34,6 +35,40 @@ void Missile::Initialize()
     //終端速度に到達するための加速度を計算します。
     //a = v / k なので、a = v * k
     propulsion = speed * damping;
+
+
+   data.textureFileName = "cloudA.png";
+    data.position = transform_.position_;
+    data.delay = 0;
+    data.number = 5;
+    data.lifeTime = 30;
+    data.direction = XMFLOAT3(0, 1, 0);
+    data.directionRnd = XMFLOAT3(90, 90, 90);
+    data.speed = 0.1f;
+    data.speedRnd = 0.8;
+    data.size = XMFLOAT2(0.4, 0.4);
+    data.sizeRnd = XMFLOAT2(0.4, 0.4);
+    data.scale = XMFLOAT2(1.05, 1.05);
+    data.color = XMFLOAT4(1, 1, 0.1, 1);
+    data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
+
+    dataExp.textureFileName = "cloudA.png";
+    dataExp.position = transform_.position_;
+    dataExp.delay = 0;
+    dataExp.number = 1;
+    dataExp.lifeTime = 100;
+    dataExp.positionRnd = XMFLOAT3(0.5, 0, 0.5);
+    dataExp.direction = XMFLOAT3(0, 1, 0);
+    dataExp.directionRnd = XMFLOAT3(90, 90, 90);
+    dataExp.speed = 0.25f;
+    dataExp.speedRnd = 1;
+    dataExp.accel = 0.93;
+    dataExp.size = XMFLOAT2(0.1, 0.1);
+    dataExp.sizeRnd = XMFLOAT2(0.4, 0.4);
+    dataExp.scale = XMFLOAT2(0.99, 0.99);
+    dataExp.color = XMFLOAT4(1, 1, 0.1, 1);
+    dataExp.deltaColor = XMFLOAT4(0, 0, 0, 0);
+    dataExp.gravity = 0.003f;
 
 }
 
@@ -90,18 +125,6 @@ void Missile::Update()
 
     }
 
-    XMFLOAT3 pPos = pPlayer_->GetPosition();
-    pPos.y += 0.5f;
-    distance = sqrt(
-        (pPos.x - pos.x) * (pPos.x - pos.x) +
-        (pPos.y - pos.y) * (pPos.y - pos.y) +
-        (pPos.z - pos.z) * (pPos.z - pos.z)
-    );
-    if (distance < 1.0f) {
-        KillMe();
-
-    }
-
     const XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tar.x, 0, transform_.position_.z - tar.z);
     XMVECTOR vAimPos = XMLoadFloat3(&fAimPos);
@@ -118,6 +141,29 @@ void Missile::Update()
 
     transform_.rotate_.y = XMConvertToDegrees(angle);
     transform_.rotate_.y += 180.0f; //Blender
+
+
+    XMFLOAT3 pPos = pPlayer_->GetPosition();
+    pPos.y += 0.5f;
+    distance = sqrt(
+        (pPos.x - pos.x) * (pPos.x - pos.x) +
+        (pPos.y - pos.y) * (pPos.y - pos.y) +
+        (pPos.z - pos.z) * (pPos.z - pos.z)
+    );
+
+
+    //炎
+    if (distance < 1.0f) {
+
+        data.position = transform_.position_;
+        VFX::Start(data);
+
+        KillMe();
+    }
+
+    //火の粉
+    dataExp.position = transform_.position_;
+    VFX::Start(dataExp);
 
 }
 

@@ -23,8 +23,8 @@ static const float buJumpXZ = 0.28f;
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
-    playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), decelerationTime_(0.0f), isDecelerated_(false),
-    isDecelerating_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false), stateEnter_(true), hp_(0), maxHp_(0)
+    playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
+    stateEnter_(true), hp_(0), maxHp_(0)
 {
     moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
@@ -52,14 +52,11 @@ void Player::Initialize()
 
     hp_ = 50;
     maxHp_ = 50;
-
     Model::SetAnimFrame(hModel_, 0, 0, 1);
 
     pAim_ = Instantiate<Aim>(this);
     Instantiate<HpGauge>(this);
-
     pStage_ = (Stage*)FindObject("Stage");
-
     pText_ = new Text;
     pText_->Initialize();
 
@@ -111,38 +108,6 @@ void Player::Update()
         else isCrouching_ = false;
     }
 
-    //覗き込み||近接ガード||slow（落下速度低下）
-    //こっちは最初に押したらのやつ
-    if (Input::IsMouseButtonDown(1) && !IsPlayerOnGround()) {
-        isDecelerating_ = true;
-        pAim_->TriggerCameraShake(10, 0.1f);
-
-        if (!isDecelerated_) {
-            //上へ移動している場合は0に
-            if (graY_ > 0.0f)graY_ = -gravity_ * 0.5f;
-            else graY_ *= 0.2f;
-
-            decelerationTime_ = 0.0f;
-            isDecelerated_ = true;
-        }
-        else {
-            graY_ = graY_ * decelerationTime_;
-
-        }
-    }
-
-    if(Input::IsMouseButtonUp(1)) {
-        isDecelerating_ = false;
-    }
-
-    //減速している
-    if (isDecelerating_ ) {
-        decelerationTime_ += deTime;
-
-        //減速時間終わったよの処理
-        if (decelerationTime_ > noDe) isDecelerating_ = false;
-    }
-
     if (Input::IsKey(DIK_UPARROW)) {
         hp_--;
     }
@@ -172,8 +137,6 @@ void Player::SetActiveWithDelay(bool isActive)
         pAim->SetAimMove(true);
 
     }).detach();    
-
-
 }
 
 XMVECTOR Player::GetPlaVector() {
@@ -181,21 +144,6 @@ XMVECTOR Player::GetPlaVector() {
 
     return v;
 
-}
-
-float Player::IsAiming()
-{
-    //減速時カメラ位置近くなるのは遠距離武器を持っているときのみ
-    //だから今は無しに
-    if (false) {
-        if (IsPlayerOnGround()) {
-            if (Input::IsMouseButton(1)) return 0.4f;
-        }
-        else if (isDecelerating_) return 0.75f;
-
-    }   
-
-    return 1.0f;
 }
 
 /*--------------------------------State------------------------*/
@@ -433,8 +381,7 @@ void Player::GradualRotate(float x, float z)
 
 void Player::Gravity()
 {
-    if (isDecelerating_) graY_ -= (decelerationTime_ * 0.2f * gravity_);
-    else graY_ -= gravity_;
+    graY_ -= gravity_;
 
     const float maxGra = -1.0f;
     if (graY_ < maxGra) graY_ = maxGra;
@@ -448,7 +395,6 @@ void Player::Gravity()
         firstJump_ = false;
         secondJump_ = false;
         bulletJump_ = false;
-        isDecelerated_ = false;
         playerMovement_ = { 0.0f , 0.0f , 0.0f};
         transform_.position_.y = 0;
         graY_ = 0.0f;
@@ -460,8 +406,6 @@ void Player::Gravity()
 
 void Player::Jump()
 {
-    isDecelerating_ = false;
-
     //BulletJump
     if (isCrouching_ == true && !bulletJump_ && (!firstJump_ || !secondJump_)) {
 
