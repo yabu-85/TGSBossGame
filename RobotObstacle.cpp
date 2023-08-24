@@ -216,6 +216,7 @@ void RobotObstacle::ShotMissile()
 		Missile* pMissile = Instantiate<Missile>(GetParent()->GetParent());
 		pMissile->SetPosition(transform_.position_.x + tblP[i].x, transform_.position_.y + tblP[i].y, transform_.position_.z + tblP[i].z);
 		pMissile->SetTarget(tblT[i].x, tblT[i].y, tblT[i].z);
-
+		pMissile->SetParent(this);
+		if (i == 0) pMissile->SetKillParent(true);
 	}
 }

@@ -3,10 +3,12 @@
 #include "Player.h"
 #include "Engine/VFX.h"
 #include "Engine/Input.h"
+#include "RobotObstacle.h"
 
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
-    propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false)
+    propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
+    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), killParent_(false)
 {
 }
 
@@ -19,6 +21,7 @@ void Missile::Initialize()
 	hModel_ = Model::Load("Missile.fbx");
 	assert(hModel_ >= 0);
 	transform_.position_.y = 1.0f;
+    rotationAngle_ = { -(float)(rand() % 5), (float)(rand() % 10), (float)(rand() % 10) };
 
     pPlayer_ = (Player*)FindObject("Player");
     XMFLOAT3 pPos = pPlayer_->GetPosition();
@@ -32,27 +35,27 @@ void Missile::Initialize()
     //円運動の向心力
     maxCentripetalAccel = 0.1f;
 
-    //終端速度に到達するための加速度を計算します。
+    //終端速度に到達するための加速度の計算方法↓
     //a = v / k なので、a = v * k
     propulsion = speed * damping;
 
-    dataExp.textureFileName = "cloudA.png";
-    dataExp.position = transform_.position_;
-    dataExp.delay = 0;
-    dataExp.number = 1;
-    dataExp.lifeTime = 100;
-    dataExp.positionRnd = XMFLOAT3(0.5, 0, 0.5);
-    dataExp.direction = XMFLOAT3(0, 1, 0);
-    dataExp.directionRnd = XMFLOAT3(90, 90, 90);
-    dataExp.speed = 0.1f;
-    dataExp.speedRnd = 1.0f;
-    dataExp.accel = 0.93;
-    dataExp.size = XMFLOAT2(0.1, 0.1);
-    dataExp.sizeRnd = XMFLOAT2(0.4, 0.4);
-    dataExp.scale = XMFLOAT2(0.99, 0.99);
-    dataExp.color = XMFLOAT4(1, 1, 0.1, 1);
-    dataExp.deltaColor = XMFLOAT4(0, 0, 0, 0);
-    dataExp.gravity = 0.003f;
+    dataExp_.textureFileName = "cloudA.png";
+    dataExp_.position = transform_.position_;
+    dataExp_.delay = 0;
+    dataExp_.number = 1;
+    dataExp_.lifeTime = 100;
+    dataExp_.positionRnd = XMFLOAT3(0.5, 0, 0.5);
+    dataExp_.direction = XMFLOAT3(0, 1, 0);
+    dataExp_.directionRnd = XMFLOAT3(90, 90, 90);
+    dataExp_.speed = 0.1f;
+    dataExp_.speedRnd = 1.0f;
+    dataExp_.accel = 0.93;
+    dataExp_.size = XMFLOAT2(0.1, 0.1);
+    dataExp_.sizeRnd = XMFLOAT2(0.4, 0.4);
+    dataExp_.scale = XMFLOAT2(0.99, 0.99);
+    dataExp_.color = XMFLOAT4(1, 1, 0.1, 1);
+    dataExp_.deltaColor = XMFLOAT4(0, 0, 0, 0);
+    dataExp_.gravity = 0.003f;
 
 }
 
@@ -60,8 +63,8 @@ void Missile::Update()
 {
 
     //火の粉
-    dataExp.position = transform_.position_;
-    VFX::Start(dataExp);
+    dataExp_.position = transform_.position_;
+    VFX::Start(dataExp_);
 
     if (Input::IsMouseButtonDown(1)) {
         missileReflected_ = true;
@@ -77,6 +80,10 @@ void Missile::Update()
         XMFLOAT3 posF;
         XMStoreFloat3(&posF, pos);
         transform_.position_ = { transform_.position_.x + posF.x, transform_.position_.y + posF.y, transform_.position_.z + posF.z };
+
+        transform_.rotate_.x += rotationAngle_.x;
+        transform_.rotate_.y += rotationAngle_.y;
+        transform_.rotate_.z += rotationAngle_.z;
 
         float leng = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
         if (leng <= 1.0f) {
@@ -98,6 +105,10 @@ void Missile::Update()
             data.color = XMFLOAT4(1, 1, 0.1, 1);
             data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
             VFX::Start(data);
+
+            if (killParent_) {
+                pRobotObstacle_->KillMe();
+            }
 
             KillMe();
 
