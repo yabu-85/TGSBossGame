@@ -140,9 +140,6 @@
     <ClCompile Include="Obstacle.cpp">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
-    <ClCompile Include="MissiletObstacle.cpp">
-      <Filter>Scene\PlayScene\Obstacle</Filter>
-    </ClCompile>
     <ClCompile Include="WallObstacle.cpp">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
@@ -158,12 +155,15 @@
     <ClCompile Include="UfoObstacle.cpp">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
-    <ClCompile Include="HpGauge.cpp">
-      <Filter>PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="StageSelect.cpp">
-      <Filter>TitleScene</Filter>
+    <ClCompile Include="Missile.cpp" />
+    <ClCompile Include="HpGauge.cpp" />
+    <ClCompile Include="Stageselect.cpp" />
+    <ClCompile Include="RobotObstacle.cpp">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonFactory.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -266,9 +266,6 @@
     <ClInclude Include="Obstacle.h">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClInclude>
-    <ClInclude Include="MissileObstacle.h">
-      <Filter>Scene\PlayScene\Obstacle</Filter>
-    </ClInclude>
     <ClInclude Include="WallObstacle.h">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClInclude>
@@ -284,12 +281,15 @@
     <ClInclude Include="UfoObstacle.h">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClInclude>
-    <ClInclude Include="HpGauge.h">
-      <Filter>PlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="StageSelect.h">
-      <Filter>TitleScene</Filter>
+    <ClInclude Include="Missile.h" />
+    <ClInclude Include="HpGauge.h" />
+    <ClInclude Include="Stageselect.h" />
+    <ClInclude Include="RobotObstacle.h">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonFactory.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

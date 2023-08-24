@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Engine/Direct3D.h"
 
 class TitleScene;
 
@@ -14,6 +15,7 @@ class Button : public GameObject
 	std::string name_;		//ボタンに表示するPngの
 	XMFLOAT3 widePos_;		//-1～1じゃなく,-1280～1280とかの座標
 	XMFLOAT3 frameSize_;	//Frameのサイズ
+	Direct3D::BLEND_MODE mode_;
 
 public:
 	Button(GameObject* parent);
@@ -33,5 +35,7 @@ public:
 	void SetActive(bool b) { isButtonInactive_ = b; };
 	bool IsWithinBound();
 	std::string GetName() { return name_; };
+	void SetBlendMode(int mode);
+
 };
 

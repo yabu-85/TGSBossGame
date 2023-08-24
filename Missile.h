@@ -1,6 +1,8 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+class Player;
+
 class Missile :
     public GameObject
 {	
@@ -11,11 +13,11 @@ class Missile :
 	float propulsion;				// 推進力
 	float countPerMeter;			//メートルあたりのカウント
 	float speed;					//スピード
-	float curvatureRadius;			//曲率半径
 	float damping;					//減衰
 	float impact;					//衝突距離
-
 	int hModel_;
+	Player* pPlayer_;
+
 public:
 	Missile(GameObject* parent);
 	~Missile();

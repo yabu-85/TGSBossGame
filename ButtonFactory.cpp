@@ -72,6 +72,16 @@ void ButtonFactory::SetActive(bool b)
 	}
 }
 
+void ButtonFactory::SetBlendMode(int mode, std::string name)
+{
+	for (Button* obj : buttons_) {
+		if (obj->GetName() == name) {
+			obj->SetBlendMode(mode);
+			return;
+		}
+	}
+}
+
 void ButtonFactory::SetAlpha(int i)
 {
 	for (Button* e : buttons_) {

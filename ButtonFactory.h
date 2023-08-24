@@ -28,7 +28,9 @@ public:
 
 	void SetAlpha(int i);
 	void SetFrameAlpha(int i);
-
 	void SetActive(bool b);
+
+	//Default=0, Add = 1
+	void SetBlendMode(int mode, std::string name);
 };
 

@@ -19,11 +19,21 @@ void StageSelect::Initialize()
 	hPict_ = Image::Load("StageSelect.png");
 	assert(hPict_ >= 0);
 
+	//Defaultの上にAddを置くと気持ち明るくなる
+	//から画像が重なるときは、ボタンを作る順番でも描画結果が異なる
+	//0 = DefaultModeで重ねると暗くなる設定（多分
+	//1 = AddModeで加算合成、重ねると明るくなる設定
+
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
 	pButtonFactory_->ButtonCreate(-1000.0f, -200.0f, 0.5f, 0.5f, "Clear", "Stage01");
 	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.6f, 1.2f, "Over");
-	pButtonFactory_->ButtonCreate(1000.0f, -200.0f, 0.6f, 1.2f, "Clear", "Team");
-	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "Back", "GameOver");
+	pButtonFactory_->ButtonCreate(1000.0f, -200.0f, 0.6f, 1.2f, "Quit", "Team");
+	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 0.5f, "Back", "GameOver");
+	pButtonFactory_->SetAlpha(50);
+	pButtonFactory_->SetFrameAlpha(200);
+	pButtonFactory_->SetBlendMode(0, "Clear");
+	pButtonFactory_->SetBlendMode(0, "Back");
+	pButtonFactory_->SetBlendMode(0, "Quit");
 
 }
 

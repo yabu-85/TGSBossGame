@@ -7,7 +7,6 @@
 #include "Engine/Text.h"
 #include "Engine/Input.h"
 #include "ExitMenu.h"
-#include "Engine/Global.h"
 #include "Stageselect.h"
 
 TitleScene::TitleScene(GameObject* parent)
@@ -44,6 +43,7 @@ void TitleScene::Initialize()
 		pButtonFactory_ = Instantiate<ButtonFactory>(this);
 		pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Start");
 		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
+
 	}
 }
 
@@ -82,7 +82,6 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	if (disp_) {
-		Image::SetAlpha(hPict_[0], 150);
 		Transform pos1 = transform_;
 		pos1.scale_.x = 0.8f;
 		pos1.scale_.y = 0.8f;

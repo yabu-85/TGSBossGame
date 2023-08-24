@@ -6,13 +6,29 @@ class Player;
 class RobotObstacle :
     public Obstacle
 {
+    enum STATE {
+        S_ENTER = 0, //ìoèÍ
+        S_CHARGING,  //É`ÉÉÅ[ÉWíÜ
+        S_SHOT,      //Ç±Ç±Ç≈ë≈Ç¬
+        S_IDLE,      //âΩÇ‡ÇµÇ»Ç¢
+        S_LEAVING,   //ãéÇÈ
+    }
+    state_;
+    void UpdateEnter();
+    void UpdateCharging();
+    void UpdateShot();
+    void UpdateIdle();
+    void UpdateLeaving();
+
     bool backMove_;
+    bool attack_;
     int hModelHead_;
     int nearestLocation_;
     float count_;
     Player* pPlayer_;
 
     void Rotate();
+    void ShotMissile();
 
 public:
     RobotObstacle(GameObject* parent);

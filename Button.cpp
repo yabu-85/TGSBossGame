@@ -2,13 +2,14 @@
 #include "Engine/Image.h"
 #include "Engine/Input.h"
 #include "TitleScene.h"
+#include "Engine/Direct3D.h"
 
 static XMFLOAT3 iSize = { 0.65f, 0.7f, 0 };
 static XMFLOAT3 nSize = { 0.6f, 0.6f, 0 };
 
 Button::Button(GameObject* parent):
-	GameObject(parent, "Button"), hPict_{-1,-1}, width_(0), height_(0), name_(""), widePos_{0,0,0}, alpha_(255),
-	isButtonInactive_(true), frameAlpha_(255), frameSize_{0, 0, 0}
+	GameObject(parent, "Button"), hPict_{-1,-1}, width_(0), height_(0), name_(""), widePos_{0,0,0}, alpha_(255), frameAlpha_(255),
+	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD)
 {
 }
 
@@ -31,25 +32,25 @@ void Button::Update()
 	if (IsWithinBound()) {
 		transform_.scale_.x = iSize.x * width_;
 		transform_.scale_.y = iSize.y * height_;
-		alpha_ = 255;
 	}
 	else {
 		transform_.scale_.x = nSize.x * width_;
 		transform_.scale_.y = nSize.y * height_;
-		alpha_ = 230;
 	}
-
 }
 
 void Button::Draw()
 {
-	Image::SetAlpha(hPict_[0], alpha_);
-	Image::SetTransform(hPict_[0], transform_);
-	Image::Draw(hPict_[0]);
+	Direct3D::SetBlendMode(mode_);
 
 	Image::SetAlpha(hPict_[1], frameAlpha_);
 	Image::SetTransform(hPict_[1], transform_);
 	Image::Draw(hPict_[1]);
+
+	Image::SetAlpha(hPict_[0], alpha_);
+	Image::SetTransform(hPict_[0], transform_);
+	Image::Draw(hPict_[0]);
+
 
 }
 
@@ -132,4 +133,9 @@ bool Button::IsWithinBound()
 		return true;
 
 	return false;
+}
+
+void Button::SetBlendMode(int mode)
+{
+	mode_ = (Direct3D::BLEND_MODE)mode;
 }

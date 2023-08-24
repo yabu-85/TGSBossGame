@@ -3,7 +3,8 @@
 #include "Player.h"
 
 Missile::Missile(GameObject* parent)
-	:GameObject(parent, "Missile"), hModel_(-1)
+	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
+    propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr)
 {
 }
 
@@ -17,22 +18,23 @@ void Missile::Initialize()
 	assert(hModel_ >= 0);
 	transform_.position_.y = 1.0f;
 
-    Player* pPlayer = (Player*)FindObject("Player");
-    XMFLOAT3 pPos = pPlayer->GetPosition();
+    pPlayer_ = (Player*)FindObject("Player");
+    XMFLOAT3 pPos = pPlayer_->GetPosition();
+    pPos.z += 3.0f;
     target = XMLoadFloat3(&pPos);
 
     countPerMeter = 1.0f;
     speed = 0.05f;
-    curvatureRadius = 1.0f;
-    damping = 0.001f;
-    impact = 1.0f;
+    damping = 0.0f;
+    impact = 0.5f;
 
-    // 円運動の向心力を計算します。速さv、半径rの場合、向心力 = v^2 / r
-    maxCentripetalAccel = 0.05f;
+    //円運動の向心力
+    maxCentripetalAccel = 0.1f;
 
-    // 終端速度に到達するための加速度を計算します。
-    // a = v / k なので、a = v * k
+    //終端速度に到達するための加速度を計算します。
+    //a = v / k なので、a = v * k
     propulsion = speed * damping;
+
 }
 
 void Missile::Update()
@@ -85,9 +87,20 @@ void Missile::Update()
     );
     if (distance < impact) {
         KillMe();
+
     }
 
+    XMFLOAT3 pPos = pPlayer_->GetPosition();
+    pPos.y += 0.5f;
+    distance = sqrt(
+        (pPos.x - pos.x) * (pPos.x - pos.x) +
+        (pPos.y - pos.y) * (pPos.y - pos.y) +
+        (pPos.z - pos.z) * (pPos.z - pos.z)
+    );
+    if (distance < 1.0f) {
+        KillMe();
 
+    }
 
     const XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tar.x, 0, transform_.position_.z - tar.z);
