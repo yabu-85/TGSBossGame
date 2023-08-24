@@ -2,10 +2,11 @@
 #include "Engine/Model.h"
 #include "Player.h"
 #include "Engine/VFX.h"
+#include "Engine/Input.h"
 
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
-    propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr)
+    propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false)
 {
 }
 
@@ -21,7 +22,6 @@ void Missile::Initialize()
 
     pPlayer_ = (Player*)FindObject("Player");
     XMFLOAT3 pPos = pPlayer_->GetPosition();
-    pPos.z += 3.0f;
     target = XMLoadFloat3(&pPos);
 
     countPerMeter = 1.0f;
@@ -36,22 +36,6 @@ void Missile::Initialize()
     //a = v / k なので、a = v * k
     propulsion = speed * damping;
 
-
-   data.textureFileName = "cloudA.png";
-    data.position = transform_.position_;
-    data.delay = 0;
-    data.number = 5;
-    data.lifeTime = 30;
-    data.direction = XMFLOAT3(0, 1, 0);
-    data.directionRnd = XMFLOAT3(90, 90, 90);
-    data.speed = 0.1f;
-    data.speedRnd = 0.8;
-    data.size = XMFLOAT2(0.4, 0.4);
-    data.sizeRnd = XMFLOAT2(0.4, 0.4);
-    data.scale = XMFLOAT2(1.05, 1.05);
-    data.color = XMFLOAT4(1, 1, 0.1, 1);
-    data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
-
     dataExp.textureFileName = "cloudA.png";
     dataExp.position = transform_.position_;
     dataExp.delay = 0;
@@ -60,8 +44,8 @@ void Missile::Initialize()
     dataExp.positionRnd = XMFLOAT3(0.5, 0, 0.5);
     dataExp.direction = XMFLOAT3(0, 1, 0);
     dataExp.directionRnd = XMFLOAT3(90, 90, 90);
-    dataExp.speed = 0.25f;
-    dataExp.speedRnd = 1;
+    dataExp.speed = 0.1f;
+    dataExp.speedRnd = 1.0f;
     dataExp.accel = 0.93;
     dataExp.size = XMFLOAT2(0.1, 0.1);
     dataExp.sizeRnd = XMFLOAT2(0.4, 0.4);
@@ -74,19 +58,54 @@ void Missile::Initialize()
 
 void Missile::Update()
 {
-    /*
-    // 角度をラジアンに変換
-    float angleRad = (-transform_.rotate_.y + 90.0f) * XM_PI / 180.0f;
 
-    // 角度から方向ベクトルを計算
-    XMFLOAT3 direction = { cosf(angleRad), 0.0f, sinf(angleRad) };
+    //火の粉
+    dataExp.position = transform_.position_;
+    VFX::Start(dataExp);
 
-    // 速度を乗算して位置を更新
-    float speed = 0.5f; // 移動速度を調整
-    transform_.position_.x += direction.x * speed;
-    transform_.position_.z += direction.z * speed;
-    */
-    
+    if (Input::IsMouseButtonDown(1)) {
+        missileReflected_ = true;
+    }
+
+    if (missileReflected_) {
+        float reflectSpeed = 1.0f;
+        XMVECTOR pos1, pos2;
+        pos1 = XMLoadFloat3(&launchPoint_);
+        pos2 = XMLoadFloat3(&transform_.position_);
+        XMVECTOR pos = pos1 - pos2;
+        pos = XMVector3Normalize(pos) * reflectSpeed;
+        XMFLOAT3 posF;
+        XMStoreFloat3(&posF, pos);
+        transform_.position_ = { transform_.position_.x + posF.x, transform_.position_.y + posF.y, transform_.position_.z + posF.z };
+
+        float leng = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
+        if (leng <= 1.0f) {
+            //炎
+            EmitterData data;
+            data.position = transform_.position_;
+            data.textureFileName = "cloudA.png";
+            data.position = transform_.position_;
+            data.delay = 0;
+            data.number = 5;
+            data.lifeTime = 30;
+            data.direction = XMFLOAT3(0, 1, 0);
+            data.directionRnd = XMFLOAT3(90, 90, 90);
+            data.speed = 0.1f;
+            data.speedRnd = 0.8;
+            data.size = XMFLOAT2(0.4, 0.4);
+            data.sizeRnd = XMFLOAT2(0.4, 0.4);
+            data.scale = XMFLOAT2(1.05, 1.05);
+            data.color = XMFLOAT4(1, 1, 0.1, 1);
+            data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
+            VFX::Start(data);
+
+            KillMe();
+
+        }
+
+        return;
+    }
+
     position = XMLoadFloat3(&transform_.position_);
     XMVECTOR toTarget = target - position;
     XMVECTOR vn = XMVector3Normalize(velocity);
@@ -121,6 +140,25 @@ void Missile::Update()
         (tar.z - pos.z) * (tar.z - pos.z)
     );
     if (distance < impact) {
+        //炎
+        EmitterData data;
+        data.position = transform_.position_;
+        data.textureFileName = "cloudA.png";
+        data.position = transform_.position_;
+        data.delay = 0;
+        data.number = 5;
+        data.lifeTime = 30;
+        data.direction = XMFLOAT3(0, 1, 0);
+        data.directionRnd = XMFLOAT3(90, 90, 90);
+        data.speed = 0.1f;
+        data.speedRnd = 0.8;
+        data.size = XMFLOAT2(0.4, 0.4);
+        data.sizeRnd = XMFLOAT2(0.4, 0.4);
+        data.scale = XMFLOAT2(1.05, 1.05);
+        data.color = XMFLOAT4(1, 1, 0.1, 1);
+        data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
+        VFX::Start(data);
+
         KillMe();
 
     }
@@ -151,19 +189,31 @@ void Missile::Update()
         (pPos.z - pos.z) * (pPos.z - pos.z)
     );
 
-
-    //炎
     if (distance < 1.0f) {
-
+        
+        //炎
+        EmitterData data;
         data.position = transform_.position_;
+        data.textureFileName = "cloudA.png";
+        data.position = transform_.position_;
+        data.delay = 0;
+        data.number = 5;
+        data.lifeTime = 30;
+        data.direction = XMFLOAT3(0, 1, 0);
+        data.directionRnd = XMFLOAT3(90, 90, 90);
+        data.speed = 0.1f;
+        data.speedRnd = 0.8;
+        data.size = XMFLOAT2(0.4, 0.4);
+        data.sizeRnd = XMFLOAT2(0.4, 0.4);
+        data.scale = XMFLOAT2(1.05, 1.05);
+        data.color = XMFLOAT4(1, 1, 0.1, 1);
+        data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
         VFX::Start(data);
 
         KillMe();
     }
 
-    //火の粉
-    dataExp.position = transform_.position_;
-    VFX::Start(dataExp);
+
 
 }
 
@@ -183,4 +233,6 @@ void Missile::SetTarget(float x, float y, float z)
 {
     XMFLOAT3 t = { x,y,z };
     velocity = XMLoadFloat3(&t);
+    launchPoint_ = transform_.position_;
+
 }
