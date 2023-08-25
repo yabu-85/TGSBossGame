@@ -185,7 +185,7 @@ HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdSho
 	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);	//アイコン
 	wc.hIconSm = LoadIcon(nullptr, IDI_WINLOGO);	//小さいアイコン
 	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);	//マウスカーソル
-	wc.lpszMenuName = nullptr;						//メニュー（なし）
+	wc.lpszMenuName = NULL;						//メニュー（なし）
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	//背景（白）
@@ -203,7 +203,7 @@ HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdSho
 	HWND hWnd = CreateWindow(
 		WIN_CLASS_NAME,					//ウィンドウクラス名
 		caption,						//タイトルバーに表示する内容
-		WS_POPUP | WS_VISIBLE,			//スタイル（普通のウィンドウ WS_OVERLAPPEDWINDOW）
+		WS_OVERLAPPEDWINDOW,			//スタイル（普通のウィンドウ WS_OVERLAPPEDWINDOW）このゲームのWS_POPUP | WS_VISIBLE
 		CW_USEDEFAULT,					//表示位置左（おまかせ）
 		CW_USEDEFAULT,					//表示位置上（おまかせ）
 		winRect.right - winRect.left,	//ウィンドウ幅

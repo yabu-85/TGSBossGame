@@ -5,7 +5,7 @@
 WallObstacle::WallObstacle(GameObject* parent)
 	:Obstacle(parent)
 {
-	SetObjectName("WallObstacle");
+	objectName_ = "WallObstacle";
 }
 
 WallObstacle::~WallObstacle()

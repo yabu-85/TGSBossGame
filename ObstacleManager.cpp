@@ -42,13 +42,6 @@ void ObstacleManager::Initialize()
         }
     }
 
-    for (Obstacle* e : obstacles_) {
-        if (e->GetObjectName() == "RobotObstacle") {
-            RobotObstacle* pRobotObstacle = dynamic_cast<RobotObstacle*>(e);
-            pRobotObstacle->SetLearestLocation();
-        }
-    }
-
     pText_ = new Text;
     pText_->Initialize();
 

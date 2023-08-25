@@ -39,6 +39,7 @@ void Missile::Initialize()
     //a = v / k Ç»ÇÃÇ≈ÅAa = v * k
     propulsion = speed * damping;
 
+    //âŒÇÃï≤
     dataExp_.textureFileName = "cloudA.png";
     dataExp_.position = transform_.position_;
     dataExp_.delay = 0;
@@ -87,24 +88,7 @@ void Missile::Update()
 
         float leng = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
         if (leng <= 1.0f) {
-            //âä
-            EmitterData data;
-            data.position = transform_.position_;
-            data.textureFileName = "cloudA.png";
-            data.position = transform_.position_;
-            data.delay = 0;
-            data.number = 5;
-            data.lifeTime = 30;
-            data.direction = XMFLOAT3(0, 1, 0);
-            data.directionRnd = XMFLOAT3(90, 90, 90);
-            data.speed = 0.1f;
-            data.speedRnd = 0.8;
-            data.size = XMFLOAT2(0.4, 0.4);
-            data.sizeRnd = XMFLOAT2(0.4, 0.4);
-            data.scale = XMFLOAT2(1.05, 1.05);
-            data.color = XMFLOAT4(1, 1, 0.1, 1);
-            data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
-            VFX::Start(data);
+            CreateExplodeParticle();
 
             if (killParent_) {
                 pRobotObstacle_->KillMe();
@@ -151,24 +135,7 @@ void Missile::Update()
         (tar.z - pos.z) * (tar.z - pos.z)
     );
     if (distance < impact) {
-        //âä
-        EmitterData data;
-        data.position = transform_.position_;
-        data.textureFileName = "cloudA.png";
-        data.position = transform_.position_;
-        data.delay = 0;
-        data.number = 5;
-        data.lifeTime = 30;
-        data.direction = XMFLOAT3(0, 1, 0);
-        data.directionRnd = XMFLOAT3(90, 90, 90);
-        data.speed = 0.1f;
-        data.speedRnd = 0.8;
-        data.size = XMFLOAT2(0.4, 0.4);
-        data.sizeRnd = XMFLOAT2(0.4, 0.4);
-        data.scale = XMFLOAT2(1.05, 1.05);
-        data.color = XMFLOAT4(1, 1, 0.1, 1);
-        data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
-        VFX::Start(data);
+        CreateExplodeParticle();
 
         KillMe();
 
@@ -201,25 +168,7 @@ void Missile::Update()
     );
 
     if (distance < 1.0f) {
-        
-        //âä
-        EmitterData data;
-        data.position = transform_.position_;
-        data.textureFileName = "cloudA.png";
-        data.position = transform_.position_;
-        data.delay = 0;
-        data.number = 5;
-        data.lifeTime = 30;
-        data.direction = XMFLOAT3(0, 1, 0);
-        data.directionRnd = XMFLOAT3(90, 90, 90);
-        data.speed = 0.1f;
-        data.speedRnd = 0.8;
-        data.size = XMFLOAT2(0.4, 0.4);
-        data.sizeRnd = XMFLOAT2(0.4, 0.4);
-        data.scale = XMFLOAT2(1.05, 1.05);
-        data.color = XMFLOAT4(1, 1, 0.1, 1);
-        data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
-        VFX::Start(data);
+        CreateExplodeParticle();
 
         KillMe();
     }
@@ -245,5 +194,29 @@ void Missile::SetTarget(float x, float y, float z)
     XMFLOAT3 t = { x,y,z };
     velocity = XMLoadFloat3(&t);
     launchPoint_ = transform_.position_;
+
+}
+
+
+void Missile::CreateExplodeParticle()
+{
+    //îöî≠
+    EmitterData data;
+    data.position = transform_.position_;
+    data.textureFileName = "cloudA.png";
+    data.position = transform_.position_;
+    data.delay = 0;
+    data.number = 5;
+    data.lifeTime = 30;
+    data.direction = XMFLOAT3(0, 1, 0);
+    data.directionRnd = XMFLOAT3(90, 90, 90);
+    data.speed = 0.1f;
+    data.speedRnd = 0.8;
+    data.size = XMFLOAT2(0.4, 0.4);
+    data.sizeRnd = XMFLOAT2(0.4, 0.4);
+    data.scale = XMFLOAT2(1.05, 1.05);
+    data.color = XMFLOAT4(1, 1, 0.1, 1);
+    data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
+    VFX::Start(data);
 
 }

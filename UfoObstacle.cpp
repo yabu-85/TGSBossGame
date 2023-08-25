@@ -5,6 +5,7 @@
 UfoObstacle::UfoObstacle(GameObject* parent)
 	:Obstacle(parent), firstMoveZ_(0.0f), first_(false), hModelLa_(-1), move_(0.0f), maxMoveX_(0.0f), x_(true), firstAct_(true)
 {
+	objectName_ = "UfoObstacle";
 }
 
 UfoObstacle::~UfoObstacle()

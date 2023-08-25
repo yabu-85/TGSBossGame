@@ -10,7 +10,7 @@ RobotObstacle::RobotObstacle(GameObject* parent)
 	:Obstacle(parent), pPlayer_(nullptr), nearestLocation_(0), hModelHead_(-1), count_(0),
 	state_(S_ENTER), stateEnter_(true)
 {
-	SetObjectName("RobotObstacle");
+	objectName_ = "RobotObstacle";
 }
 
 RobotObstacle::~RobotObstacle()
@@ -34,6 +34,7 @@ void RobotObstacle::Initialize()
 	pPlayer_ = (Player*)FindObject("Player");
 	transform_.rotate_.y = 180;
 
+	SetLearestLocation();
 	count_ = 90;
 }
 
@@ -139,10 +140,9 @@ void RobotObstacle::UpdateShot()
 
 void RobotObstacle::UpdateIdle()
 {
-	//プレイヤーが跳ね返したら死亡、しなければLeavingへ移行にする
+	//跳ね返さなかったら
+	if(false) ChangeState(S_LEAVING);
 
-
-	if (count_ <= -100) ChangeState(S_LEAVING);
 }
 
 void RobotObstacle::UpdateLeaving()

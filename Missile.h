@@ -26,6 +26,7 @@ class Missile :
 	RobotObstacle* pRobotObstacle_;	
 	Player* pPlayer_;
 
+	void CreateExplodeParticle();
 
 public:
 	Missile(GameObject* parent);

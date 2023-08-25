@@ -44,6 +44,12 @@ void Timer::Draw()
 
     int sec = frame_ / FPS;                             //•b”
     pNum_->Draw(drawX_ + 100, drawY_, sec);
+
+    static int time = 100;
+    time -= (100.0 / FPS);
+    if (time < 0) time = 100;
+
+    pNum_->Draw(drawX_ + 500, drawY_, time );
 }
 
 //ŠJ•ú
