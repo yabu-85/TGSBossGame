@@ -2,6 +2,15 @@
 #include <vector>
 #include "Audio.h"
 
+//なんかリトルエンディアンとかの違いがあるらしい 下見て
+//https://learn.microsoft.com/ja-jp/windows/win32/xaudio2/how-to--load-audio-data-files-in-xaudio2
+#define fourccRIFF 'FFIR'
+#define fourccDATA 'atad'
+#define fourccFMT ' tmf'
+#define fourccWAVE 'EVAW'
+#define fourccXWMA 'AMWX'
+#define fourccDPDS 'sdpd'
+
 #define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
 
 namespace Audio
@@ -15,17 +24,14 @@ namespace Audio
 	//ファイル毎に必要な情報
 	struct AudioData
 	{
-		//サウンド情報
-		XAUDIO2_BUFFER buf = {};
-
 		//ソースボイス
 		IXAudio2SourceVoice** pSourceVoice = nullptr;
 
 		//同時再生最大数
-		int svNum;
+		int svNum = 1;
 
 		//ファイル名
-		std::string fileName;
+		std::string fileName = "";
 	};
 	std::vector<AudioData>	audioDatas;
 }
@@ -33,9 +39,9 @@ namespace Audio
 //初期化
 void Audio::Initialize()
 {
-	CoInitializeEx(0, COINIT_MULTITHREADED);
+	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
-	XAudio2Create(&pXAudio);
+	XAudio2Create(&pXAudio, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	pXAudio->CreateMasteringVoice(&pMasteringVoice);
 
 }
@@ -52,98 +58,49 @@ int Audio::Load(std::string fileName, int svNum)
 		}
 	}
 
-	//チャンク構造体
-	struct Chunk
-	{
-		char	id[4]; 		// ID
-		unsigned int	size;	// サイズ
-	};
+	return 0;
 
-	//ファイルを開く
-	HANDLE hFile;
-	hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-	DWORD dwBytes = 0;
-
-	Chunk riffChunk;
-	ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL);
-	ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL);
-
-	char wave[4];
-	ReadFile(hFile, &wave, 4, &dwBytes, NULL);
-
-	Chunk formatChunk;
-	while (formatChunk.id[0] != 'f') {
-		ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL);
-	}
-	ReadFile(hFile, &formatChunk.size, 4, &dwBytes, NULL);
-
-
-	//フォーマットを読み取る
-	//https://learn.microsoft.com/ja-jp/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
-	WAVEFORMATEX fmt;
-	ReadFile(hFile, &fmt.wFormatTag, 2, &dwBytes, NULL);		//形式
-	ReadFile(hFile, &fmt.nChannels, 2, &dwBytes, NULL);			//チャンネル（モノラル/ステレオ）
-	ReadFile(hFile, &fmt.nSamplesPerSec, 4, &dwBytes, NULL);	//サンプリング数
-	ReadFile(hFile, &fmt.nAvgBytesPerSec, 4, &dwBytes, NULL);	//1秒あたりのバイト数
-	ReadFile(hFile, &fmt.nBlockAlign, 2, &dwBytes, NULL);		//ブロック配置
-	ReadFile(hFile, &fmt.wBitsPerSample, 2, &dwBytes, NULL);	//サンプル当たりのビット数
-
-
-	
-
-	//波形データの読み込み
-	Chunk data = { 0 };
-	while (data.id[0] != 'd') 
-	{
-		ReadFile(hFile, &data.id, 4, &dwBytes, NULL);
-	}
-	ReadFile(hFile, &data.size, 4, &dwBytes, NULL);
-
-	char* pBuffer = new char[data.size];
-	ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL);
-	CloseHandle(hFile);
-
-
-	AudioData ad;
-
-	ad.fileName = fileName;
-
-	ad.buf.pAudioData = (BYTE*)pBuffer;
-	ad.buf.Flags = XAUDIO2_END_OF_STREAM;
-
-	ad.buf.AudioBytes = data.size;
-
-
-	ad.pSourceVoice = new IXAudio2SourceVoice * [svNum];
-
-	for (int i = 0; i < svNum; i++)
-	{
-		pXAudio->CreateSourceVoice(&ad.pSourceVoice[i], &fmt);
-	}
-	ad.svNum = svNum;
-	audioDatas.push_back(ad);
-
-	//SAFE_DELETE_ARRAY(pBuffer);
-
-	return (int)audioDatas.size() - 1;
 }
 
 //再生
-void Audio::Play(int ID)
+void Audio::Play(std::string _fileName)
 {
-	for (int i = 0; i < audioDatas[ID].svNum; i++)
-	{
-		XAUDIO2_VOICE_STATE state;
-		audioDatas[ID].pSourceVoice[i]->GetState(&state);
+	//サウンド情報
+	WAVEFORMATEXTENSIBLE wfx = { 0 };
+	XAUDIO2_BUFFER buffer = { 0 };
 
-		if (state.BuffersQueued == 0)
-		{
-			audioDatas[ID].pSourceVoice[i]->SubmitSourceBuffer(&audioDatas[ID].buf);
-			audioDatas[ID].pSourceVoice[i]->Start();
-			break;
-		}
-	}
+	HANDLE hFile = CreateFile(_fileName.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+	SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+
+	DWORD dwChunkSize;
+	DWORD dwChunkPosition;
+	//check the file type, should be fourccWAVE or 'XWMA'
+	FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition);
+	DWORD filetype;
+	ReadChunkData(hFile, &filetype, sizeof(DWORD), dwChunkPosition);
+
+	FindChunk(hFile, fourccFMT, dwChunkSize, dwChunkPosition);
+	ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
+
+	//fill out the audio data buffer with the contents of the fourccDATA chunk
+	FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
+	BYTE* pDataBuffer = new BYTE[dwChunkSize];
+	ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
+
+	buffer.AudioBytes = dwChunkSize;  //size of the audio buffer in bytes
+	buffer.pAudioData = pDataBuffer;  //buffer containing audio data
+	buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
+
+	IXAudio2SourceVoice* pSourceVoice;
+	pXAudio->CreateSourceVoice(&pSourceVoice, (WAVEFORMATEX*)&wfx);
+
+	pSourceVoice->SubmitSourceBuffer(&buffer);
+
+	//音量の設定
+	pSourceVoice->SetVolume(0.1f);
+
+	pSourceVoice->Start(0);
+
 }
 
 //すべて開放
@@ -155,7 +112,6 @@ void Audio::Release()
 		{
 			audioDatas[i].pSourceVoice[j]->DestroyVoice();
 		}
-		SAFE_DELETE_ARRAY(audioDatas[i].buf.pAudioData);
 	}
 
 	CoUninitialize();
@@ -164,4 +120,69 @@ void Audio::Release()
 		pMasteringVoice->DestroyVoice();
 	}
 	pXAudio->Release();
+}
+
+HRESULT Audio::FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition)
+{
+	HRESULT hr = S_OK;
+	if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
+		return HRESULT_FROM_WIN32(GetLastError());
+
+	DWORD dwChunkType = 0;
+	DWORD dwChunkDataSize = 0;
+	DWORD dwRIFFDataSize = 0;
+	DWORD dwFileType = 0;
+	DWORD bytesRead = 0;
+	DWORD dwOffset = 0;
+
+	while (hr == S_OK)
+	{
+		DWORD dwRead;
+		if (0 == ReadFile(hFile, &dwChunkType, sizeof(DWORD), &dwRead, NULL))
+			hr = HRESULT_FROM_WIN32(GetLastError());
+
+		if (0 == ReadFile(hFile, &dwChunkDataSize, sizeof(DWORD), &dwRead, NULL))
+			hr = HRESULT_FROM_WIN32(GetLastError());
+
+		switch (dwChunkType)
+		{
+		case fourccRIFF:
+			dwRIFFDataSize = dwChunkDataSize;
+			dwChunkDataSize = 4;
+			if (0 == ReadFile(hFile, &dwFileType, sizeof(DWORD), &dwRead, NULL))
+				hr = HRESULT_FROM_WIN32(GetLastError());
+			break;
+
+		default:
+			if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, dwChunkDataSize, NULL, FILE_CURRENT))
+				return HRESULT_FROM_WIN32(GetLastError());
+		}
+
+		dwOffset += sizeof(DWORD) * 2;
+
+		if (dwChunkType == fourcc)
+		{
+			dwChunkSize = dwChunkDataSize;
+			dwChunkDataPosition = dwOffset;
+			return S_OK;
+		}
+
+		dwOffset += dwChunkDataSize;
+
+		if (bytesRead >= dwRIFFDataSize) return S_FALSE;
+
+	}
+
+	return S_OK;
+}
+
+HRESULT Audio::ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset)
+{
+	HRESULT hr = S_OK;
+	if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferoffset, NULL, FILE_BEGIN))
+		return HRESULT_FROM_WIN32(GetLastError());
+	DWORD dwRead;
+	if (0 == ReadFile(hFile, buffer, buffersize, &dwRead, NULL))
+		hr = HRESULT_FROM_WIN32(GetLastError());
+	return hr;
 }

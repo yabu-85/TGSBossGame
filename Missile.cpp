@@ -4,6 +4,7 @@
 #include "Engine/VFX.h"
 #include "Engine/Input.h"
 #include "RobotObstacle.h"
+#include "Engine/Audio.h"
 
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
@@ -58,6 +59,8 @@ void Missile::Initialize()
     dataExp_.deltaColor = XMFLOAT4(0, 0, 0, 0);
     dataExp_.gravity = 0.003f;
 
+    Audio::Play("Sound/MissileShot.wav");
+
 }
 
 void Missile::Update()
@@ -97,6 +100,7 @@ void Missile::Update()
                 pRobotObstacle_->KillMe();
             }
 
+            Audio::Play("Sound/MissileExplode.wav");
             KillMe();
 
         }
@@ -140,6 +144,7 @@ void Missile::Update()
     //‚±‚±‚ÍTarget‚ÌêŠ‚Ì”ÍˆÍ‚É“ü‚Á‚½‚ç
     if (distance < impact) {
         CreateExplodeParticle();
+        Audio::Play("Sound/MissileExplode.wav");
         KillMe();
 
     }
@@ -172,8 +177,8 @@ void Missile::Update()
     );
     if (distance < 1.0f) {
         CreateExplodeParticle();
+        Audio::Play("Sound/MissileExplode.wav");
         pPlayer_->DecreaseHp(5);
-
         KillMe();
     }
 

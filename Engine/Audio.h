@@ -18,9 +18,13 @@ namespace Audio
 
 	//再生
 	//引数：handle	鳴らしたいサウンドの番号
-	void Play(int ID);
+	void Play(std::string fileName);
 
 	//すべて開放
 	void Release();
+
+	HRESULT FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition);
+	HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset);
+
 };
 
