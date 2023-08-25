@@ -34,7 +34,6 @@ void RobotObstacle::Initialize()
 	pPlayer_ = (Player*)FindObject("Player");
 	transform_.rotate_.y = 180;
 
-	SetLearestLocation();
 	count_ = 90;
 }
 
@@ -93,20 +92,6 @@ void RobotObstacle::OnCollision(GameObject* pTarget)
 		//////////////////プレイヤーノックバック処理	
 	}
 }
-
-void RobotObstacle::SetLearestLocation()
-{
-	nearestLocation_ = 99999;
-	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
-	std::vector<Obstacle*> obj = pObstacleManager->GetObstacleList();
-	for (Obstacle* e : obj) {
-		if (e->GetObjectName() == "WallObstacle" && e->GetPosition().z > transform_.position_.z &&
-			e->GetPosition().z < nearestLocation_) {
-			nearestLocation_ = (int)e->GetPosition().z;
-		}
-	}
-}
-
 
 void RobotObstacle::UpdateEnter()
 {

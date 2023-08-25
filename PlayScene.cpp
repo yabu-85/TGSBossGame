@@ -22,15 +22,15 @@ void PlayScene::Initialize()
 	Stage* pStage = Instantiate<Stage>(this);
 	goal = pStage->GetHeight();
 
-	pPlayer_ = Instantiate<Player>(this);
 	Instantiate<ObstacleManager>(this);
+	pPlayer_ = Instantiate<Player>(this);
 
 	pTimer_ = Instantiate<Timer>(this);
 	pTimer_->SetLimit(30);
 	pTimer_->Start();
 
 	pPlayer_->SetPosition(pStage->GetPlaPos());
-	pPlayer_->SetActiveWithDelay(true);
+	pPlayer_->SetActiveWithDelay(true, 10); //クリックの動作を入れないように遅延
 }
 
 //更新

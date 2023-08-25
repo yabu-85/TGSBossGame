@@ -19,7 +19,6 @@ class Player : public GameObject
     float cameraHeight_;            //カメラの高さ (しゃがみとかにしか使わない？)
     float maxMoveSpeed_;            //最大移動速度
     XMFLOAT3 fMove_;                //移動方向
-    XMFLOAT3 previousPosition_;     //前の座標
     XMFLOAT3 playerMovement_;       //プレイヤーの移動量
     bool firstJump_;                //ジャンプしているか
     bool secondJump_;               //ジャンプしているか2
@@ -40,7 +39,6 @@ class Player : public GameObject
     float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
 
     bool IsMovementKeyPressed();        //移動キーを押しているか
-    bool IsPlayerMove();                //移動キーを押しているか
     bool IsPlayerOnGround();            //地面についているか
 
     //------------------State------------------
@@ -59,7 +57,6 @@ class Player : public GameObject
     void UpdateCrouch();
     void UpdateDead();
 
-
 public:
     Player(GameObject* parent);
     ~Player();
@@ -68,11 +65,11 @@ public:
     void Draw() override;
     void Release() override;
 
-    void SetActiveWithDelay(bool isActive);
-    void SetActive(bool b) { isActive_ = b; };
-    void DecreaseHp(int i) { hp_ -= i; };
+    //Activeを遅延を入れてセット/1000=1秒
+    void SetActiveWithDelay(bool isActive, int time);    
+    void SetActive(bool b) { isActive_ = b; };  //Activeをセット
+    void DecreaseHp(int i);       //Hpを減らす関数
 
-    XMVECTOR GetPlaVector();                            //移動方向取得
     float GetCameraHeight() { return cameraHeight_; };  //カメラの高さ0.8f ～ 1.0f
     int GetModelHandle() { return hModel_; }
     int GetHp() { return hp_; };

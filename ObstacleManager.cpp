@@ -24,23 +24,8 @@ void ObstacleManager::Initialize()
     width_ = (int)csv_.GetWidth();
     height_ = (int)csv_.GetHeight();
 
-    pPlayer_ = (Player*)FindObject("Player");
-
     activationZone_ = 70;
     activationZoneSub_ = activationZone_;
-
-    //CSVデータをテーブルに格納
-    for (int x = 0; x < width_; x++) {
-        for (int y = 0; y < height_; y++) {
-            if (csv_.GetValue(x, y) != 0)
-            {
-                XMFLOAT3 position((float)x + 0.5f, 50,(float)(height_ - y) - 0.5f );
-                int intValue = csv_.GetValue(x, y);
-                ObstacleType a = static_cast<ObstacleType>(intValue);
-                createAndAddObstacle(position, a);
-            }
-        }
-    }
 
     pText_ = new Text;
     pText_->Initialize();
@@ -49,6 +34,15 @@ void ObstacleManager::Initialize()
 
 void ObstacleManager::Update()
 {
+    //プレイヤー生まれるの待つ
+    if (pPlayer_ == nullptr) {
+        if (FindObject("Player")) {
+            pPlayer_ = (Player*)FindObject("Player");
+            InitCsv();
+        }
+        return;
+    }
+
     int plaPosZ = (int)pPlayer_->GetPosition().z;
     if (activationZoneSub_ < activationZone_ + plaPosZ) {
         activationZoneSub_ = activationZone_ + plaPosZ;
@@ -115,4 +109,22 @@ void ObstacleManager::LoadCsv()
         }
         
     }
+}
+
+
+void ObstacleManager::InitCsv()
+{
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < width_; x++) {
+        for (int y = 0; y < height_; y++) {
+            if (csv_.GetValue(x, y) != 0)
+            {
+                XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
+                int intValue = csv_.GetValue(x, y);
+                ObstacleType a = static_cast<ObstacleType>(intValue);
+                createAndAddObstacle(position, a);
+            }
+        }
+    }
+
 }

@@ -27,6 +27,7 @@ class ObstacleManager : public GameObject
     Player* pPlayer_;
     Text* pText_;
 
+    void InitCsv();
 
 public:
     ObstacleManager(GameObject* parent);
@@ -42,8 +43,10 @@ public:
     // áŠQ•¨‚ğ¶¬‚µ‚Ä’Ç‰Á‚·‚é
     void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);
 
+    //”ÍˆÍ“à‚ÌáŠQ•¨‚ğActive‚É
     void LoadCsv();
 
+    //Obstacles‚Ìlist‚ğæ“¾
     std::vector<Obstacle*> GetObstacleList() { return obstacles_; }
 
 };

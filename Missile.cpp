@@ -71,6 +71,7 @@ void Missile::Update()
         missileReflected_ = true;
     }
 
+    //跳ね返されてる場合の処理
     if (missileReflected_) {
         float reflectSpeed = 1.0f;
         XMVECTOR pos1, pos2;
@@ -86,10 +87,12 @@ void Missile::Update()
         transform_.rotate_.y += rotationAngle_.y;
         transform_.rotate_.z += rotationAngle_.z;
 
+        //爆発の範囲内かどうか
         float leng = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
         if (leng <= 1.0f) {
             CreateExplodeParticle();
 
+            //Robotoを倒す個体だったら親kill->Managerで設定してる
             if (killParent_) {
                 pRobotObstacle_->KillMe();
             }
@@ -134,9 +137,9 @@ void Missile::Update()
         (tar.y - pos.y) * (tar.y - pos.y) +
         (tar.z - pos.z) * (tar.z - pos.z)
     );
+    //ここはTargetの場所の範囲に入ったら
     if (distance < impact) {
         CreateExplodeParticle();
-
         KillMe();
 
     }
@@ -159,6 +162,7 @@ void Missile::Update()
     transform_.rotate_.y += 180.0f; //Blender
 
 
+    //こっちはプレイヤーとの範囲内か
     XMFLOAT3 pPos = pPlayer_->GetPosition();
     pPos.y += 0.5f;
     distance = sqrt(
@@ -166,9 +170,9 @@ void Missile::Update()
         (pPos.y - pos.y) * (pPos.y - pos.y) +
         (pPos.z - pos.z) * (pPos.z - pos.z)
     );
-
     if (distance < 1.0f) {
         CreateExplodeParticle();
+        pPlayer_->DecreaseHp(5);
 
         KillMe();
     }

@@ -22,7 +22,7 @@ static const float buJumpXZ = 0.28f;
 
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
-    graY_(0), fMove_{ 0,0,0 }, previousPosition_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
+    graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
     stateEnter_(true), hp_(0), maxHp_(0)
 {
@@ -68,7 +68,6 @@ void Player::Initialize()
 void Player::Update()
 {
     if (!isActive_) return;
-    previousPosition_ = transform_.position_;
 
     switch (state_) {
     case STATE::S_IDLE:
@@ -127,23 +126,21 @@ void Player::Release()
 {
 }
 
-void Player::SetActiveWithDelay(bool isActive)
+void Player::SetActiveWithDelay(bool isActive,int time)
 {
     //1秒後に実際のアクティブ状態を設定するタイマーをセットアップ
-    std::thread([this, isActive]() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::thread([this, isActive, time]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(time));
         isActive_ = isActive;
-        Aim* pAim = (Aim*)FindObject("Aim");
-        pAim->SetAimMove(true);
+        pAim_->SetAimMove(true);
 
     }).detach();    
 }
 
-XMVECTOR Player::GetPlaVector() {
-    XMVECTOR v = previousPosition_ - transform_.position_;
-
-    return v;
-
+void Player::DecreaseHp(int i)
+{
+    hp_ -= i;
+    pAim_->TriggerCameraShake(10, 1.0f);
 }
 
 /*--------------------------------State------------------------*/
@@ -494,15 +491,6 @@ bool Player::IsPlayerOnGround() {
 bool Player::IsMovementKeyPressed()
 {
     if (Input::IsKey(DIK_W) || Input::IsKey(DIK_A) || Input::IsKey(DIK_S) || Input::IsKey(DIK_D))
-        return true;
-
-    return false;
-}
-
-bool Player::IsPlayerMove() {
-    XMVECTOR v = XMLoadFloat3(&previousPosition_) - XMLoadFloat3(&transform_.position_);
-    float a = XMVectorGetX(XMVector3Length(v));
-    if (a != 0.0f)
         return true;
 
     return false;
