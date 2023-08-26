@@ -11,7 +11,7 @@ class UfoObstacle : public Obstacle
     bool x_;
     bool firstAct_;
 
-    float EaseOutExpo(float x) { return 1.0f - pow(1 - x, 5); };
+    float EaseOutExpo(float x) { return 1.0f - (float)pow(1 - x, 5); };
 
 public:
     UfoObstacle(GameObject* parent);
@@ -21,7 +21,5 @@ public:
     void Draw() override;
     void Release() override;
 
-    // è’ìÀîªíËÇïtó^
-    void OnCollision(GameObject* pTarget) override;
 };
 

@@ -2,14 +2,15 @@
 #include "Engine/Model.h"
 #include "Player.h"
 #include "Engine/VFX.h"
-#include "Engine/Input.h"
 #include "RobotObstacle.h"
 #include "Engine/Audio.h"
+
+#define SAFE_DELETE(p) {if ((p)!=nullptr) { delete (p); (p)=nullptr;}}
 
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
     propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
-    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), killParent_(false)
+    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr)
 {
 }
 
@@ -39,7 +40,7 @@ void Missile::Initialize()
     //終端速度に到達するための加速度の計算方法↓
     //a = v / k なので、a = v * k
     propulsion = speed * damping;
-
+    
     //火の粉
     dataExp_.textureFileName = "cloudA.png";
     dataExp_.position = transform_.position_;
@@ -59,8 +60,6 @@ void Missile::Initialize()
     dataExp_.deltaColor = XMFLOAT4(0, 0, 0, 0);
     dataExp_.gravity = 0.003f;
 
-    Audio::Play("Sound/MissileShot.wav");
-
 }
 
 void Missile::Update()
@@ -69,10 +68,6 @@ void Missile::Update()
     //火の粉
     dataExp_.position = transform_.position_;
     VFX::Start(dataExp_);
-
-    if (Input::IsMouseButtonDown(1)) {
-        missileReflected_ = true;
-    }
 
     //跳ね返されてる場合の処理
     if (missileReflected_) {
@@ -95,14 +90,13 @@ void Missile::Update()
         if (leng <= 1.0f) {
             CreateExplodeParticle();
 
-            //Robotoを倒す個体だったら親kill->Managerで設定してる
-            if (killParent_) {
+            //まだ撃った親が生きていればkill
+            if (pRobotObstacle_ != nullptr) {
                 pRobotObstacle_->KillMe();
             }
 
-            Audio::Play("Sound/MissileExplode.wav");
+            Audio::Play("Sound/RobotHit.wav");
             KillMe();
-
         }
 
         return;
@@ -132,7 +126,7 @@ void Missile::Update()
     XMFLOAT3 pos;
     XMStoreFloat3(&pos, position);
     transform_.position_ = pos;
-
+    
     XMFLOAT3 tar;
     pos = transform_.position_;
     XMStoreFloat3(&tar, target);
@@ -143,12 +137,13 @@ void Missile::Update()
     );
     //ここはTargetの場所の範囲に入ったら
     if (distance < impact) {
-        CreateExplodeParticle();
+        CreateExplodeParticle();        
         Audio::Play("Sound/MissileExplode.wav");
+        pRobotObstacle_->NotifyMissileDestroyed(this);
         KillMe();
 
     }
-
+    
     const XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tar.x, 0, transform_.position_.z - tar.z);
     XMVECTOR vAimPos = XMLoadFloat3(&fAimPos);
@@ -179,6 +174,7 @@ void Missile::Update()
         CreateExplodeParticle();
         Audio::Play("Sound/MissileExplode.wav");
         pPlayer_->DecreaseHp(5);
+        pRobotObstacle_->NotifyMissileDestroyed(this);
         KillMe();
     }
 
@@ -204,6 +200,25 @@ void Missile::SetTarget(float x, float y, float z)
     velocity = XMLoadFloat3(&t);
     launchPoint_ = transform_.position_;
 
+}
+
+void Missile::Reflect(XMFLOAT3 plaPos)
+{
+    XMFLOAT3 pPos = pPlayer_->GetPosition();
+    pPos.y += 0.5f;
+    XMFLOAT3 pos = transform_.position_;
+
+    float distance = sqrt(
+        (pPos.x - pos.x) * (pPos.x - pos.x) +
+        (pPos.y - pos.y) * (pPos.y - pos.y) +
+        (pPos.z - pos.z) * (pPos.z - pos.z)
+    );
+
+    int i = 0;
+
+    if (distance <= 7.0f) {
+        missileReflected_ = true;
+    }
 }
 
 

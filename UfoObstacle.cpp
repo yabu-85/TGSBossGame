@@ -22,10 +22,6 @@ void UfoObstacle::Initialize()
 	hModelLa_ = Model::Load("Laser.fbx");
 	assert(hModelLa_ >= 0);
 
-	//当たり判定付与
-	BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(3.0f, 1.0f, 3.0f));
-	AddCollider(collision);
-
 }
 
 void UfoObstacle::Update()
@@ -92,16 +88,4 @@ void UfoObstacle::Draw()
 
 void UfoObstacle::Release()
 {
-}
-
-void UfoObstacle::OnCollision(GameObject* pTarget)
-{
-	XMFLOAT3 position = { 0,0,0 };
-	//Playerに当たったとき
-	if (pTarget->GetObjectName() == "Player")
-	{
-		//SetPosition(XMFLOAT3(0, 0, 30));
-		position = pTarget->GetPosition();
-		//////////////////プレイヤーノックバック処理	
-	}
 }

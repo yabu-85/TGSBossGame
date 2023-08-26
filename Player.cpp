@@ -8,6 +8,8 @@
 #include "HpGauge.h"
 #include <thread>
 #include <chrono>
+#include "ObstacleManager.h"
+
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
 static const float airMoveSpeed = 0.002f;
@@ -34,9 +36,7 @@ Player::Player(GameObject* parent)
 
 Player::~Player()
 {
-    SAFE_DELETE(pAim_);
-    SAFE_DELETE(pText_);
-    SAFE_DELETE(pStage_);
+    Release();
 }
 
 void Player::Initialize()
@@ -107,6 +107,11 @@ void Player::Update()
         else isCrouching_ = false;
     }
 
+    if (Input::IsMouseButtonDown(1)) {
+        ObstacleManager* pObsM = (ObstacleManager*)FindObject("ObstacleManager");
+        pObsM->a();
+    }
+
     if (Input::IsKey(DIK_UPARROW)) {
         hp_--;
     }
@@ -124,6 +129,9 @@ void Player::Draw()
 
 void Player::Release()
 {
+    SAFE_DELETE(pAim_);
+    SAFE_DELETE(pText_);
+    SAFE_DELETE(pStage_);
 }
 
 void Player::SetActiveWithDelay(bool isActive,int time)

@@ -49,5 +49,6 @@ public:
     //Obstacles‚Ìlist‚ðŽæ“¾
     std::vector<Obstacle*> GetObstacleList() { return obstacles_; }
 
+    void a();
 };
 

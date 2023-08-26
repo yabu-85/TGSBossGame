@@ -2,6 +2,7 @@
 #include "Obstacle.h"
 
 class Player;
+class Missile;
 
 class RobotObstacle :
     public Obstacle
@@ -23,9 +24,9 @@ class RobotObstacle :
     void ChangeState(STATE s);
 
     int hModelHead_;
-    int nearestLocation_;
     float count_;
     Player* pPlayer_;
+    std::list<Missile*> missiles_;
 
     void Rotate();
     void ShotMissile();
@@ -38,7 +39,9 @@ public:
     void Draw() override;
     void Release() override;
 
-    // 衝突判定を付与
-    void OnCollision(GameObject* pTarget) override;
+    //引数のオブジェクトをmissiles_から外す
+    void NotifyMissileDestroyed(Missile* destMissile);
+
+    std::list<Missile*> GetMissiles() { return missiles_; };
 };
 

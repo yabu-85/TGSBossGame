@@ -4,6 +4,7 @@
 #include "RobotObstacle.h"
 #include "Engine/CsvReader.h"
 #include "Player.h"
+#include "Missile.h"
 
 ObstacleManager::ObstacleManager(GameObject* parent)
     :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),
@@ -109,6 +110,23 @@ void ObstacleManager::LoadCsv()
         }
         
     }
+}
+
+void ObstacleManager::a()
+{
+    for (GameObject* e : obstacles_) {
+        if (e->GetObjectName() == "RobotObstacle") {
+            RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
+            if (!pRobot) continue;
+
+            std::list<Missile*> mis = pRobot->GetMissiles();
+            for (Missile* missile : mis) {
+                missile->Reflect(XMFLOAT3 (1,1,1) );
+            }
+        }
+    }
+
+
 }
 
 

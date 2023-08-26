@@ -5,10 +5,10 @@
 #include "ObstacleManager.h"
 #include <vector>
 #include "Missile.h"
+#include "Engine/Audio.h"
 
 RobotObstacle::RobotObstacle(GameObject* parent)
-	:Obstacle(parent), pPlayer_(nullptr), nearestLocation_(0), hModelHead_(-1), count_(0),
-	state_(S_ENTER), stateEnter_(true)
+	:Obstacle(parent), pPlayer_(nullptr), hModelHead_(-1), count_(0), state_(S_ENTER), stateEnter_(true)
 {
 	objectName_ = "RobotObstacle";
 }
@@ -26,10 +26,6 @@ void RobotObstacle::Initialize()
 	//モデルロード
 	hModelHead_ = Model::Load("Robot_Head.fbx");
 	assert(hModelHead_ >= 0);
-
-	//当たり判定付与
-	BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(3.0f, 1.0f, 3.0f));
-	AddCollider(collision);
 
 	pPlayer_ = (Player*)FindObject("Player");
 	transform_.rotate_.y = 180;
@@ -81,16 +77,9 @@ void RobotObstacle::Release()
 {
 }
 
-void RobotObstacle::OnCollision(GameObject* pTarget)
-{
-	XMFLOAT3 position = { 0,0,0 };
-	//Playerに当たったとき
-	if (pTarget->GetObjectName() == "Player")
-	{
-		//SetPosition(XMFLOAT3(0, 0, 30));
-		position = pTarget->GetPosition();
-		//////////////////プレイヤーノックバック処理	
-	}
+void RobotObstacle::NotifyMissileDestroyed(Missile* destMissile) {
+	auto newEnd = std::remove(missiles_.begin(), missiles_.end(), destMissile);
+	missiles_.erase(newEnd, missiles_.end());
 }
 
 void RobotObstacle::UpdateEnter()
@@ -103,6 +92,8 @@ void RobotObstacle::UpdateEnter()
 	transform_.position_.y -= 2.0f;
 	if (transform_.position_.y <= 0.0f) {
 		transform_.position_.y = 0.0f;
+		Audio::Play("Sound/RobotHit.wav");
+
 		ChangeState(S_CHARGING);
 
 	}
@@ -118,15 +109,16 @@ void RobotObstacle::UpdateCharging()
 
 void RobotObstacle::UpdateShot()
 {
-	ShotMissile();
+	Audio::Play("Sound/MissileShot.wav");
 
+	ShotMissile();
 	ChangeState(S_IDLE);
 }
 
 void RobotObstacle::UpdateIdle()
 {
-	//跳ね返さなかったら
-	if(false) ChangeState(S_LEAVING);
+
+	if(missiles_.empty()) ChangeState(S_LEAVING);
 
 }
 
@@ -202,6 +194,6 @@ void RobotObstacle::ShotMissile()
 		pMissile->SetPosition(transform_.position_.x + tblP[i].x, transform_.position_.y + tblP[i].y, transform_.position_.z + tblP[i].z);
 		pMissile->SetTarget(tblT[i].x, tblT[i].y, tblT[i].z);
 		pMissile->SetParent(this);
-		if (i == 0) pMissile->SetKillParent(true);
+		missiles_.push_back(pMissile);
 	}
 }
