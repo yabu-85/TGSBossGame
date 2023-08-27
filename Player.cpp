@@ -119,24 +119,24 @@ void Player::Update()
 
         //エフェクト
         EmitterData data;
-        data.textureFileName = "Particle/cloudA.png";
+        data.textureFileName = "Particle/defaultParticle.png";
         data.position = transform_.position_;
-        data.position.y -= 8.7f;
-        data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
-        data.direction = XMFLOAT3(10, -10, 10);
+        data.position.y += 0.9f;
+        data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
+        data.direction = XMFLOAT3(0,0,0);
         data.directionRnd = XMFLOAT3(0, 0, 0);
         data.speed = 0.1f;
         data.speedRnd = 0.0;
         data.accel = 1.0f;
         data.delay = 0;
-        data.number = 30 + (rand() % 5);
+        data.number = 5;
         data.gravity = 0;
         data.lifeTime = 5;
-        data.color = XMFLOAT4(1, 1, 0, 1);
-        data.deltaColor = XMFLOAT4(0, 0, 0, 0);
+        data.color = XMFLOAT4(0, 0.2, 1, 1);
+        data.deltaColor = XMFLOAT4(0, 0, 0.1, 0);
         data.size = XMFLOAT2(0.2, 0.2);
-        data.sizeRnd = XMFLOAT2(0.4, 0.4);
-        data.scale = XMFLOAT2(0.8, 0.8);
+        data.sizeRnd = XMFLOAT2(0.1, 0.1);
+        data.scale = XMFLOAT2(1.7, 1.7);
         data.isBillBoard = true;
         VFX::Start(data);
 
@@ -507,6 +507,36 @@ void Player::Jump()
         float a = XMVectorGetX(XMVector3Length(vMax));
         maxMoveSpeed_ = a;
         if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
+
+        if (IsMovementKeyPressed()) {
+            fMove_ = { 0,0,0 };
+            XMFLOAT3 aimDirection = pAim_->GetAimDirectionY();
+
+            // PlayerクラスのMove関数内の一部
+            if (Input::IsKey(DIK_W)) {
+                fMove_.x += aimDirection.x;
+                fMove_.z += aimDirection.z;
+            }
+            if (Input::IsKey(DIK_A)) {
+                fMove_.x -= aimDirection.z;
+                fMove_.z += aimDirection.x;
+            }
+            if (Input::IsKey(DIK_S)) {
+                fMove_.x -= aimDirection.x;
+                fMove_.z -= aimDirection.z;
+            }
+            if (Input::IsKey(DIK_D)) {
+                fMove_.x += aimDirection.z;
+                fMove_.z -= aimDirection.x;
+            }
+
+            XMVECTOR vMove = XMLoadFloat3(&fMove_);
+            vMove = XMVector3Normalize(vMove);
+
+            XMStoreFloat3(&fMove_, vMove * maxMoveSpeed_);
+            playerMovement_ = fMove_;
+        
+        }
 
         return;
     }
