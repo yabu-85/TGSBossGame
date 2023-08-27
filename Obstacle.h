@@ -15,10 +15,7 @@ public:
     virtual void Update() override;
     virtual void Draw() override;
     virtual void Release() override;
-
-    //障害物の位置をセットする
-    void SetPosition(XMFLOAT3 _position);
-
+    
     void SetActive(bool b) { active_ = b; };
     bool IsActive() { return active_; };
 

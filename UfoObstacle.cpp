@@ -83,9 +83,9 @@ void UfoObstacle::UpdateEnter()
 		targetPos_.y = 10.0f;
 
 		transform_.position_.y = 10.0f;
-		transform_.position_.x += (float)(rand() & 5 - 2);
-		transform_.position_.y += (float)(rand() & 3 -3);
-		transform_.position_.z += -5.0f + (float)(rand() & 5 - 1);
+		transform_.position_.x += (float)( (rand() % 2 - 1) * (rand() % 5 + 10) );
+		transform_.position_.y += (float)(rand() % 3 - 3);
+		transform_.position_.z += -5.0f + (float)( rand() % 5 + 20);
 	}
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);

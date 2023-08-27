@@ -25,8 +25,3 @@ void Obstacle::Draw()
 void Obstacle::Release()
 {
 }
-
-void Obstacle::SetPosition(XMFLOAT3 _position)
-{
-    transform_.position_ = _position;
-}
