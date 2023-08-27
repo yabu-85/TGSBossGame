@@ -50,6 +50,7 @@ void Timer::Draw()
     if (time < 0) time = 100;
 
     pNum_->Draw(drawX_ + 500, drawY_, time );
+
 }
 
 //ŠJ•ú

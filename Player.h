@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include "Engine/Text.h"
 
 class Aim;
 class Stage;
@@ -22,6 +21,7 @@ class Player : public GameObject
     void UpdateDead();
 
     int hModel_;                    //モデル番号
+    int hPict_;                    //画像番号
     int hp_;                        //今のHP
     int maxHp_;                     //最大HP
     float moveSpeed_;               //移動
@@ -42,7 +42,6 @@ class Player : public GameObject
     XMFLOAT3 playerMovement_;       //プレイヤーの移動量
 
     Stage* pStage_;
-    Text* pText_;
     Aim* pAim_;
 
     void CalcMove();                    //移動方向計算・normalize

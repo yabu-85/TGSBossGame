@@ -230,7 +230,7 @@ void Missile::CreateExplodeParticle()
     data.textureFileName = "cloudA.png";
     data.position = transform_.position_;
     data.delay = 0;
-    data.number = 5;
+    data.number = 3;
     data.lifeTime = 30;
     data.direction = XMFLOAT3(0, 1, 0);
     data.directionRnd = XMFLOAT3(90, 90, 90);

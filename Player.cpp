@@ -22,10 +22,13 @@ static const float deTime = 0.0055f; //時間の速さ
 static const float buJumpY = 1.6f;
 static const float buJumpXZ = 0.28f;
 
+static int hitPicTime;
+static int maxHitPicTime = 60;
+
 Player::Player(GameObject* parent)
-    : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
+    : GameObject(parent, "Player"), hModel_(-1), hPict_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
-    playerMovement_{ 0,0,0 }, pText_(nullptr), bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
+    playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
     stateEnter_(true), hp_(0), maxHp_(0)
 {
     moveSpeed_ = 1.5f;
@@ -57,8 +60,10 @@ void Player::Initialize()
     pAim_ = Instantiate<Aim>(this);
     Instantiate<HpGauge>(this);
     pStage_ = (Stage*)FindObject("Stage");
-    pText_ = new Text;
-    pText_->Initialize();
+    
+    //画像データのロード
+    hPict_ = Image::Load("ColorDamage.png");
+    assert(hPict_ >= 0);
 
     //箱型コライダー
     BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 1, 0), XMFLOAT3(1, 2, 1));
@@ -110,10 +115,34 @@ void Player::Update()
     if (Input::IsMouseButtonDown(1)) {
         ObstacleManager* pObsM = (ObstacleManager*)FindObject("ObstacleManager");
         pObsM->a();
+
+        //エフェクト
+        EmitterData data;
+        data.textureFileName = "cloudA.png";
+        data.position = transform_.position_;
+        data.position.y -= 8.7f;
+        data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
+        data.direction = XMFLOAT3(10, -10, 10);
+        data.directionRnd = XMFLOAT3(0, 0, 0);
+        data.speed = 0.1f;
+        data.speedRnd = 0.0;
+        data.accel = 1.0f;
+        data.delay = 0;
+        data.number = 30 + (rand() % 5);
+        data.gravity = 0;
+        data.lifeTime = 5;
+        data.color = XMFLOAT4(1, 1, 0, 1);
+        data.deltaColor = XMFLOAT4(0, 0, 0, 0);
+        data.size = XMFLOAT2(0.2, 0.2);
+        data.sizeRnd = XMFLOAT2(0.4, 0.4);
+        data.scale = XMFLOAT2(0.8, 0.8);
+        data.isBillBoard = true;
+        VFX::Start(data);
+
     }
 
     if (Input::IsKey(DIK_UPARROW)) {
-        hp_--;
+        DecreaseHp(1);
     }
 }
 
@@ -122,15 +151,22 @@ void Player::Draw()
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
-    pText_->Draw(30, 100, transform_.position_.x);
-    pText_->Draw(30, 140, transform_.position_.y);
-    pText_->Draw(30, 180, transform_.position_.z);
+    if (hitPicTime > 0) {
+        Transform pict;
+        pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_).x;
+        pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_).y;
+        Image::SetAlpha(hPict_, 255.0f * ( (float)hitPicTime / maxHitPicTime));
+        Image::SetTransform(hPict_, pict);
+        Image::Draw(hPict_);
+
+        hitPicTime--;
+    }
+
 }
 
 void Player::Release()
 {
     SAFE_DELETE(pAim_);
-    SAFE_DELETE(pText_);
     SAFE_DELETE(pStage_);
 }
 
@@ -149,6 +185,9 @@ void Player::DecreaseHp(int i)
 {
     hp_ -= i;
     pAim_->TriggerCameraShake(10, 1.0f);
+
+    hitPicTime = maxHitPicTime;
+
 }
 
 /*--------------------------------State------------------------*/
