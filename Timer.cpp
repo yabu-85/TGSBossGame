@@ -17,13 +17,12 @@ void Timer::Initialize()
     pNum_->Initialize();
 
     for (int i = 0; i < 10; i++) {
-        std::string fileName = "Time";
-        fileName = fileName + std::to_string( (int)(i % 2 + 1) );
+        std::string fileName = "Png/Time/Time";
+        fileName = fileName + std::to_string(i);
         fileName = fileName + ".png";
         hPict_[i] = Image::Load(fileName);
         assert(hPict_[i] >= 0);
     }
-
 }
 
 void Timer::Update()
@@ -54,22 +53,41 @@ void Timer::Draw()
     int sec = frame_ / FPS;                             //•b”
     pNum_->Draw(drawX_ + 100, drawY_, sec);
 
+
+
+
     //ˆêŒ…–Úæ“¾
     int firstDigit = sec % 10;
     int secondDigit = (sec / 10) % 10; // 2Œ…–Ú‚Ì”š‚ğæ“¾
-    int thirdDigit = sec / 100; // 3Œ…–Ú‚Ì”š‚ğæ“¾
 
-    Transform pic;
-    pic.scale_.x = 0.2f;
-    pic.scale_.y = 0.2f;
-    Image::SetTransform(hPict_[firstDigit], pic);
+    Transform pic1;
+    pic1.scale_.x = 1.2f;
+    pic1.scale_.y = 1.2f;
+    Image::SetTransform(hPict_[firstDigit], pic1);
     Image::Draw(hPict_[firstDigit]);
 
-    static int time = 100;
+    Transform pic2 = pic1;
+    pic2.position_.x = -0.2f;
+    Image::SetTransform(hPict_[secondDigit], pic2);
+    Image::Draw(hPict_[secondDigit]);
+
+
+    static int time = 100;                              //‚P‚ÌˆÊA‚Q‚ÌˆÊ‰º‚Ì‚Ë
     time -= (100.0 / FPS);
     if (time < 0) time = 100;
+    pNum_->Draw(drawX_ + 500, drawY_, time);
 
-    pNum_->Draw(drawX_ + 500, drawY_, time );
+    firstDigit = time % 10;
+    secondDigit = (time / 10) % 10; // 2Œ…–Ú‚Ì”š‚ğæ“¾
+
+    pic1.position_.x = 0.7f;
+    Image::SetTransform(hPict_[firstDigit], pic1);
+    Image::Draw(hPict_[firstDigit]);
+
+    pic2.position_.x = 0.5f;
+    Image::SetTransform(hPict_[secondDigit], pic2);
+    Image::Draw(hPict_[secondDigit]);
+
 }
 
 //ŠJ•ú

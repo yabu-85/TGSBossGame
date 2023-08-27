@@ -20,7 +20,7 @@ Missile::~Missile()
 
 void Missile::Initialize()
 {
-	hModel_ = Model::Load("Missile.fbx");
+	hModel_ = Model::Load("Model/Missile.fbx");
 	assert(hModel_ >= 0);
 	transform_.position_.y = 1.0f;
     rotationAngle_ = { -(float)(rand() % 5), (float)(rand() % 10), (float)(rand() % 10) };
@@ -42,7 +42,7 @@ void Missile::Initialize()
     propulsion = speed * damping;
     
     //‰Î‚Ì•²
-    dataExp_.textureFileName = "cloudA.png";
+    dataExp_.textureFileName = "Particle/cloudA.png";
     dataExp_.position = transform_.position_;
     dataExp_.delay = 0;
     dataExp_.number = 1;
@@ -227,7 +227,7 @@ void Missile::CreateExplodeParticle()
     //”š”­
     EmitterData data;
     data.position = transform_.position_;
-    data.textureFileName = "cloudA.png";
+    data.textureFileName = "Particle/cloudA.png";
     data.position = transform_.position_;
     data.delay = 0;
     data.number = 3;

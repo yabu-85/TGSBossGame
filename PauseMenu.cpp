@@ -28,10 +28,10 @@ void PauseMenu::Initialize()
 	Aim* pAim = (Aim*)FindObject("Aim");
 	pAim->SetAimMove(false);
 
-	hPict_[0] = Image::Load("White.png");
+	hPict_[0] = Image::Load("Png/White.png");
 	assert(hPict_[0] >= 0);
 
-	hPict_[1] = Image::Load("cross.png");
+	hPict_[1] = Image::Load("Png/cross.png");
 	assert(hPict_[1] >= 0);
 }
 

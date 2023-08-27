@@ -13,7 +13,7 @@ HpGauge::~HpGauge()
 
 void HpGauge::Initialize()
 {
-    const char* fileName[] = { "hpGaugeA0.png","hpGaugeA1.png" };
+    const char* fileName[] = { "Png/hpGaugeA0.png","Png/hpGaugeA1.png" };
 
     //モデルデータのロード
     for (int i = 0; i < 2; i++) { //壁と床のロード

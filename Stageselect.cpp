@@ -16,7 +16,7 @@ StageSelect::~StageSelect()
 
 void StageSelect::Initialize()
 {
-	hPict_ = Image::Load("StageSelect.png");
+	hPict_ = Image::Load("Png/StageSelect.png");
 	assert(hPict_ >= 0);
 
 	//Default‚Ìã‚ÉAdd‚ğ’u‚­‚Æ‹C‚¿–¾‚é‚­‚È‚é

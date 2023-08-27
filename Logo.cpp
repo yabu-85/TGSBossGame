@@ -41,10 +41,10 @@ Logo::~Logo()
 
 void Logo::Initialize()
 {
-	hPict_[0] = Image::Load("Team.png");
+	hPict_[0] = Image::Load("Png/Team.png");
 	assert(hPict_[0] >= 0);
 
-	hPict_[1] = Image::Load("Black.png");
+	hPict_[1] = Image::Load("Png/Black.png");
 	assert(hPict_[1] >= 0);
 
 	totalTime = tbl[seq_line+1].time;

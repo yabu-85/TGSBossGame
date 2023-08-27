@@ -15,21 +15,21 @@ void ResultScene::Initialize()
 {
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	if (pSceneManager->GetResult()) {
-		hPict_[0] = Image::Load("ClearBG.png");
+		hPict_[0] = Image::Load("Png/ClearBG.png");
 		assert(hPict_[0] >= 0);
 
-		hPict_[1] = Image::Load("Clear.png");
+		hPict_[1] = Image::Load("Png/Clear.png");
 		assert(hPict_[1] >= 0);
 	}
 	else {
-		hPict_[0] = Image::Load("OverBG.png");
+		hPict_[0] = Image::Load("Png/OverBG.png");
 		assert(hPict_[0] >= 0);
 
-		hPict_[1] = Image::Load("Over.png");
+		hPict_[1] = Image::Load("Png/Over.png");
 		assert(hPict_[1] >= 0);
 	}
 
-	hPict_[2] = Image::Load("cross.png");
+	hPict_[2] = Image::Load("Png/cross.png");
 	assert(hPict_[2] >= 0);
 
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);

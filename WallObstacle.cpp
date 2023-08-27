@@ -15,7 +15,7 @@ WallObstacle::~WallObstacle()
 void WallObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Wall_Stone.fbx");
+	hModel_ = Model::Load("Model/Wall_Stone.fbx");
 	assert(hModel_ >= 0);
 
 	//当たり判定付与

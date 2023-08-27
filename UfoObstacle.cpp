@@ -19,11 +19,11 @@ UfoObstacle::~UfoObstacle()
 void UfoObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Ufo.fbx");
+	hModel_ = Model::Load("Model/Ufo.fbx");
 	assert(hModel_ >= 0);
 
 	//モデルロード
-	hModelLa_ = Model::Load("Laser.fbx");
+	hModelLa_ = Model::Load("Model/Laser.fbx");
 	assert(hModelLa_ >= 0);
 
 	moveSpeed_ = 1.0f;
@@ -143,7 +143,7 @@ void UfoObstacle::UpdateShot()
 
 	//エフェクト
 	EmitterData data;
-	data.textureFileName = "cloudA.png";
+	data.textureFileName = "Particle/cloudA.png";
 	data.position = transform_.position_;
 	data.position.y -= 8.7f;
 	data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);

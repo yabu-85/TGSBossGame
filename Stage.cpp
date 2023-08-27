@@ -34,10 +34,10 @@ void Stage::Initialize()
 {
     const char* fileName[] = 
     { 
-        "StagePit.fbx",
-        "Wall.fbx",
-        "Wall2.fbx",
-        "HightWall.fbx",
+        "Model/StagePit.fbx",
+        "Model/Wall.fbx",
+        "Model/Wall2.fbx",
+        "Model/HightWall.fbx",
     };
 
     //モデルデータのロード

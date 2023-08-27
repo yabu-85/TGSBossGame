@@ -21,11 +21,11 @@ RobotObstacle::~RobotObstacle()
 void RobotObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Robot_body.fbx");
+	hModel_ = Model::Load("Model/Robot_body.fbx");
 	assert(hModel_ >= 0);
 
 	//モデルロード
-	hModelHead_ = Model::Load("Robot_Head.fbx");
+	hModelHead_ = Model::Load("Model/Robot_Head.fbx");
 	assert(hModelHead_ >= 0);
 
 	pPlayer_ = (Player*)FindObject("Player");

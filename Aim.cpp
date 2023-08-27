@@ -30,7 +30,7 @@ void Aim::Initialize()
     pStage_ = (Stage*)FindObject("Stage");
 
     //画像データのロード
-    hPict_ = Image::Load("cross.png");
+    hPict_ = Image::Load("Png/cross.png");
     assert(hPict_ >= 0);
 
 }

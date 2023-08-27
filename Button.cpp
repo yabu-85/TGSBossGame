@@ -74,7 +74,7 @@ void Button::SetValue(float x, float y, float w, float h, std::string n)
 	name_ = n;
 	widePos_ = { x, y, 0 };
 
-	std::string str1 = name_;
+	std::string str1 = "Png/" + name_;
 	std::string str2 = ".png";
 	std::string str = str1 + str2;
 
@@ -82,7 +82,7 @@ void Button::SetValue(float x, float y, float w, float h, std::string n)
 	assert(hPict_[0] >= 0);
 
 	// 1100 * 120
-	hPict_[1] = Image::Load("Frame.png");
+	hPict_[1] = Image::Load("Png/Frame.png");
 	assert(hPict_[1] >= 0);
 	frameSize_ = Image::GetTextureSize(hPict_[1]);
 
@@ -104,14 +104,14 @@ void Button::SetValue(float x, float y, float w, float h, std::string n, std::st
 	name_ = n;
 	widePos_ = { x, y, 0 };
 
-	std::string str1 = name_;
+	std::string str1 = "Png/" + name_;
 	std::string str2 = ".png";
 	std::string str = str1 + str2;
 
 	hPict_[0] = Image::Load(str);
 	assert(hPict_[0] >= 0);
 
-	str1 = frame;
+	str1 = "Png/" + frame;
 	str2 = ".png";
 	str = str1 + str2;
 

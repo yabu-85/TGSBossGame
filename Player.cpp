@@ -50,7 +50,7 @@ void Player::Initialize()
     transform_.rotate_.y = 0.0f;
 
     //モデルデータのロード
-    hModel_ = Model::Load("huu.fbx");
+    hModel_ = Model::Load("Model/huu.fbx");
     assert(hModel_ >= 0);
 
     hp_ = 50;
@@ -62,7 +62,7 @@ void Player::Initialize()
     pStage_ = (Stage*)FindObject("Stage");
     
     //画像データのロード
-    hPict_ = Image::Load("ColorDamage.png");
+    hPict_ = Image::Load("Png/ColorDamage.png");
     assert(hPict_ >= 0);
 
     //箱型コライダー
@@ -118,7 +118,7 @@ void Player::Update()
 
         //エフェクト
         EmitterData data;
-        data.textureFileName = "cloudA.png";
+        data.textureFileName = "Particle/cloudA.png";
         data.position = transform_.position_;
         data.position.y -= 8.7f;
         data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
