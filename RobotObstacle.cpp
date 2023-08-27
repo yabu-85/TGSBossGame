@@ -6,6 +6,7 @@
 #include <vector>
 #include "Missile.h"
 #include "Engine/Audio.h"
+#include "Engine/VFX.h"
 
 RobotObstacle::RobotObstacle(GameObject* parent)
 	:Obstacle(parent), pPlayer_(nullptr), hModelHead_(-1), count_(0), state_(S_ENTER), stateEnter_(true)
@@ -37,6 +38,8 @@ void RobotObstacle::Update()
 {
 	if (!active_) return;
 
+	Rotate();
+
 	switch (state_) {
 	case STATE::S_ENTER:
 		UpdateEnter();
@@ -54,8 +57,6 @@ void RobotObstacle::Update()
 		UpdateLeaving();
 		break;
 	}
-
-	Rotate();
 		
 }
 

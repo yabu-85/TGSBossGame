@@ -67,6 +67,32 @@ void UfoObstacle::Draw()
 		Model::SetTransform(hModelLa_, pos);
 		Model::Draw(hModelLa_, 4);
 
+		//‰Š
+		EmitterData data;
+		data.textureFileName = "cloudA.png";
+		data.position = transform_.position_;
+		data.position.y -= 8.7f;
+		data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
+		data.direction = XMFLOAT3(10, -10, 10);
+		data.directionRnd = XMFLOAT3(0, 0, 0);
+		data.speed = 0.1f;
+		data.speedRnd = 0.0;
+		data.accel = 1.0f;
+		data.delay = 0;
+		data.number = 30 + (rand()% 5);
+		data.gravity = 0;
+		data.lifeTime = 5;
+		data.color = XMFLOAT4(1, 1, 0, 1);
+		data.deltaColor = XMFLOAT4(0, 0, 0, 0);
+		
+		data.size = XMFLOAT2(0.2, 0.2);
+		data.sizeRnd = XMFLOAT2(0.4, 0.4);
+		data.scale = XMFLOAT2(0.8, 0.8);
+		data.isBillBoard = true;
+
+		VFX::Start(data);
+
+		
 	}
 }
 
@@ -116,6 +142,7 @@ void UfoObstacle::UpdateShot()
 		time_ = 0;
 
 	}
+
 
 	transform_.position_.z -= 0.3f + (time_ * 0.007f);
 
