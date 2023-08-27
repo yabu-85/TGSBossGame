@@ -3,9 +3,11 @@
 #include "Engine/Model.h"
 #include "Engine/VFX.h"
 #include "Engine/Direct3D.h"
+#include "Player.h"
 
 UfoObstacle::UfoObstacle(GameObject* parent)
-	:Obstacle(parent), hModelLa_(-1), state_(S_ENTER), stateEnter_(true), targetPos_(0,0,0), moveSpeed_(0.0f), time_(0)
+	:Obstacle(parent), hModelLa_(-1), state_(S_ENTER), stateEnter_(true), targetPos_(0,0,0), moveSpeed_(0.0f), time_(0),
+	attackDone_(false)
 {
 	objectName_ = "UfoObstacle";
 }
@@ -66,32 +68,6 @@ void UfoObstacle::Draw()
 		pos.position_.y -= 0.5f;
 		Model::SetTransform(hModelLa_, pos);
 		Model::Draw(hModelLa_, 4);
-
-		//炎
-		EmitterData data;
-		data.textureFileName = "cloudA.png";
-		data.position = transform_.position_;
-		data.position.y -= 8.7f;
-		data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
-		data.direction = XMFLOAT3(10, -10, 10);
-		data.directionRnd = XMFLOAT3(0, 0, 0);
-		data.speed = 0.1f;
-		data.speedRnd = 0.0;
-		data.accel = 1.0f;
-		data.delay = 0;
-		data.number = 30 + (rand()% 5);
-		data.gravity = 0;
-		data.lifeTime = 5;
-		data.color = XMFLOAT4(1, 1, 0, 1);
-		data.deltaColor = XMFLOAT4(0, 0, 0, 0);
-		
-		data.size = XMFLOAT2(0.2, 0.2);
-		data.sizeRnd = XMFLOAT2(0.4, 0.4);
-		data.scale = XMFLOAT2(0.8, 0.8);
-		data.isBillBoard = true;
-
-		VFX::Start(data);
-
 		
 	}
 }
@@ -143,12 +119,51 @@ void UfoObstacle::UpdateShot()
 
 	}
 
-
 	transform_.position_.z -= 0.3f + (time_ * 0.007f);
 
 	int shotTime = 100;
 	if (time_ > shotTime) ChangeState(S_IDLE);
 	time_++;
+
+	if (!attackDone_) {
+
+		XMFLOAT2 lPos = { transform_.position_.x, transform_.position_.z };
+		Player* pPla = (Player*)FindObject("Player");
+		XMFLOAT2 pPos = { pPla->GetPosition().x, pPla->GetPosition().z };
+		float distanceSquared = XMVectorGetX(XMVector2LengthSq(XMLoadFloat2(&lPos) - XMLoadFloat2(&pPos)));
+		float plaRadius = 0.3f, lRadius = 0.4f;
+
+		if (distanceSquared <= (lRadius + plaRadius) * (lRadius + plaRadius))
+		{
+			pPla->DecreaseHp(15);
+			attackDone_ = true;
+		}
+	}
+
+
+	//エフェクト
+	EmitterData data;
+	data.textureFileName = "cloudA.png";
+	data.position = transform_.position_;
+	data.position.y -= 8.7f;
+	data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
+	data.direction = XMFLOAT3(10, -10, 10);
+	data.directionRnd = XMFLOAT3(0, 0, 0);
+	data.speed = 0.1f;
+	data.speedRnd = 0.0;
+	data.accel = 1.0f;
+	data.delay = 0;
+	data.number = 30 + (rand() % 5);
+	data.gravity = 0;
+	data.lifeTime = 5;
+	data.color = XMFLOAT4(1, 1, 0, 1);
+	data.deltaColor = XMFLOAT4(0, 0, 0, 0);
+	data.size = XMFLOAT2(0.2, 0.2);
+	data.sizeRnd = XMFLOAT2(0.4, 0.4);
+	data.scale = XMFLOAT2(0.8, 0.8);
+	data.isBillBoard = true;
+	VFX::Start(data);
+
 }
 
 void UfoObstacle::UpdateIdle()

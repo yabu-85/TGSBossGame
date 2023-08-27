@@ -19,6 +19,7 @@ class UfoObstacle : public Obstacle
     void UpdateLeaving();
     void ChangeState(STATE s);
 
+    bool attackDone_;
     int hModelLa_;
     int time_;              //チャージ時間とかに使う
     float moveSpeed_;       //移動スピード
