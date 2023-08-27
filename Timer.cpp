@@ -3,7 +3,7 @@
 
 Timer::Timer(GameObject* parent)
     :GameObject(parent, "Timer"), pNum_(nullptr),
-   frame_(0), active_(false), drawX_(10), drawY_(20)
+   frame_(0), active_(false), drawX_(10), drawY_(20), hPict_{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
 {
 }
 
@@ -15,6 +15,15 @@ void Timer::Initialize()
 {
     pNum_ = new Text;
     pNum_->Initialize();
+
+    for (int i = 0; i < 10; i++) {
+        std::string fileName = "Time";
+        fileName = fileName + std::to_string( (int)(i % 2 + 1) );
+        fileName = fileName + ".png";
+        hPict_[i] = Image::Load(fileName);
+        assert(hPict_[i] >= 0);
+    }
+
 }
 
 void Timer::Update()
@@ -45,12 +54,22 @@ void Timer::Draw()
     int sec = frame_ / FPS;                             //•b”
     pNum_->Draw(drawX_ + 100, drawY_, sec);
 
+    //ˆêŒ…–Úæ“¾
+    int firstDigit = sec % 10;
+    int secondDigit = (sec / 10) % 10; // 2Œ…–Ú‚Ì”š‚ğæ“¾
+    int thirdDigit = sec / 100; // 3Œ…–Ú‚Ì”š‚ğæ“¾
+
+    Transform pic;
+    pic.scale_.x = 0.2f;
+    pic.scale_.y = 0.2f;
+    Image::SetTransform(hPict_[firstDigit], pic);
+    Image::Draw(hPict_[firstDigit]);
+
     static int time = 100;
     time -= (100.0 / FPS);
     if (time < 0) time = 100;
 
     pNum_->Draw(drawX_ + 500, drawY_, time );
-
 }
 
 //ŠJ•ú
