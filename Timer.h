@@ -8,7 +8,7 @@ static const int FPS = 60;
 //タイマー管理するクラス
 class Timer : public GameObject
 {
-    int hPict_[10];    //画像番号
+    int hPict_[12];    //画像番号
     bool active_;        //起動しているかどうか
     int frame_;          //一秒間に何回更新されるか
     Text* pNum_;         //秒数テキスト

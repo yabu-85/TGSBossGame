@@ -3,7 +3,6 @@
 #include "Obstacle.h"
 #include <vector>
 #include "Engine/CsvReader.h"
-#include "Engine/Text.h"
 
 class Player;
 
@@ -25,7 +24,6 @@ class ObstacleManager : public GameObject
     int activationZone_;
     int activationZoneSub_;
     Player* pPlayer_;
-    Text* pText_;
 
     void InitCsv();
 

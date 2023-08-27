@@ -3,7 +3,7 @@
 
 Timer::Timer(GameObject* parent)
     :GameObject(parent, "Timer"), pNum_(nullptr),
-   frame_(0), active_(false), drawX_(10), drawY_(20), hPict_{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
+   frame_(0), active_(false), drawX_(10), drawY_(20), hPict_{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
 {
 }
 
@@ -23,6 +23,11 @@ void Timer::Initialize()
         hPict_[i] = Image::Load(fileName);
         assert(hPict_[i] >= 0);
     }
+    hPict_[10] = Image::Load("Png/Time/Colon.png");
+    assert(hPict_[10] >= 0);
+
+    hPict_[11] = Image::Load("Png/Time/Period.png");
+    assert(hPict_[11] >= 0);
 }
 
 void Timer::Update()
@@ -39,54 +44,59 @@ void Timer::Update()
 //描画
 void Timer::Draw()
 {
-    //テキスト表示
-    pNum_->SetScale(1.0f);                              //テキストのサイズ
-    pNum_->Draw(drawX_, drawY_, "Time:");               //描画
-
     int frameCount = frame_ % FPS;                      //一秒ごとリセット
+    float size = frameCount * 0.2f + 1.0f;
     //タイマー数値表示
     if (frameCount < 10)                                //躍動感
-        pNum_->SetScale(frameCount * 0.2f + 1.0f);      //規定フレーム以下時に適応
+        transform_.scale_ = { size, size, size };       //規定フレーム以下時に適応
     else
-        pNum_->SetScale(1.0f);
-
+        transform_.scale_ = { 1.0f, 1.0f, 1.0f};
     int sec = frame_ / FPS;                             //秒数
-    pNum_->Draw(drawX_ + 100, drawY_, sec);
 
 
+    int firstDigit = sec % 10;                          //１行目
+    int secondDigit = (sec / 10) % 10;                  //2桁目の数字を取得
 
-
-    //一桁目取得
-    int firstDigit = sec % 10;
-    int secondDigit = (sec / 10) % 10; // 2桁目の数字を取得
-
-    Transform pic1;
-    pic1.scale_.x = 1.2f;
-    pic1.scale_.y = 1.2f;
+    Transform pic1 = transform_;
+    pic1.scale_.x += 1.2f;
+    pic1.scale_.y += 1.2f;
+    pic1.position_ = { -0.1f, 0.8, 0.0f };
     Image::SetTransform(hPict_[firstDigit], pic1);
     Image::Draw(hPict_[firstDigit]);
 
     Transform pic2 = pic1;
-    pic2.position_.x = -0.2f;
+    pic2.position_.x -= 0.09f;
     Image::SetTransform(hPict_[secondDigit], pic2);
     Image::Draw(hPict_[secondDigit]);
 
+    Transform picPeriod = pic1;
+    picPeriod.position_.x += 0.06f;
+    picPeriod.position_.y -= 0.03f;
+    Image::SetTransform(hPict_[11], picPeriod);
+    Image::Draw(hPict_[11]);
 
     static int time = 100;                              //１の位、２の位下のね
     time -= (100.0 / FPS);
     if (time < 0) time = 100;
-    pNum_->Draw(drawX_ + 500, drawY_, time);
 
-    firstDigit = time % 10;
-    secondDigit = (time / 10) % 10; // 2桁目の数字を取得
+    firstDigit = time % 10;                             //１行目
+    secondDigit = (time / 10) % 10;                     //2桁目の数字を取得
 
-    pic1.position_.x = 0.7f;
+    pic2.position_.x += 0.18f;
+    pic2.position_.y += -0.03f;
+    pic2.scale_.x = 1.3f;
+    pic2.scale_.y = 1.3f;
+    Image::SetTransform(hPict_[secondDigit], pic2);
+    Image::Draw(hPict_[secondDigit]);
+
+    pic1.position_.x += 0.14f;
+    pic1.position_.y += -0.03f;
+    pic1.scale_.x = 1.3f;
+    pic1.scale_.y = 1.3f;
     Image::SetTransform(hPict_[firstDigit], pic1);
     Image::Draw(hPict_[firstDigit]);
 
-    pic2.position_.x = 0.5f;
-    Image::SetTransform(hPict_[secondDigit], pic2);
-    Image::Draw(hPict_[secondDigit]);
+
 
 }
 

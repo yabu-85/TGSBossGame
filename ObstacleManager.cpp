@@ -8,7 +8,7 @@
 
 ObstacleManager::ObstacleManager(GameObject* parent)
     :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),
-    pPlayer_(nullptr), pText_(nullptr)
+    pPlayer_(nullptr)
 {
 }
 
@@ -27,9 +27,6 @@ void ObstacleManager::Initialize()
 
     activationZone_ = 70;
     activationZoneSub_ = activationZone_;
-
-    pText_ = new Text;
-    pText_->Initialize();
 
 }
 
@@ -55,8 +52,6 @@ void ObstacleManager::Update()
 
 void ObstacleManager::Draw()
 {
-    pText_->Draw(30, 240, activationZoneSub_);
-
 }
 
 void ObstacleManager::Release()

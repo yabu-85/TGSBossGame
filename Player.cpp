@@ -9,6 +9,7 @@
 #include <thread>
 #include <chrono>
 #include "ObstacleManager.h"
+#include "Engine/Image.h"
 
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
