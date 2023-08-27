@@ -1,12 +1,26 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include "Aim.h"
 #include "Engine/Text.h"
 
+class Aim;
 class Stage;
 
 class Player : public GameObject
 {
+    enum STATE {
+        S_IDLE,
+        S_MOVE,
+        S_CROUCH,
+        S_DEAD,
+    };
+    STATE state_;
+    bool stateEnter_; //入った時だけ呼ぶのに使う
+    void ChangeState(STATE s);
+    void UpdateIdle();
+    void UpdateMove();
+    void UpdateCrouch();
+    void UpdateDead();
+
     int hModel_;                    //モデル番号
     int hp_;                        //今のHP
     int maxHp_;                     //最大HP
@@ -18,14 +32,14 @@ class Player : public GameObject
     float initVy_;                  //初期ジャンプ力
     float cameraHeight_;            //カメラの高さ (しゃがみとかにしか使わない？)
     float maxMoveSpeed_;            //最大移動速度
-    XMFLOAT3 fMove_;                //移動方向
-    XMFLOAT3 playerMovement_;       //プレイヤーの移動量
     bool firstJump_;                //ジャンプしているか
     bool secondJump_;               //ジャンプしているか2
     bool bulletJump_;               //バレットジャンプしているか
     bool isCrouching_;              //しゃがんでいるか
     bool anime_;                    //アニメーションしてる？
     bool isActive_;                 //操作を受け付けるか
+    XMFLOAT3 fMove_;                //移動方向
+    XMFLOAT3 playerMovement_;       //プレイヤーの移動量
 
     Stage* pStage_;
     Text* pText_;
@@ -41,21 +55,6 @@ class Player : public GameObject
     bool IsMovementKeyPressed();        //移動キーを押しているか
     bool IsPlayerOnGround();            //地面についているか
 
-    //------------------State------------------
-    enum STATE {
-        S_IDLE,
-        S_MOVE,
-        S_CROUCH,
-        S_DEAD,
-    };
-    STATE state_;
-    bool stateEnter_; //入った時だけ呼ぶのに使う
-
-    void ChangeState(STATE s);
-    void UpdateIdle();
-    void UpdateMove();
-    void UpdateCrouch();
-    void UpdateDead();
 
 public:
     Player(GameObject* parent);
@@ -74,4 +73,5 @@ public:
     int GetModelHandle() { return hModel_; }
     int GetHp() { return hp_; };
     int GetMaxHp() { return maxHp_; };
+
 };

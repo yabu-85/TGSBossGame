@@ -73,7 +73,8 @@ public:
 
 	//描画
 	//引数：World	ワールド行列
-	void    Draw(Transform& transform, int frame);
+	//SHADEMODE : 0=3D, 1=2D, 2=UNLIT(DEBUG用), 3=BillBoard, 4=NoShadow
+	void    Draw(Transform& transform, int frame, int type = 0);
 
 	//描画
 	//引数：World	ワールド行列

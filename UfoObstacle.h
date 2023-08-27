@@ -3,15 +3,26 @@
 
 class UfoObstacle : public Obstacle
 {
-    int hModelLa_;
-    float firstMoveZ_;
-    bool first_;
-    float move_;
-    float maxMoveX_;
-    bool x_;
-    bool firstAct_;
+    enum STATE {
+        S_ENTER = 0, //登場
+        S_CHARGING,  //チャージ中
+        S_SHOT,      //ここで打つ
+        S_IDLE,      //何もしない
+        S_LEAVING,   //去る
+    }
+    state_;
+    bool stateEnter_;
+    void UpdateEnter();
+    void UpdateCharging();
+    void UpdateShot();
+    void UpdateIdle();
+    void UpdateLeaving();
+    void ChangeState(STATE s);
 
-    float EaseOutExpo(float x) { return 1.0f - (float)pow(1 - x, 5); };
+    int hModelLa_;
+    int time_;              //チャージ時間とかに使う
+    float moveSpeed_;       //移動スピード
+    XMFLOAT3 targetPos_;    //ビームを放つ場所
 
 public:
     UfoObstacle(GameObject* parent);

@@ -65,7 +65,7 @@ namespace Model
 	}
 
 	//描画
-	void Draw(int handle)
+	void Draw(int handle, int type)
 	{
 		if (handle < 0 || handle >= _datas.size() || _datas[handle] == nullptr)
 		{
@@ -96,7 +96,7 @@ namespace Model
 		if (_datas[handle]->pFbx)
 		{
 			// 現在のアニメーションフレームでモデルを描画
-			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame);
+			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame, type);
 
 
 		}

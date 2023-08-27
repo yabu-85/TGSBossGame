@@ -99,10 +99,10 @@ void Fbx::CheckNode(FbxNode * pNode, std::vector<FbxParts*>* pPartsList)
 	}
 }
 
-void Fbx::Draw(Transform& transform, int frame)
+void Fbx::Draw(Transform& transform, int frame, int type)
 {
 	Direct3D::SetBlendMode(Direct3D::BLEND_DEFAULT);
-	Direct3D::SetShader(Direct3D::SHADER_3D);
+	Direct3D::SetShader((Direct3D::SHADER_TYPE)type);
 
 	//ƒp[ƒc‚ğ1ŒÂ‚¸‚Â•`‰æ
 	for (int k = 0; k < parts_.size(); k++)

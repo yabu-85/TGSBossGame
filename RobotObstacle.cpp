@@ -68,8 +68,7 @@ void RobotObstacle::Draw()
 	Model::SetTransform(hModel_, body);
 	Model::Draw(hModel_);
 
-	Transform head = transform_;
-	Model::SetTransform(hModelHead_, head);
+	Model::SetTransform(hModelHead_, transform_);
 	Model::Draw(hModelHead_);
 }
 
@@ -124,8 +123,8 @@ void RobotObstacle::UpdateIdle()
 
 void RobotObstacle::UpdateLeaving()
 {
-	transform_.position_.y += 0.2f;
-	if (transform_.position_.y > 10.0f) {
+	transform_.position_.y += 2.0f;
+	if (transform_.position_.y > 40.0f) {
 		KillMe();
 	}
 

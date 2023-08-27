@@ -28,7 +28,9 @@ class RobotObstacle :
     Player* pPlayer_;
     std::list<Missile*> missiles_;
 
+    //回転する
     void Rotate();
+    //ミサイル撃つ&リストに登録
     void ShotMissile();
 
 public:
@@ -42,6 +44,7 @@ public:
     //引数のオブジェクトをmissiles_から外す
     void NotifyMissileDestroyed(Missile* destMissile);
 
+    //ミサイルのリスト取得
     std::list<Missile*> GetMissiles() { return missiles_; };
 };
 
