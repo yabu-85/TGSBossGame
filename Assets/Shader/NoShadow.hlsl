@@ -76,6 +76,6 @@ float4 PS(VS_OUT inData) : SV_Target
     diffuse = g_vecAmbient;
     ambient = g_vecDiffuse;
     
-    return (diffuse + ambient);
+    return (diffuse + ambient) * 0.2;
 
 }

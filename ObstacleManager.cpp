@@ -6,6 +6,9 @@
 #include "Player.h"
 #include "Missile.h"
 
+//Ufoだけロード範囲を狭める
+static float ufoLoadRange = -40.0f;
+
 ObstacleManager::ObstacleManager(GameObject* parent)
     :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),
     pPlayer_(nullptr)
@@ -95,18 +98,25 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
 void ObstacleManager::LoadCsv()
 {
     //CSVデータをテーブルに格納
-    for (int x = 0; x < width_; x++) {
+    for (Obstacle* obj : obstacles_) {
+        Obstacle* pObstacle = (Obstacle*)obj;
 
-        for (Obstacle* obj : obstacles_) {
-            Obstacle* pObstacle = (Obstacle*)obj;
+        // UFOの場合、ロード範囲を制限する
+        if (pObstacle->GetObjectName() == "UfoObstacle") {
+            if (pObstacle->GetPosition().z <= activationZoneSub_ + ufoLoadRange) {
+                pObstacle->SetActive(true);
+            }
+        }
+        // 他の障害物の処理
+        else {
             if (pObstacle->GetPosition().z <= activationZoneSub_) {
                 pObstacle->SetActive(true);
             }
         }
-        
     }
 }
 
+//反射で使うやつ名前変えとく気が向いたら
 void ObstacleManager::a()
 {
     for (GameObject* e : obstacles_) {

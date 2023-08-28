@@ -4,25 +4,28 @@
 class UfoObstacle : public Obstacle
 {
     enum STATE {
-        S_ENTER = 0, //登場
-        S_CHARGING,  //チャージ中
-        S_SHOT,      //ここで打つ
-        S_IDLE,      //何もしない
-        S_LEAVING,   //去る
+        S_ENTER = 0,    //登場
+        S_DETECT,       //プレイヤーを検知する
+        S_PREARATION,   //撃つ準備
+        S_SHOT,         //ここで打つ
+        S_LEAVING,      //去る
     }
     state_;
     bool stateEnter_;
     void UpdateEnter();
-    void UpdateCharging();
+    void UpdateDetection();
+    void UpdatePreparation();
     void UpdateShot();
-    void UpdateIdle();
     void UpdateLeaving();
     void ChangeState(STATE s);
 
-    bool attackDone_;
-    int hModelLa_;
+    bool attack_;           //攻撃するかどうか
+    int hModelSub_[2];         //レイザーと検知用
     int time_;              //チャージ時間とかに使う
     float moveSpeed_;       //移動スピード
+    float moveDist_;        //移動する距離（上限値みたいなもの？
+    float leavYmoveSpeed_;  //去るときの上昇値
+    XMVECTOR leavVec_;      //去るときの方向
     XMFLOAT3 targetPos_;    //ビームを放つ場所
 
 public:
