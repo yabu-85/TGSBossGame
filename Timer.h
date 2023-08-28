@@ -11,9 +11,10 @@ class Timer : public GameObject
     int hPict_[12];    //画像番号
     bool active_;        //起動しているかどうか
     int frame_;          //一秒間に何回更新されるか
-    Text* pNum_;         //秒数テキスト
+    int calcTime_;       //下の位を計算するための
     float drawX_;        //描画位置(左右)
     float drawY_;        //描画位置(上下)
+
 
 public:
     //コンストラクタ

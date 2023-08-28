@@ -26,6 +26,9 @@ static const float buJumpXZ = 0.28f;
 static int hitPicTime;
 static int maxHitPicTime = 60;
 
+//–„‚Ü‚Á‚½—p‚Ì
+static float prevYHeight = 0;
+
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), hPict_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
@@ -106,6 +109,14 @@ void Player::Update()
 
     //d—Í
     if (!IsPlayerOnGround()) Gravity();
+
+    //–„‚Ü‚Á‚½‚Ì‘Îˆ‚ğ‚±‚±‚Å‚â‚é
+    if (transform_.position_.y < 0.0f && prevYHeight == transform_.position_.y) {
+        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+        if (!IsMovementKeyPressed()) playerMovement_ = { 0,0,0 };
+    }
+    prevYHeight = transform_.position_.y;
+
 
     //jump
     if (Input::IsKeyDown(DIK_SPACE)) Jump();
@@ -642,5 +653,4 @@ void Player::IsInWall()
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
             transform_.position_.x = (float)((int)transform_.position_.x) + 0.3f;
         }
-
 }

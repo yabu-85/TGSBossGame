@@ -2,8 +2,8 @@
 #include "Engine/Input.h"
 
 Timer::Timer(GameObject* parent)
-    :GameObject(parent, "Timer"), pNum_(nullptr),
-   frame_(0), active_(false), drawX_(10), drawY_(20), hPict_{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
+    :GameObject(parent, "Timer"), frame_(0), active_(false), drawX_(10), drawY_(20),
+    hPict_{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }, calcTime_(0)
 {
 }
 
@@ -13,9 +13,6 @@ Timer::~Timer()
 
 void Timer::Initialize()
 {
-    pNum_ = new Text;
-    pNum_->Initialize();
-
     for (int i = 0; i < 10; i++) {
         std::string fileName = "Png/Time/Time";
         fileName = fileName + std::to_string(i);
@@ -37,7 +34,11 @@ void Timer::Update()
     {
         //カウントダウン
         if (frame_ > 0)
-            frame_ += 0;
+            frame_--;
+
+        calcTime_ -= (100.0 / FPS);
+        if (calcTime_ < 0) calcTime_ = 100;
+
     }
 }
 
@@ -52,7 +53,6 @@ void Timer::Draw()
     else
         transform_.scale_ = { 1.0f, 1.0f, 1.0f};
     int sec = frame_ / FPS;                             //秒数
-
 
     int firstDigit = sec % 10;                          //一の位
     int secondDigit = (sec / 10) % 10;                  //十の位の数字を取得
@@ -80,12 +80,8 @@ void Timer::Draw()
     Image::SetTransform(hPict_[11], picPeriod);
     Image::Draw(hPict_[11]);
 
-    static int time = 100;                              //0.1の位、0.01の位
-    time -= (100.0 / FPS);
-    if (time < 0) time = 100;
-
-    firstDigit = time % 10;                             //１行目
-    secondDigit = (time / 10) % 10;                     //2桁目の数字を取得
+    firstDigit = calcTime_ % 10;                             //１行目
+    secondDigit = (calcTime_ / 10) % 10;                     //2桁目の数字を取得
 
     //右の一の位
     pic2.position_.x += 0.18f;
