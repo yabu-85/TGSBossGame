@@ -55,6 +55,15 @@ void PlayScene::Update()
 		pSceneManager->SetResult(true);
 		pSceneManager->ChangeScene(SCENE_ID_RESULT);
 	}
+
+	if (Input::IsKeyDown(DIK_LEFTARROW)) {
+		pTimer_->Stop();
+	}
+
+	if (Input::IsKeyDown(DIK_RIGHTARROW)) {
+		pTimer_->Start();
+	}
+
 }
 
 //•`‰æ

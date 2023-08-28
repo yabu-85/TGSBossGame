@@ -102,7 +102,7 @@ void Aim::Update()
 
     XMStoreFloat3(&cameraPos_, camPos);
     XMStoreFloat3(&cameraTarget_, caTarget);
-    if (cameraPos_.y <= 0.0f) cameraPos_.y = 0.0f;
+    //if (cameraPos_.y <= 0.0f) cameraPos_.y = 0.0f;
 
     Camera::SetPosition(cameraPos_);
     Camera::SetTarget(cameraTarget_);

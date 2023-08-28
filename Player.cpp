@@ -30,7 +30,7 @@ Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), hPict_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
     graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
-    stateEnter_(true), hp_(0), maxHp_(0)
+    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr)
 {
     moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
@@ -45,6 +45,9 @@ Player::~Player()
 
 void Player::Initialize()
 {
+    pText = new Text;
+    pText->Initialize();
+
     transform_.scale_.x = 0.2f;
     transform_.scale_.y = 0.2f;
     transform_.scale_.z = 0.2f;
@@ -93,8 +96,10 @@ void Player::Update()
     transform_.position_.x += (playerMovement_.x * moveSpeed_); // 移動！
     transform_.position_.z += (playerMovement_.z * moveSpeed_); // z
 
+    IsInWall();
+
     if (transform_.position_.x <= 0.0f) transform_.position_.x = 0.0f;
-    if (transform_.position_.x >= 7.0f) transform_.position_.x = 7.0f;
+    if (transform_.position_.x >= 7.0f) transform_.position_.x = 6.99f;
 
     //移動するなら向きを変える
     if (IsMovementKeyPressed()) GradualRotate(playerMovement_.x, playerMovement_.z);
@@ -149,9 +154,14 @@ void Player::Update()
 
 void Player::Draw()
 {
+    pText->Draw(30, 30, (int)transform_.position_.x);
+    pText->Draw(30, 70, (int)transform_.position_.z);
+    pText->Draw(30, 150, pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z));
+
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 
+    //ダメージ画面効果
     if (hitPicTime > 0) {
         Transform pict;
         pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_).x;
@@ -441,7 +451,7 @@ void Player::Gravity()
         secondJump_ = false;
         bulletJump_ = false;
         playerMovement_ = { 0.0f , 0.0f , 0.0f};
-        transform_.position_.y = 0;
+        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
         graY_ = 0.0f;
 
         return;
@@ -560,7 +570,7 @@ void Player::Jump()
 }
 
 bool Player::IsPlayerOnGround() {
-    if (transform_.position_.y <= 0.0f)
+    if (transform_.position_.y <= pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z))
         return true;
 
     return false;
@@ -572,4 +582,53 @@ bool Player::IsMovementKeyPressed()
         return true;
 
     return false;
+}
+
+void Player::IsInWall()
+{
+    //壁との判定  ここ壁だったとき
+    int checkX1, checkX2;
+    int checkZ1, checkZ2;
+    float ground1, ground2;
+
+    checkX1 = (int)(transform_.position_.x + 0.15f); //前
+    checkZ1 = (int)(transform_.position_.z + 0.3f);
+    checkX2 = (int)(transform_.position_.x - 0.15f);
+    checkZ2 = (int)(transform_.position_.z + 0.3f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (!(transform_.position_.y < ground1 || transform_.position_.y < ground2)) return;
+
+        if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) { //床やけやったら
+            transform_.position_.z = (float)((int)transform_.position_.z) + (1.0f - 0.3f);
+        }
+
+    checkX1 = (int)(transform_.position_.x + 0.3f); //右
+    checkZ1 = (int)(transform_.position_.z + 0.15f);
+    checkX2 = (int)(transform_.position_.x + 0.3f);
+    checkZ2 = (int)(transform_.position_.z - 0.15f);
+
+        if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
+            transform_.position_.x = (float)((int)transform_.position_.x + 1) - 0.3f;  // x　だけ戻すことで斜め移動ができるようになる     
+        }
+
+    checkX1 = (int)(transform_.position_.x + 0.15f); //後ろ
+    checkZ1 = (int)(transform_.position_.z - 0.3f);
+    checkX2 = (int)(transform_.position_.x - 0.15f);
+    checkZ2 = (int)(transform_.position_.z - 0.3f);
+
+        if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
+            transform_.position_.z = (float)((int)transform_.position_.z) + 0.3f;
+        }
+
+    checkX1 = (int)(transform_.position_.x - 0.3f); //左
+    checkZ1 = (int)(transform_.position_.z + 0.15f);
+    checkX2 = (int)(transform_.position_.x - 0.3f);
+    checkZ2 = (int)(transform_.position_.z - 0.15f);
+
+        if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
+            transform_.position_.x = (float)((int)transform_.position_.x) + 0.3f;
+        }
+
 }

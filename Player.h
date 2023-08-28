@@ -1,11 +1,14 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Engine/Text.h"
 
 class Aim;
 class Stage;
 
 class Player : public GameObject
 {
+    Text* pText;
+
     enum STATE {
         S_IDLE,
         S_MOVE,
@@ -53,7 +56,7 @@ class Player : public GameObject
 
     bool IsMovementKeyPressed();        //ˆÚ“®ƒL[‚ğ‰Ÿ‚µ‚Ä‚¢‚é‚©
     bool IsPlayerOnGround();            //’n–Ê‚É‚Â‚¢‚Ä‚¢‚é‚©
-
+    void IsInWall();
 
 public:
     Player(GameObject* parent);

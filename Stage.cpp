@@ -113,6 +113,7 @@ bool Stage::IsWall(int x, int z)
     int type = table_[x][z];
     switch (type)
     {
+    case TYPE_FLOOR:
     case TYPE_WALL:
     case TYPE_WALL2:
     case TYPE_HIGHTWALL:
