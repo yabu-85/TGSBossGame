@@ -598,7 +598,7 @@ void Player::IsInWall()
 
     ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
     ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
-    if (!(transform_.position_.y < ground1 || transform_.position_.y < ground2)) return;
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
 
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) { //°‚â‚¯‚â‚Á‚½‚ç
             transform_.position_.z = (float)((int)transform_.position_.z) + (1.0f - 0.3f);
@@ -609,6 +609,10 @@ void Player::IsInWall()
     checkX2 = (int)(transform_.position_.x + 0.3f);
     checkZ2 = (int)(transform_.position_.z - 0.15f);
 
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
+
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
             transform_.position_.x = (float)((int)transform_.position_.x + 1) - 0.3f;  // x@‚¾‚¯–ß‚·‚±‚Æ‚ÅŽÎ‚ßˆÚ“®‚ª‚Å‚«‚é‚æ‚¤‚É‚È‚é     
         }
@@ -618,6 +622,10 @@ void Player::IsInWall()
     checkX2 = (int)(transform_.position_.x - 0.15f);
     checkZ2 = (int)(transform_.position_.z - 0.3f);
 
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
+
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
             transform_.position_.z = (float)((int)transform_.position_.z) + 0.3f;
         }
@@ -626,6 +634,10 @@ void Player::IsInWall()
     checkZ1 = (int)(transform_.position_.z + 0.15f);
     checkX2 = (int)(transform_.position_.x - 0.3f);
     checkZ2 = (int)(transform_.position_.z - 0.15f);
+
+    ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
+    ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
+    if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
 
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
             transform_.position_.x = (float)((int)transform_.position_.x) + 0.3f;
