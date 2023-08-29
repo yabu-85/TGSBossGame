@@ -224,7 +224,7 @@ void UfoObstacle::UpdateShot()
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 	XMVECTOR vTar = XMLoadFloat3(&targetPos_);
 	XMVECTOR vMovePos = vTar - vPos;
-	vMovePos = XMVector3Normalize(vMovePos) * moveSpeed_ * 0.01;
+	vMovePos = XMVector3Normalize(vMovePos) * moveSpeed_;
 	leavVec_ = vMovePos;
 	vMovePos += vPos;
 	XMFLOAT3 fPos;
@@ -233,28 +233,28 @@ void UfoObstacle::UpdateShot()
 
 	//エフェクト
 	EmitterData data;
-	data.textureFileName = "Particle/cloudA.png";
+	data.textureFileName = "Particle/missilePar.png";
 	data.position = transform_.position_;
 	data.position.y -= 8.7f;
-	data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
-	data.direction = XMFLOAT3(10, -10, 10);
-	data.directionRnd = XMFLOAT3(0, 0, 0);
+	data.positionRnd = XMFLOAT3(1.0f, 7.2f, 1.0f);
+	data.direction = XMFLOAT3(10.0f, -10.0f, 10.0f);
+	data.directionRnd = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	data.speed = 0.1f;
-	data.speedRnd = 0.0;
+	data.speedRnd = 0.0f;
 	data.accel = 1.0f;
 	data.delay = 0;
-	data.number = 30 + (rand() % 5);
-	data.gravity = 0;
+	data.number = 30;
+	data.gravity = 0.0f;
 	data.lifeTime = 5;
-	data.color = XMFLOAT4(1, 1, 0, 1);
-	data.deltaColor = XMFLOAT4(0, 0, 0, 0);
-	data.size = XMFLOAT2(0.2, 0.2);
-	data.sizeRnd = XMFLOAT2(0.4, 0.4);
-	data.scale = XMFLOAT2(0.8, 0.8);
+	data.color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+	data.deltaColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	data.size = XMFLOAT2(0.5f, 0.4f);
+	data.sizeRnd = XMFLOAT2(0.4f, 0.4f);
+	data.scale = XMFLOAT2(0.8f, 0.8f);
 	data.isBillBoard = true;
 	VFX::Start(data);
 
-	int shotTime = 3000;
+	int shotTime = 30;
 	if (time_ > shotTime) ChangeState(S_LEAVING);
 	time_++;
 
@@ -272,21 +272,21 @@ void UfoObstacle::UpdateLeaving()
 		data.textureFileName = "Particle/cloudA.png";
 		data.position = transform_.position_;
 		data.position.y -= 8.7f;
-		data.positionRnd = XMFLOAT3(0.5, 7.2, 0.5);
-		data.direction = XMFLOAT3(10, -10, 10);
-		data.directionRnd = XMFLOAT3(0, 0, 0);
+		data.positionRnd = XMFLOAT3(0.5f, 7.2f, 0.5f);
+		data.direction = XMFLOAT3(10.0f, -10.0f, 10.0f);
+		data.directionRnd = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		data.speed = 0.1f;
-		data.speedRnd = 0.0;
+		data.speedRnd = 0.0f;
 		data.accel = 1.0f;
 		data.delay = 0;
 		data.number = 30 + (rand() % 5);
-		data.gravity = 0;
+		data.gravity = 0.0f;
 		data.lifeTime = 5;
-		data.color = XMFLOAT4(1, 1, 0, 1);
-		data.deltaColor = XMFLOAT4(0, 0, 0, 0);
-		data.size = XMFLOAT2(0.2, 0.2);
-		data.sizeRnd = XMFLOAT2(0.4, 0.4);
-		data.scale = XMFLOAT2(0.8, 0.8);
+		data.color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+		data.deltaColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		data.size = XMFLOAT2(0.2f, 0.2f);
+		data.sizeRnd = XMFLOAT2(0.4f, 0.4f);
+		data.scale = XMFLOAT2(0.8f, 0.8f);
 		data.isBillBoard = true;
 		VFX::Start(data);
 	}
