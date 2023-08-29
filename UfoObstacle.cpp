@@ -5,6 +5,8 @@
 #include "Engine/Direct3D.h"
 #include "Player.h"
 
+static const float height_ = 15.0f;
+
 UfoObstacle::UfoObstacle(GameObject* parent)
 	:Obstacle(parent), hModelSub_{-1, -1}, state_(S_ENTER), stateEnter_(true), targetPos_(0, 0, 0), moveSpeed_(0.0f), time_(0),
 	moveDist_(0), leavVec_{0,1,0,0}, leavYmoveSpeed_(0.0f), attack_(false)
@@ -63,11 +65,14 @@ void UfoObstacle::Draw()
 	Model::Draw(hModel_);
 
 	if (state_ == S_DETECT) {
+		Direct3D::SetDepthBafferWriteEnable(false);
+
 		Transform pos = transform_;
 		pos.position_.y -= 0.5f;
 		Model::SetTransform(hModelSub_[1], pos);
 		Model::Draw(hModelSub_[1], 4);
 		
+		Direct3D::SetDepthBafferWriteEnable(true);
 	}
 
 	if (state_ == S_SHOT || (state_ == S_LEAVING && attack_) ) {
@@ -90,9 +95,9 @@ void UfoObstacle::UpdateEnter()
 		stateEnter_ = false;
 
 		targetPos_ = transform_.position_;
-		targetPos_.y = 10.0f;
+		targetPos_.y = height_;
 
-		transform_.position_.y = 10.0f;
+		transform_.position_.y = height_;
 		transform_.position_.x += (float)( (rand() % 2 - 1) * (rand() % 5 + 10) );
 		transform_.position_.y += (float)(rand() % 2 - 5);		//‚È‚é‚×‚­Œ©‚¦‚â‚·‚¢‚æ‚¤‰º‚Ì•û‚©‚ç“oê‚³‚¹‚é
 		transform_.position_.z += -5.0f + (float)( rand() % 5 + 20);
@@ -115,7 +120,7 @@ void UfoObstacle::UpdateEnter()
 void UfoObstacle::UpdateDetection()
 {
 	//ŽžŠÔØ‚ê‚Å‹Ž‚é
-	int shotTime = 400;
+	int shotTime = 40000;
 	if (time_ > shotTime) ChangeState(S_LEAVING);
 	time_++;
 
@@ -176,14 +181,14 @@ void UfoObstacle::UpdatePreparation()
 		//‘æ“ñ‚ÌTargetPositionŒˆ’è
 		Player* pPla = (Player*)FindObject("Player");
 		targetPos_ = pPla->GetPosition();
-		targetPos_.y = 10.0f;
+		targetPos_.y = height_;
 		XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 		XMVECTOR vTar = XMLoadFloat3(&targetPos_);
 		XMVECTOR vMovePos = vTar - vPos;
 		vMovePos = XMVector3Normalize(vMovePos) * moveDist_;
 		vMovePos += vPos;
 		XMStoreFloat3(&targetPos_, vMovePos);
-		targetPos_.y = 10.0f;
+		targetPos_.y = height_;
 		
 		ChangeState(S_SHOT);
 	}
