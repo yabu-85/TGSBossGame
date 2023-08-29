@@ -137,6 +137,7 @@ void ObstacleManager::a()
 
 void ObstacleManager::InitCsv()
 {
+
     //CSVデータをテーブルに格納
     for (int x = 0; x < width_; x++) {
         for (int y = 0; y < height_; y++) {
@@ -144,10 +145,33 @@ void ObstacleManager::InitCsv()
             {
                 XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
                 int intValue = csv_.GetValue(x, y);
-                ObstacleType a = static_cast<ObstacleType>(intValue);
-                createAndAddObstacle(position, a);
+                if (intValue != OBSTACLE_UFO) {
+
+                    ObstacleType a = static_cast<ObstacleType>(intValue);
+                    createAndAddObstacle(position, a);
+
+                }
             }
         }
     }
+
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < width_; x++) {
+        for (int y = 0; y < height_; y++) {
+            if (csv_.GetValue(x, y) != 0)
+            {
+                XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
+                int intValue = csv_.GetValue(x, y);
+                if (intValue == OBSTACLE_UFO) {
+
+                    ObstacleType a = static_cast<ObstacleType>(intValue);
+                    createAndAddObstacle(position, a);
+
+                }
+            }
+        }
+    }
+
+
 
 }

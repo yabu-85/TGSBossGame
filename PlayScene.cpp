@@ -22,8 +22,8 @@ void PlayScene::Initialize()
 	Stage* pStage = Instantiate<Stage>(this);
 	goal = pStage->GetHeight();
 
-	Instantiate<ObstacleManager>(this);
 	pPlayer_ = Instantiate<Player>(this);
+	Instantiate<ObstacleManager>(this);
 
 	pTimer_ = Instantiate<Timer>(this);
 	pTimer_->SetLimit(30);

@@ -65,14 +65,11 @@ void UfoObstacle::Draw()
 	Model::Draw(hModel_);
 
 	if (state_ == S_DETECT) {
-		Direct3D::SetDepthBafferWriteEnable(false);
-
 		Transform pos = transform_;
 		pos.position_.y -= 0.5f;
 		Model::SetTransform(hModelSub_[1], pos);
 		Model::Draw(hModelSub_[1], 4);
 		
-		Direct3D::SetDepthBafferWriteEnable(true);
 	}
 
 	if (state_ == S_SHOT || (state_ == S_LEAVING && attack_) ) {

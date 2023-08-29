@@ -31,7 +31,7 @@ void Missile::Initialize()
 
     countPerMeter = 1.0f;
     speed = 0.05f;
-    damping = 0.0f;
+    damping = 0.3f;
     impact = 0.5f;
 
     //‰~‰^“®‚ÌŒüS—Í
