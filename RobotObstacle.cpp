@@ -78,8 +78,10 @@ void RobotObstacle::Release()
 }
 
 void RobotObstacle::NotifyMissileDestroyed(Missile* destMissile) {
-	auto newEnd = std::remove(missiles_.begin(), missiles_.end(), destMissile);
-	missiles_.erase(newEnd, missiles_.end());
+	if (destMissile != nullptr) {
+		auto newEnd = std::remove(missiles_.begin(), missiles_.end(), destMissile);
+		missiles_.erase(newEnd, missiles_.end());
+	}
 }
 
 void RobotObstacle::UpdateEnter()
@@ -117,7 +119,6 @@ void RobotObstacle::UpdateShot()
 
 void RobotObstacle::UpdateIdle()
 {
-
 	if(missiles_.empty()) ChangeState(S_LEAVING);
 
 }

@@ -25,9 +25,12 @@ void UfoObstacle::Initialize()
 
 	hModelSub_[0] = Model::Load("Model/Laser.fbx");
 	assert(hModelSub_[0] >= 0);
-
-	hModelSub_[1] = Model::Load("Model/Laser2.fbx");
+	
+	hModelSub_[1] = Model::Load("Model/Laser3.fbx");
 	assert(hModelSub_[1] >= 0);
+
+	hModelSub_[2] = Model::Load("Model/Laser2.fbx");
+	assert(hModelSub_[2] >= 0);
 
 	moveSpeed_ = 1.0f;
 	moveDist_ = 50.0f;
@@ -66,17 +69,20 @@ void UfoObstacle::Draw()
 
 	if (state_ == S_DETECT) {
 		Transform pos = transform_;
-		pos.position_.y -= 0.5f;
-		Model::SetTransform(hModelSub_[1], pos);
-		Model::Draw(hModelSub_[1], 4);
+		pos.position_.y -= 1.0f;
+		Model::SetTransform(hModelSub_[2], pos);
+		Model::Draw(hModelSub_[2], 5);
 		
 	}
 
 	if (state_ == S_SHOT || (state_ == S_LEAVING && attack_) ) {
 		Transform pos = transform_;
-		pos.position_.y -= 0.5f;
+		pos.position_.y -= 1.5f;
 		Model::SetTransform(hModelSub_[0], pos);
 		Model::Draw(hModelSub_[0], 4);
+
+		Model::SetTransform(hModelSub_[1], pos);
+		Model::Draw(hModelSub_[1], 5);
 
 	}
 
@@ -117,21 +123,33 @@ void UfoObstacle::UpdateEnter()
 void UfoObstacle::UpdateDetection()
 {
 	//時間切れで去る
-	int shotTime = 40000;
+	int shotTime = 500;
 	if (time_ > shotTime) ChangeState(S_LEAVING);
 	time_++;
 
 	//こっちは範囲内に入ったら攻撃の準備へ
-	XMFLOAT2 lPos = { transform_.position_.x, transform_.position_.z };
 	Player* pPla = (Player*)FindObject("Player");
-	XMFLOAT2 pPos = { pPla->GetPosition().x, pPla->GetPosition().z };
-	float distanceSquared = XMVectorGetX(XMVector2LengthSq(XMLoadFloat2(&lPos) - XMLoadFloat2(&pPos)));
-	float plaRadius = 0.3f, lRadius = 0.4f;
-	if (distanceSquared <= (lRadius + plaRadius) * (lRadius + plaRadius)) {
-		attack_ = true;
-		ChangeState(S_PREARATION);
-	}
 
+	//円錐出来ないから円と円の衝突判定をn回繰り返す
+	const int num = 6;
+	const float dist[num] = { 0.9f, 1.15f, 1.38f, 1.65f, 2.0f, 2.35f };		//円の半径
+	const float heig[num] = { -3.5f, -5.0f, -7.0f, -9.0f, -11.0f, -13.5f };	//円の高さ
+	const float rad = 0.2f;
+
+	for (int i = 0; i < num; i++) {
+		XMFLOAT3 fPos = { transform_.position_.x, transform_.position_.y + -1.0f + heig[i], transform_.position_.z };
+		XMFLOAT3 fTar = pPla->GetPosition();
+		fTar.y += 0.5f;
+		XMVECTOR tar = XMLoadFloat3(&fTar);
+		XMVECTOR pos = XMLoadFloat3(&fPos);
+		float distance = XMVectorGetX(XMVector3Length(pos - tar));
+
+		//ここはTargetの場所の範囲に入ったら
+		if (distance < (dist[i] + rad)) {
+			attack_ = true;
+			ChangeState(S_PREARATION);
+		}
+	}
 }
 
 void UfoObstacle::UpdatePreparation()
@@ -206,7 +224,7 @@ void UfoObstacle::UpdateShot()
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 	XMVECTOR vTar = XMLoadFloat3(&targetPos_);
 	XMVECTOR vMovePos = vTar - vPos;
-	vMovePos = XMVector3Normalize(vMovePos) * moveSpeed_;
+	vMovePos = XMVector3Normalize(vMovePos) * moveSpeed_ * 0.01;
 	leavVec_ = vMovePos;
 	vMovePos += vPos;
 	XMFLOAT3 fPos;
@@ -236,7 +254,7 @@ void UfoObstacle::UpdateShot()
 	data.isBillBoard = true;
 	VFX::Start(data);
 
-	int shotTime = 30;
+	int shotTime = 3000;
 	if (time_ > shotTime) ChangeState(S_LEAVING);
 	time_++;
 
@@ -281,4 +299,43 @@ void UfoObstacle::ChangeState(STATE s)
 {
 	state_ = s;
 	stateEnter_ = true;
+}
+
+
+// 球と円錐の当たり判定を行う関数
+bool UfoObstacle::Intersect_sphere_cone(XMVECTOR sphereCenter, float sphereRadius, XMVECTOR coneBaseCenter, XMVECTOR coneVertex) {
+	// 平面の法線ベクトルを計算
+	XMVECTOR planeNormal = coneBaseCenter - coneVertex;
+	 XMVECTOR planeNormalXM =  XMVector3Normalize(planeNormal);
+
+	// 球の中心から平面までの距離を計算
+	XMVECTOR sphereToPlane = sphereCenter - coneBaseCenter;
+	float distanceToPlane =  XMVectorGetX( XMVector3Dot(sphereToPlane, planeNormalXM));
+
+	// 円錐の軸ベクトル
+	XMVECTOR coneAxis = coneBaseCenter - coneVertex;
+
+	// lベクトルを計算
+	XMVECTOR l = sphereCenter - coneVertex;
+
+	// lベクトルと軸ベクトルの内積を計算
+	float dotProduct =  XMVectorGetX( XMVector3Dot( l,coneAxis));
+
+	bool intersection = false;
+
+	if (dotProduct >= 0.0f) {
+		// 球の中心が円錐の軸側にある場合
+		intersection = true;
+	}
+	else {
+		// 球の中心が円錐の軸の反対側にある場合、lベクトルとの距離を計算
+		float lLength =  XMVectorGetX( XMVector3Length(l));
+		float distance = std::abs(distanceToPlane);
+
+		if (distance <= sphereRadius) {
+			intersection = true;
+		}
+	}
+
+	return intersection;
 }

@@ -31,7 +31,7 @@ void Missile::Initialize()
 
     countPerMeter = 1.0f;
     speed = 0.05f;
-    damping = 0.3f;
+    damping = 0.0f;
     impact = 0.5f;
 
     //円運動の向心力
@@ -42,20 +42,20 @@ void Missile::Initialize()
     propulsion = speed * damping;
     
     //火の粉
-    dataExp_.textureFileName = "Particle/cloudA.png";
+    dataExp_.textureFileName = "Particle/missilePar.png";
     dataExp_.position = transform_.position_;
     dataExp_.delay = 0;
     dataExp_.number = 1;
-    dataExp_.lifeTime = 100;
+    dataExp_.lifeTime = 60;
     dataExp_.positionRnd = XMFLOAT3(0.5, 0, 0.5);
     dataExp_.direction = XMFLOAT3(0, 1, 0);
     dataExp_.directionRnd = XMFLOAT3(90, 90, 90);
     dataExp_.speed = 0.1f;
     dataExp_.speedRnd = 1.0f;
     dataExp_.accel = 0.93;
-    dataExp_.size = XMFLOAT2(0.1, 0.1);
+    dataExp_.size = XMFLOAT2(0.4, 0.4);
     dataExp_.sizeRnd = XMFLOAT2(0.4, 0.4);
-    dataExp_.scale = XMFLOAT2(0.99, 0.99);
+    dataExp_.scale = XMFLOAT2(0.9, 0.9);
     dataExp_.color = XMFLOAT4(1, 1, 0.1, 1);
     dataExp_.deltaColor = XMFLOAT4(0, 0, 0, 0);
     dataExp_.gravity = 0.003f;
@@ -139,7 +139,10 @@ void Missile::Update()
     if (distance < impact) {
         CreateExplodeParticle();        
         Audio::Play("Sound/MissileExplode.wav");
-        pRobotObstacle_->NotifyMissileDestroyed(this);
+        
+        if (!pRobotObstacle_->IsDead())
+            pRobotObstacle_->NotifyMissileDestroyed(this);
+        
         KillMe();
 
     }
@@ -161,7 +164,6 @@ void Missile::Update()
     transform_.rotate_.y = XMConvertToDegrees(angle);
     transform_.rotate_.y += 180.0f; //Blender
 
-
     //こっちはプレイヤーとの範囲内か
     XMFLOAT3 pPos = pPlayer_->GetPosition();
     pPos.y += 0.5f;
@@ -174,7 +176,10 @@ void Missile::Update()
         CreateExplodeParticle();
         Audio::Play("Sound/MissileExplode.wav");
         pPlayer_->DecreaseHp(5);
-        pRobotObstacle_->NotifyMissileDestroyed(this);
+
+        if (!pRobotObstacle_->IsDead())
+            pRobotObstacle_->NotifyMissileDestroyed(this);
+        
         KillMe();
     }
 
@@ -227,7 +232,7 @@ void Missile::CreateExplodeParticle()
     //爆発
     EmitterData data;
     data.position = transform_.position_;
-    data.textureFileName = "Particle/cloudA.png";
+    data.textureFileName = "Particle/missilePar.png";
     data.position = transform_.position_;
     data.delay = 0;
     data.number = 3;
