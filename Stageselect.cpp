@@ -26,8 +26,7 @@ void StageSelect::Initialize()
 
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
 	pButtonFactory_->ButtonCreate(-1000.0f, -200.0f, 0.4f, 0.4f, "Clear", "Stage01");
-	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.4f, 0.4f, "Over", "Stage01");
-	pButtonFactory_->ButtonCreate(1000.0f, -200.0f, 0.4f, 0.4f, "Quit", "Stage01");
+	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.4f, 0.4f, "Over", "Stage02");
 	pButtonFactory_->ButtonCreate(0.0f, -700.0f, 1.0f, 1.0f, "Back");
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
@@ -56,8 +55,8 @@ void StageSelect::Update()
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;
 		pB->SetActive(true);
-		pB->SetAlpha(100);
-		pB->SetFrameAlpha(100);
+		pB->SetAlpha(200);
+		pB->SetFrameAlpha(200);
 
 		KillMe();
 		return;

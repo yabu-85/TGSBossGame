@@ -24,6 +24,9 @@ void PauseMenu::Initialize()
 	pButtonFactory_->ButtonCreate(0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame");
 	pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "ReturnTitle");
 	pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
+	pButtonFactory_->SetAlpha(200);
+	pButtonFactory_->SetFrameAlpha(200);
+	pButtonFactory_->SetBlendMode(0);
 
 	Aim* pAim = (Aim*)FindObject("Aim");
 	pAim->SetAimMove(false);

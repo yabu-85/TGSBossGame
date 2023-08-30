@@ -64,7 +64,6 @@ void Player::Initialize()
     maxHp_ = 50;
     Model::SetAnimFrame(hModel_, 0, 0, 1);
 
-    Instantiate<HpGauge>(this);
     pStage_ = (Stage*)FindObject("Stage");
     
     //画像データのロード

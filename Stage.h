@@ -6,9 +6,6 @@
 enum OBJ
 {
     TYPE_FLOOR,         //П∞
-    TYPE_WALL,          //Х«
-    TYPE_WALL2,         //Х«(Се)
-    TYPE_HIGHTWALL,     //Х«(УЅСе)
     TYPE_MAX            //Н≈СеТl
 };
 

@@ -4,8 +4,10 @@
 
 
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), hModel_{ -1, -1, -1, -1}, table_(nullptr)
+    :GameObject(parent, "Stage"), table_(nullptr)
 {
+    for (int i = 0; i < TYPE_MAX; i++) hModel_[i] = -1;
+
     //CSVファイル読み込み
     CsvReader csv;
     csv.Load("Map.csv");
@@ -34,10 +36,7 @@ void Stage::Initialize()
 {
     const char* fileName[] = 
     { 
-        "Model/StagePit.fbx",
-        "Model/Wall.fbx",
-        "Model/Wall2.fbx",
-        "Model/HightWall.fbx",
+        "Model/StagePit2.fbx",
     };
 
     //モデルデータのロード
@@ -94,12 +93,6 @@ float Stage::GetFloorHeight(int x, int z)
     {
     case TYPE_FLOOR:
         return 0.0f;
-    case TYPE_WALL:
-        return 1.0f;
-    case TYPE_WALL2:
-        return 2.0f;
-    case TYPE_HIGHTWALL:
-        return 5.0f;
     default:
         return -10.0f;
     }
@@ -114,9 +107,6 @@ bool Stage::IsWall(int x, int z)
     switch (type)
     {
     case TYPE_FLOOR:
-    case TYPE_WALL:
-    case TYPE_WALL2:
-    case TYPE_HIGHTWALL:
         return true;
     default:
         return false;

@@ -43,6 +43,9 @@ void TitleScene::Initialize()
 		pButtonFactory_ = Instantiate<ButtonFactory>(this);
 		pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Start");
 		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
+		pButtonFactory_->SetAlpha(200);
+		pButtonFactory_->SetFrameAlpha(200);
+		pButtonFactory_->SetBlendMode(0);
 
 	}
 }
@@ -58,6 +61,10 @@ void TitleScene::Update()
 			pButtonFactory_ = Instantiate<ButtonFactory>(this);
 			pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Start");
 			pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
+			pButtonFactory_->SetAlpha(200);
+			pButtonFactory_->SetFrameAlpha(200);
+			pButtonFactory_->SetBlendMode(0);
+
 		}
 	}
 

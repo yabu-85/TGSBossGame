@@ -18,6 +18,9 @@ void ExitMenu::Initialize()
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
 	pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Ok");
 	pButtonFactory_->ButtonCreate(0.0f, -600.0f, 1.0f, 1.0f, "Back");
+	pButtonFactory_->SetAlpha(255);
+	pButtonFactory_->SetFrameAlpha(255);
+	pButtonFactory_->SetBlendMode(0);
 
 	time_ = 0;
 }
@@ -35,8 +38,8 @@ void ExitMenu::Update()
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;
 		pB->SetActive(true);
-		pB->SetAlpha(100);
-		pB->SetFrameAlpha(100);
+		pB->SetAlpha(200);
+		pB->SetFrameAlpha(200);
 
 		KillMe();
 		return;

@@ -9,6 +9,7 @@
 #include "Engine/SceneManager.h"
 #include "SkyBox.h"
 #include "Aim.h"
+#include "HpGauge.h"
 
 static int goal;
 
@@ -32,6 +33,7 @@ void PlayScene::Initialize()
 	pTimer_->SetLimit(30);
 	pTimer_->Start();
 
+	Instantiate<HpGauge>(this);
 	Instantiate<Aim>(this);
 
 	pPlayer_->SetPosition(pStage->GetPlaPos());
