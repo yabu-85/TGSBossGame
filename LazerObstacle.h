@@ -1,14 +1,14 @@
 #pragma once
 #include "Obstacle.h"
 
-class LaserObstacle :
+class LazerObstacle :
     public Obstacle
 {
     int hModelHead_;
 
 public:
-    LaserObstacle(GameObject* parent);
-    ~LaserObstacle();
+    LazerObstacle(GameObject* parent);
+    ~LazerObstacle();
     void Initialize() override;
     void Update() override;
     void Draw() override;

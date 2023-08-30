@@ -1,17 +1,17 @@
-#include "LaserObstacle.h"
+#include "LazerObstacle.h"
 #include "Engine/Model.h"
 
-LaserObstacle::LaserObstacle(GameObject* parent)
+LazerObstacle::LazerObstacle(GameObject* parent)
 	:Obstacle(parent), hModelHead_(-1)
 {
-	objectName_ = "LaserObstacle";
+	objectName_ = "LazerObstacle";
 }
 
-LaserObstacle::~LaserObstacle()
+LazerObstacle::~LazerObstacle()
 {
 }
 
-void LaserObstacle::Initialize()
+void LazerObstacle::Initialize()
 {
 	//モデルロード
 	hModel_ = Model::Load("Model/Robot_body_lazer.fbx");
@@ -20,16 +20,18 @@ void LaserObstacle::Initialize()
 	//モデルロード
 	hModelHead_ = Model::Load("Model/Robot_Head_lazer.fbx");
 	assert(hModelHead_ >= 0);
+
+	transform_.rotate_.y = 180.0f;
 }
 
-void LaserObstacle::Update()
+void LazerObstacle::Update()
 {
 	if (!active_) return;
 
 	transform_.position_.y = 0;
 }
 
-void LaserObstacle::Draw()
+void LazerObstacle::Draw()
 {
 	if (!active_) return;
 
@@ -42,6 +44,6 @@ void LaserObstacle::Draw()
 	Model::Draw(hModelHead_);
 }
 
-void LaserObstacle::Release()
+void LazerObstacle::Release()
 {
 }

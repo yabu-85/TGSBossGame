@@ -165,8 +165,11 @@
     <ClCompile Include="ButtonFactory.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="LaserObstacle.cpp">
+    <ClCompile Include="LazerObstacle.cpp">
       <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -294,8 +297,11 @@
     <ClInclude Include="ButtonFactory.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="LaserObstacle.h">
+    <ClInclude Include="LazerObstacle.h">
       <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

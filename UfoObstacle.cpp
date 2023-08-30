@@ -23,7 +23,7 @@ void UfoObstacle::Initialize()
 	hModel_ = Model::Load("Model/Ufo.fbx");
 	assert(hModel_ >= 0);
 
-	std::string fileName[] = { "LaserCenter", "LaserOuter", "LaserDetect" };
+	std::string fileName[] = { "LazerCenter", "LazerOuter", "LazerDetect" };
 	for (int i = 0; i < 3; i++) {
 		hModelSub_[i] = Model::Load("Model/" + fileName[i] + ".fbx");
 		assert(hModelSub_[i] >= 0);
@@ -128,9 +128,9 @@ void UfoObstacle::UpdateDetection()
 	Player* pPla = (Player*)FindObject("Player");
 
 	//‰~o—ˆ‚È‚¢‚©‚ç‰~‚Æ‰~‚ÌÕ“Ë”»’è‚ğn‰ñŒJ‚è•Ô‚·
-	const int num = 6;
-	const float dist[num] = { 0.9f, 1.15f, 1.38f, 1.65f, 2.0f, 2.35f };		//‰~‚Ì”¼Œa
-	const float heig[num] = { -3.5f, -5.0f, -7.0f, -9.0f, -11.0f, -13.5f };	//‰~‚Ì‚‚³
+	const int num = 7;
+	const float dist[num] = { 0.7f, 0.9f, 1.15f, 1.38f, 1.65f, 2.0f, 2.35f };		//‰~‚Ì”¼Œa
+	const float heig[num] = { -2.0f, -3.5f, -5.0f, -7.0f, -9.0f, -11.0f, -13.5f };	//‰~‚Ì‚‚³
 	const float rad = 0.2f;
 
 	for (int i = 0; i < num; i++) {

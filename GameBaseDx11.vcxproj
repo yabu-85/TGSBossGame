@@ -152,7 +152,7 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="ExitMenu.cpp" />
-    <ClCompile Include="LaserObstacle.cpp" />
+    <ClCompile Include="LazerObstacle.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="HpGauge.cpp" />
@@ -163,6 +163,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="RobotObstacle.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Stageselect.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -198,7 +199,7 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="ExitMenu.h" />
-    <ClInclude Include="LaserObstacle.h" />
+    <ClInclude Include="LazerObstacle.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="HpGauge.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="RobotObstacle.h" />
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Stageselect.h" />
     <ClInclude Include="Timer.h" />

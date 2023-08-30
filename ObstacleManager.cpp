@@ -5,7 +5,7 @@
 #include "Engine/CsvReader.h"
 #include "Player.h"
 #include "Missile.h"
-#include "LaserObstacle.h"
+#include "LazerObstacle.h"
 
 //UfoÇæÇØÉçÅ[ÉhîÕàÕÇã∑ÇﬂÇÈ
 static float ufoLoadRange = -40.0f;
@@ -82,8 +82,8 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     case ObstacleType::OBSTACLE_ROBOT:
         pObstacle = Instantiate<RobotObstacle>(this);
         break;
-    case ObstacleType::OBSTACLE_LASER:
-        pObstacle = Instantiate<LaserObstacle>(this);
+    case ObstacleType::OBSTACLE_LAZER:
+        pObstacle = Instantiate<LazerObstacle>(this);
         break;
     }
 
