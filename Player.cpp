@@ -64,7 +64,6 @@ void Player::Initialize()
     maxHp_ = 50;
     Model::SetAnimFrame(hModel_, 0, 0, 1);
 
-    pAim_ = Instantiate<Aim>(this);
     Instantiate<HpGauge>(this);
     pStage_ = (Stage*)FindObject("Stage");
     
@@ -198,6 +197,7 @@ void Player::SetActiveWithDelay(bool isActive,int time)
     std::thread([this, isActive, time]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(time));
         isActive_ = isActive;
+        pAim_ = (Aim*)FindObject("Aim");
         pAim_->SetAimMove(true);
 
     }).detach();    

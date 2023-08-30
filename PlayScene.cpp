@@ -8,6 +8,7 @@
 #include "ObstacleManager.h"
 #include "Engine/SceneManager.h"
 #include "SkyBox.h"
+#include "Aim.h"
 
 static int goal;
 
@@ -30,6 +31,8 @@ void PlayScene::Initialize()
 	pTimer_ = Instantiate<Timer>(this);
 	pTimer_->SetLimit(30);
 	pTimer_->Start();
+
+	Instantiate<Aim>(this);
 
 	pPlayer_->SetPosition(pStage->GetPlaPos());
 	pPlayer_->SetActiveWithDelay(true, 10); //ƒNƒŠƒbƒN‚Ì“®ì‚ğ“ü‚ê‚È‚¢‚æ‚¤‚É’x‰„

@@ -6,6 +6,7 @@
 #include "Engine/Global.h"
 #include "Stage.h"
 #include <map>
+#include "Engine/Direct3D.h"
 
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 },
@@ -26,7 +27,6 @@ Aim::~Aim()
 
 void Aim::Initialize()
 {
-    pPlayer_ = (Player*)FindObject("Player");
     pStage_ = (Stage*)FindObject("Stage");
 
     //画像データのロード
@@ -37,6 +37,11 @@ void Aim::Initialize()
 
 void Aim::Update()
 {
+    if (pPlayer_ == nullptr) {
+        pPlayer_ = (Player*)FindObject("Player");
+        return;
+    }
+
     //マウス移動量
     if (aimMove_) {
         XMFLOAT3 mouseMove = Input::GetMouseMove(); //マウスの移動量を取得
