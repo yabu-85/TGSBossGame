@@ -7,6 +7,7 @@
 #include "ExitMenu.h"
 #include "ObstacleManager.h"
 #include "Engine/SceneManager.h"
+#include "SkyBox.h"
 
 static int goal;
 
@@ -23,6 +24,7 @@ void PlayScene::Initialize()
 	goal = pStage->GetHeight();
 
 	pPlayer_ = Instantiate<Player>(this);
+	Instantiate<SkyBox>(this);
 	Instantiate<ObstacleManager>(this);
 
 	pTimer_ = Instantiate<Timer>(this);
