@@ -5,6 +5,7 @@
 #include "Engine/CsvReader.h"
 #include "Player.h"
 #include "Missile.h"
+#include "LaserObstacle.h"
 
 //Ufoだけロード範囲を狭める
 static float ufoLoadRange = -40.0f;
@@ -72,9 +73,6 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
 
     switch (_type)
     {
-    case ObstacleType::OBSTACLE_NORMAL:
-        pObstacle = Instantiate<Obstacle>(this);
-        break;
     case ObstacleType::OBSTACLE_WALL:
         pObstacle = Instantiate<WallObstacle>(this);
         break;
@@ -83,6 +81,9 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
         break;
     case ObstacleType::OBSTACLE_ROBOT:
         pObstacle = Instantiate<RobotObstacle>(this);
+        break;
+    case ObstacleType::OBSTACLE_LASER:
+        pObstacle = Instantiate<LaserObstacle>(this);
         break;
     }
 
@@ -117,6 +118,7 @@ void ObstacleManager::LoadCsv()
 }
 
 //反射で使うやつ名前変えとく気が向いたら
+//これを読んだらManegerのobstacles_のRobotの子供Missile達にプレイヤーの衝突距離かを計算している
 void ObstacleManager::a()
 {
     for (GameObject* e : obstacles_) {
@@ -126,18 +128,17 @@ void ObstacleManager::a()
 
             std::list<Missile*> mis = pRobot->GetMissiles();
             for (Missile* missile : mis) {
-                missile->Reflect(XMFLOAT3 (1,1,1) );
+                missile->Reflect();
             }
         }
     }
-
 
 }
 
 
 void ObstacleManager::InitCsv()
 {
-
+    //レーザーの描画の問題でUFOを先にInitializeしておく
     //CSVデータをテーブルに格納
     for (int x = 0; x < width_; x++) {
         for (int y = 0; y < height_; y++) {
@@ -146,7 +147,6 @@ void ObstacleManager::InitCsv()
                 XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
                 int intValue = csv_.GetValue(x, y);
                 if (intValue != OBSTACLE_UFO) {
-
                     ObstacleType a = static_cast<ObstacleType>(intValue);
                     createAndAddObstacle(position, a);
 
@@ -155,6 +155,7 @@ void ObstacleManager::InitCsv()
         }
     }
 
+    //UFO以外のをInitializeする
     //CSVデータをテーブルに格納
     for (int x = 0; x < width_; x++) {
         for (int y = 0; y < height_; y++) {
@@ -163,7 +164,6 @@ void ObstacleManager::InitCsv()
                 XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
                 int intValue = csv_.GetValue(x, y);
                 if (intValue == OBSTACLE_UFO) {
-
                     ObstacleType a = static_cast<ObstacleType>(intValue);
                     createAndAddObstacle(position, a);
 
@@ -171,7 +171,4 @@ void ObstacleManager::InitCsv()
             }
         }
     }
-
-
-
 }

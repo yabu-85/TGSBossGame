@@ -23,14 +23,11 @@ void UfoObstacle::Initialize()
 	hModel_ = Model::Load("Model/Ufo.fbx");
 	assert(hModel_ >= 0);
 
-	hModelSub_[0] = Model::Load("Model/Laser.fbx");
-	assert(hModelSub_[0] >= 0);
-	
-	hModelSub_[1] = Model::Load("Model/Laser3.fbx");
-	assert(hModelSub_[1] >= 0);
-
-	hModelSub_[2] = Model::Load("Model/Laser2.fbx");
-	assert(hModelSub_[2] >= 0);
+	std::string fileName[] = { "LaserCenter", "LaserOuter", "LaserDetect" };
+	for (int i = 0; i < 3; i++) {
+		hModelSub_[i] = Model::Load("Model/" + fileName[i] + ".fbx");
+		assert(hModelSub_[i] >= 0);
+	}
 
 	moveSpeed_ = 1.0f;
 	moveDist_ = 50.0f;

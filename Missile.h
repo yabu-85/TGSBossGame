@@ -39,7 +39,7 @@ public:
 	void SetTarget(float x, float y, float z);
 	void SetParent(RobotObstacle* p) { pRobotObstacle_ = p; };
 	void SetReflected(bool b) { missileReflected_ = b; };
-	void Reflect(XMFLOAT3 plaPos);
+	void Reflect();
 
 };
 

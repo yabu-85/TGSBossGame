@@ -207,7 +207,7 @@ void Missile::SetTarget(float x, float y, float z)
 
 }
 
-void Missile::Reflect(XMFLOAT3 plaPos)
+void Missile::Reflect()
 {
     XMFLOAT3 pPos = pPlayer_->GetPosition();
     pPos.y += 0.5f;

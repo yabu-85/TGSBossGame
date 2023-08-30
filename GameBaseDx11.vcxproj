@@ -152,6 +152,7 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="ExitMenu.cpp" />
+    <ClCompile Include="LaserObstacle.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="HpGauge.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="ExitMenu.h" />
+    <ClInclude Include="LaserObstacle.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="HpGauge.h" />

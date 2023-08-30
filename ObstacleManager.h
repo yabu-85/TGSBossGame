@@ -13,6 +13,8 @@ enum ObstacleType
     OBSTACLE_WALL,
     OBSTACLE_UFO,
     OBSTACLE_ROBOT,
+    OBSTACLE_LASER,
+    OBSTACLE_MAX,
 };
 
 class ObstacleManager : public GameObject
