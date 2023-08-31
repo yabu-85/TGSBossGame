@@ -76,4 +76,6 @@ public:
     int GetHp() { return hp_; };
     int GetMaxHp() { return maxHp_; };
 
+    bool IsisCrouc() { isCrouching_; };
+
 };

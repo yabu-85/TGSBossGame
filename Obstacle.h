@@ -7,6 +7,7 @@ class Obstacle : public GameObject
 protected:
     int hModel_;
     bool active_;
+    bool isDraw_;
 
 public:
     Obstacle(GameObject* parent);
@@ -17,6 +18,7 @@ public:
     virtual void Release() override;
     
     void SetActive(bool b) { active_ = b; };
+    void SetDraw(bool b) { isDraw_ = b; };
     bool IsActive() { return active_; };
 
 };

@@ -1,4 +1,3 @@
-#include "Engine/BoxCollider.h"
 #include "Player.h"
 #include "Engine/Input.h"
 #include "Engine/VFX.h"
@@ -30,8 +29,8 @@ static int maxHitPicTime = 60;
 static float prevYHeight = 0;
 
 Player::Player(GameObject* parent)
-    : GameObject(parent, "Player"), hModel_(-1), hPict_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), isCrouching_(false),
-    graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
+    : GameObject(parent, "Player"), hModel_(-1), hPict_(-1), targetRotation_(0), firstJump_(false), secondJump_(false),
+    isCrouching_(false), graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
     stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr)
 {
@@ -69,10 +68,6 @@ void Player::Initialize()
     //画像データのロード
     hPict_ = Image::Load("Png/ColorDamage.png");
     assert(hPict_ >= 0);
-
-    //箱型コライダー
-    BoxCollider* collision = new BoxCollider(XMFLOAT3(0, 1, 0), XMFLOAT3(1, 2, 1));
-    AddCollider(collision);
 }
 
 void Player::Update()

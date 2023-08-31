@@ -165,7 +165,7 @@
     <ClCompile Include="ButtonFactory.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="LazerObstacle.cpp">
+    <ClCompile Include="RaserObstacle.cpp">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
     <ClCompile Include="SkyBox.cpp">
@@ -297,7 +297,7 @@
     <ClInclude Include="ButtonFactory.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="LazerObstacle.h">
+    <ClInclude Include="RaserObstacle.h">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClInclude>
     <ClInclude Include="SkyBox.h">

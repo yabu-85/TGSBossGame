@@ -21,7 +21,7 @@ RobotObstacle::~RobotObstacle()
 void RobotObstacle::Initialize()
 {
 	//モデルロード
-	hModel_ = Model::Load("Model/Robot_body.fbx");
+	hModel_ = Model::Load("Model/Robot_Body.fbx");
 	assert(hModel_ >= 0);
 
 	//モデルロード
@@ -62,7 +62,7 @@ void RobotObstacle::Update()
 
 void RobotObstacle::Draw()
 {
-	if (!active_) return;
+	if (!isDraw_) return;
 
 	Transform body = transform_;
 	body.rotate_.y = 180;

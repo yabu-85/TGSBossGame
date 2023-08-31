@@ -1,9 +1,6 @@
 #pragma once
 #include "Obstacle.h"
 
-
-
-
 class UfoObstacle : public Obstacle
 {
     enum STATE {
@@ -37,8 +34,6 @@ class UfoObstacle : public Obstacle
         double min_h = 0.0;
         double max_h = 1.0;
     };
-
-    bool Intersect_sphere_cone(XMVECTOR sphereCenter, float sphereRadius, XMVECTOR coneBaseCenter, XMVECTOR coneVertex);
 
 public:
     UfoObstacle(GameObject* parent);

@@ -5,14 +5,14 @@
 #include "Engine/CsvReader.h"
 #include "Player.h"
 #include "Missile.h"
-#include "LazerObstacle.h"
+#include "RaserObstacle.h"
 
 //Ufoだけロード範囲を狭める
 static float ufoLoadRange = -40.0f;
 
 ObstacleManager::ObstacleManager(GameObject* parent)
     :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),
-    pPlayer_(nullptr)
+    pPlayer_(nullptr), isActive_(true)
 {
 }
 
@@ -36,22 +36,24 @@ void ObstacleManager::Initialize()
 
 void ObstacleManager::Update()
 {
+    if (!isActive_) return;
+
     //プレイヤー生まれるの待つ
     if (pPlayer_ == nullptr) {
         if (FindObject("Player")) {
             pPlayer_ = (Player*)FindObject("Player");
             InitCsv();
         }
+
         return;
     }
-
+    
     int plaPosZ = (int)pPlayer_->GetPosition().z;
     if (activationZoneSub_ < activationZone_ + plaPosZ) {
         activationZoneSub_ = activationZone_ + plaPosZ;
         LoadCsv();
 
     }
-    
 }
 
 void ObstacleManager::Draw()
@@ -82,8 +84,8 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     case ObstacleType::OBSTACLE_ROBOT:
         pObstacle = Instantiate<RobotObstacle>(this);
         break;
-    case ObstacleType::OBSTACLE_LAZER:
-        pObstacle = Instantiate<LazerObstacle>(this);
+    case ObstacleType::OBSTACLE_RASER:
+        pObstacle = Instantiate<RaserObstacle>(this);
         break;
     }
 
@@ -99,18 +101,23 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
 void ObstacleManager::LoadCsv()
 {
     //CSVデータをテーブルに格納
-    for (Obstacle* obj : obstacles_) {
-        Obstacle* pObstacle = (Obstacle*)obj;
+    for (auto obj : obstacles_) {
+
+        Obstacle* pObstacle = dynamic_cast<Obstacle*>(obj);
+        if (!pObstacle) return;
 
         // UFOの場合、ロード範囲を制限する
         if (pObstacle->GetObjectName() == "UfoObstacle") {
             if (pObstacle->GetPosition().z <= activationZoneSub_ + ufoLoadRange) {
+                pObstacle->SetDraw(true);
                 pObstacle->SetActive(true);
             }
         }
+
         // 他の障害物の処理
         else {
             if (pObstacle->GetPosition().z <= activationZoneSub_) {
+                pObstacle->SetDraw(true);
                 pObstacle->SetActive(true);
             }
         }
@@ -132,9 +139,14 @@ void ObstacleManager::a()
             }
         }
     }
-
 }
 
+void ObstacleManager::SetAllObstacleActive(bool b)
+{
+    isActive_ = b;
+    for (auto e : obstacles_) if(e != nullptr) e->SetActive(b);
+
+}
 
 void ObstacleManager::InitCsv()
 {

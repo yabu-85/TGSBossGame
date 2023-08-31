@@ -73,7 +73,7 @@ namespace Model
 		}
 
 		//アニメーションを進める
-		_datas[handle]->nowFrame += _datas[handle]->animSpeed;
+		if(_datas[handle]->isAimeStop == false) _datas[handle]->nowFrame += _datas[handle]->animSpeed;
 
 		//最後までアニメーションしたら戻す
 		if (_datas[handle]->nowFrame > (float)_datas[handle]->endFrame)
@@ -145,6 +145,11 @@ namespace Model
 			}
 		}
 		_datas.clear();
+	}
+
+	void SetAnimeStop(int handle, bool b)
+	{
+		_datas[handle]->SetAnimeStop(b);
 	}
 
 	//アニメーションのフレーム数をセット

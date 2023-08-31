@@ -10,7 +10,7 @@
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
     propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
-    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr)
+    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), isActive_(true)
 {
 }
 
@@ -64,6 +64,7 @@ void Missile::Initialize()
 
 void Missile::Update()
 {
+    if (!isActive_) return;
 
     //‰Î‚Ì•²
     dataExp_.position = transform_.position_;
@@ -86,11 +87,11 @@ void Missile::Update()
         transform_.rotate_.z += rotationAngle_.z;
 
         //”š”­‚Ì”ÍˆÍ“à‚©‚Ç‚¤‚©
-        float leng = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
-        if (leng <= 1.0f) {
+        float dist = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
+        if (dist <= 1.0f) {
             CreateExplodeParticle();
 
-            //‚Ü‚¾Œ‚‚Á‚½e‚ª¶‚«‚Ä‚¢‚ê‚Îkill
+            //‚Ü‚¾Œ‚‚Á‚½e‚ª¶‚«‚Ä‚¢‚ê‚Î“|‚·
             if (pRobotObstacle_ != nullptr) {
                 pRobotObstacle_->KillMe();
             }

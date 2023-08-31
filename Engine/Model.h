@@ -24,6 +24,7 @@ namespace Model
 		Transform 	transform;
 
 		//アニメーションのフレーム
+		bool isAimeStop;
 		float nowFrame, animSpeed;
 		int startFrame, endFrame;
 
@@ -36,10 +37,12 @@ namespace Model
 		
 
 		//初期化
-		ModelData() : pFbx(nullptr), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0),
+		ModelData() : pFbx(nullptr), isAimeStop(false), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0),
 			isBlending(false), blendNowFrame(0.0f), blendStartFrame(0), blendEndFrame(0), blendWeight(0.0f)
 		{
 		}
+
+		void SetAnimeStop(bool b) { isAimeStop = b; };
 
 		//アニメーションのフレーム数をセット
 		//引数：startFrame	開始フレーム
@@ -91,6 +94,8 @@ namespace Model
 	//全てのモデルを解放
 	//（シーンが切り替わるときは必ず実行）
 	void AllRelease();
+
+	void SetAnimeStop(int handle, bool b);
 
 	//ブレンディングする二つのフレーム数と影響度をセット
 	//引数：handle		設定したいモデルの番号

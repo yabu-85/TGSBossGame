@@ -8,6 +8,9 @@
 #include "ExitMenu.h"
 #include "Player.h"
 #include "Engine/SceneManager.h"
+#include "Engine/Model.h"
+#include "Timer.h"
+#include "ObstacleManager.h"
 
 PauseMenu::PauseMenu(GameObject* parent)
 	:GameObject(parent, "PauseMenu"), hPict_{-1,-1}, pButtonFactory_(nullptr)
@@ -30,8 +33,15 @@ void PauseMenu::Initialize()
 
 	Aim* pAim = (Aim*)FindObject("Aim");
 	pAim->SetAimMove(false);
+	Player* pPlayer = (Player*)FindObject("Player");
+	Model::SetAnimeStop(pPlayer->GetModelHandle(), true);
+	Timer* pTimer = (Timer*)FindObject("Timer");
+	pTimer->Stop();
 
-	hPict_[0] = Image::Load("Png/White.png");
+	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
+	//pObstacleManager->SetAllObstacleActive(false);
+
+	hPict_[0] = Image::Load("Png/Black.png");
 	assert(hPict_[0] >= 0);
 
 	hPict_[1] = Image::Load("Png/cross.png");
@@ -45,6 +55,13 @@ void PauseMenu::Update()
 		pAim->SetAimMove(true);
 		Player* pPlayer = (Player*)FindObject("Player");
 		pPlayer->SetActive(true);
+		Model::SetAnimeStop(pPlayer->GetModelHandle(), false);
+		Timer* pTimer = (Timer*)FindObject("Timer");
+		pTimer->Start();
+		
+		ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
+		//pObstacleManager->SetAllObstacleActive(true);
+
 		KillMe();
 
 	}
@@ -69,7 +86,7 @@ void PauseMenu::Update()
 void PauseMenu::Draw()
 {
 
-	Image::SetAlpha(hPict_[0], 20);
+	Image::SetAlpha(hPict_[0], 100);
 	Image::SetTransform(hPict_[0], transform_);
 	Image::Draw(hPict_[0]);
 

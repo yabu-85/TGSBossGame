@@ -23,7 +23,7 @@ void UfoObstacle::Initialize()
 	hModel_ = Model::Load("Model/Ufo.fbx");
 	assert(hModel_ >= 0);
 
-	std::string fileName[] = { "LazerCenter", "LazerOuter", "LazerDetect" };
+	std::string fileName[] = { "RaserCenter", "RaserOuter", "RaserDetect" };
 	for (int i = 0; i < 3; i++) {
 		hModelSub_[i] = Model::Load("Model/" + fileName[i] + ".fbx");
 		assert(hModelSub_[i] >= 0);
@@ -59,7 +59,7 @@ void UfoObstacle::Update()
 
 void UfoObstacle::Draw()
 {
-	if (!active_) return;
+	if (!isDraw_) return;
 
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
@@ -296,43 +296,4 @@ void UfoObstacle::ChangeState(STATE s)
 {
 	state_ = s;
 	stateEnter_ = true;
-}
-
-
-// 球と円錐の当たり判定を行う関数
-bool UfoObstacle::Intersect_sphere_cone(XMVECTOR sphereCenter, float sphereRadius, XMVECTOR coneBaseCenter, XMVECTOR coneVertex) {
-	// 平面の法線ベクトルを計算
-	XMVECTOR planeNormal = coneBaseCenter - coneVertex;
-	 XMVECTOR planeNormalXM =  XMVector3Normalize(planeNormal);
-
-	// 球の中心から平面までの距離を計算
-	XMVECTOR sphereToPlane = sphereCenter - coneBaseCenter;
-	float distanceToPlane =  XMVectorGetX( XMVector3Dot(sphereToPlane, planeNormalXM));
-
-	// 円錐の軸ベクトル
-	XMVECTOR coneAxis = coneBaseCenter - coneVertex;
-
-	// lベクトルを計算
-	XMVECTOR l = sphereCenter - coneVertex;
-
-	// lベクトルと軸ベクトルの内積を計算
-	float dotProduct =  XMVectorGetX( XMVector3Dot( l,coneAxis));
-
-	bool intersection = false;
-
-	if (dotProduct >= 0.0f) {
-		// 球の中心が円錐の軸側にある場合
-		intersection = true;
-	}
-	else {
-		// 球の中心が円錐の軸の反対側にある場合、lベクトルとの距離を計算
-		float lLength =  XMVectorGetX( XMVector3Length(l));
-		float distance = std::abs(distanceToPlane);
-
-		if (distance <= sphereRadius) {
-			intersection = true;
-		}
-	}
-
-	return intersection;
 }

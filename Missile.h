@@ -23,6 +23,7 @@ class Missile :
 	float damping;					//減衰
 	float impact;					//衝突距離
     bool missileReflected_;         //反射されたかどうか falseされてない
+	bool isActive_;					//アクティブ状態か
 	RobotObstacle* pRobotObstacle_;	
 	Player* pPlayer_;
 
@@ -40,6 +41,8 @@ public:
 	void SetParent(RobotObstacle* p) { pRobotObstacle_ = p; };
 	void SetReflected(bool b) { missileReflected_ = b; };
 	void Reflect();
+
+	void SetActive(bool b) { isActive_ = b; };
 
 };
 

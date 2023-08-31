@@ -13,7 +13,7 @@ enum ObstacleType
     OBSTACLE_WALL,
     OBSTACLE_UFO,
     OBSTACLE_ROBOT,
-    OBSTACLE_LAZER,
+    OBSTACLE_RASER,
     OBSTACLE_MAX,
 };
 
@@ -25,6 +25,7 @@ class ObstacleManager : public GameObject
     int height_;
     int activationZone_;
     int activationZoneSub_;
+    bool isActive_;
     Player* pPlayer_;
 
     void InitCsv();
@@ -50,5 +51,8 @@ public:
     std::vector<Obstacle*> GetObstacleList() { return obstacles_; }
 
     void a();
+
+    void SetAllObstacleActive(bool b);
+
 };
 
