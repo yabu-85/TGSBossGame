@@ -72,7 +72,10 @@ void Player::Initialize()
 
     hSound_[1] = Audio::Load("Sound/Running.wav", true, 1);
     hSound_[2] = Audio::Load("Sound/Missile_Reflection.wav", false, 8);
-
+    /*
+    hSound_[3] = Audio::Load("Sound/Jump.wav", false, 2);
+    hSound_[4] = Audio::Load("Sound/JumpingEnd.wav", false, 2);*/
+    
 }
 
 void Player::Update()
@@ -128,8 +131,11 @@ void Player::Update()
 
 
     //jump
-    if (Input::IsKeyDown(DIK_SPACE)) Jump();
-
+    if (Input::IsKeyDown(DIK_SPACE))
+    {
+        Audio::Play(hSound_[3]);
+        Jump();
+    }
     //しゃがんでない時カメラの高さリセット
     if (state_ != S_CROUCH) {
         if (cameraHeight_ < 1.0f)cameraHeight_ += 0.02f;
@@ -471,6 +477,7 @@ void Player::Gravity()
     firstJump_ = true;
 
     if (IsPlayerOnGround()) {
+        //Audio::Play(hSound_[4]);
         firstJump_ = false;
         secondJump_ = false;
         bulletJump_ = false;
