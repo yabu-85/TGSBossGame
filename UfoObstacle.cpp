@@ -35,10 +35,10 @@ void UfoObstacle::Initialize()
 	leavYmoveSpeed_ = 0.15f;
 
 	//サウンドデータのロード
-	hSound_[0] = Audio::Load("Sound/UFO_Charging.wav", false, 8);
+	hSound_[0] = Audio::Load("Sound/UFO_Charging.wav", false, 1);
 	assert(hSound_[0] >= 0);
 
-	hSound_[1] = Audio::Load("Sound/UFO_Attack.wav", false, 8);
+	hSound_[1] = Audio::Load("Sound/UFO_Attack.wav", false, 1);
 	assert(hSound_[1] >= 0);
 
 }

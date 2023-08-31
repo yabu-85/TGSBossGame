@@ -34,10 +34,10 @@ void RobotObstacle::Initialize()
 	count_ = 90;
 
 	//サウンドデータのロード
-	hSound_[0] = Audio::Load("Sound/RobotHit.wav", false, 8);
+	hSound_[0] = Audio::Load("Sound/RobotHit.wav", false, 1);
 	assert(hSound_[0] >= 0);
 
-	hSound_[1] = Audio::Load("Sound/MissileShot.wav", false, 8);
+	hSound_[1] = Audio::Load("Sound/MissileShot.wav", false, 1);
 	assert(hSound_[1] >= 0);
 
 }

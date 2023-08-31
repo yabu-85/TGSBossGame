@@ -9,7 +9,6 @@
 #include "ExitMenu.h"
 #include "Stageselect.h"
 
-
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}, hSound_(-1),
 	pButtonFactory_(nullptr)

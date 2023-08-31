@@ -11,6 +11,7 @@
 #include "Aim.h"
 #include "HpGauge.h"
 #include "PlayerSpeedController.h"
+#include "Engine/Audio.h"
 
 static int goal;
 
@@ -84,4 +85,5 @@ void PlayScene::Draw()
 //ŠJ•ú
 void PlayScene::Release()
 {
+	Audio::Release();
 }

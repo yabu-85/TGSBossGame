@@ -71,10 +71,10 @@ void Player::Initialize()
     assert(hPict_ >= 0);
 
     hSound_[1] = Audio::Load("Sound/Running.wav", true, 1);
-    hSound_[2] = Audio::Load("Sound/Missile_Reflection.wav", false, 8);
-    /*
-    hSound_[3] = Audio::Load("Sound/Jump.wav", false, 2);
-    hSound_[4] = Audio::Load("Sound/JumpingEnd.wav", false, 2);*/
+    hSound_[2] = Audio::Load("Sound/Missile_Reflection.wav", false, 1);
+
+    hSound_[3] = Audio::Load("Sound/JumpingEnd.wav", false, 1);
+    hSound_[0] = Audio::Load("Sound/JumpingEnd.wav", false, 1);
     
 }
 
@@ -477,7 +477,7 @@ void Player::Gravity()
     firstJump_ = true;
 
     if (IsPlayerOnGround()) {
-        //Audio::Play(hSound_[4]);
+        Audio::Play(hSound_[0]);
         firstJump_ = false;
         secondJump_ = false;
         bulletJump_ = false;

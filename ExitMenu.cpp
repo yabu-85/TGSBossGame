@@ -58,4 +58,5 @@ void ExitMenu::Draw()
 
 void ExitMenu::Release()
 {
+	Audio::AllRelease();
 }

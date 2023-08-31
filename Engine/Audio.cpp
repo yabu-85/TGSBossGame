@@ -22,7 +22,7 @@ namespace Audio
 		IXAudio2SourceVoice** pSourceVoice = nullptr;
 
 		//“¯Ä¶Å‘å”
-		int svNum;
+		int svNum = 1;
 
 		//ƒtƒ@ƒCƒ‹–¼
 		std::string fileName;
@@ -72,7 +72,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	char wave[4];
 	ReadFile(hFile, &wave, 4, &dwBytes, NULL);
 
-	Chunk formatChunk;
+	Chunk formatChunk{};
 	while (formatChunk.id[0] != 'f') {
 		ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL);
 	}

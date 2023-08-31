@@ -87,4 +87,6 @@ void StageSelect::Draw()
 
 void StageSelect::Release()
 {
+	Audio::Release();
+
 }
