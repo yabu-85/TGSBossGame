@@ -12,6 +12,7 @@ class Button : public GameObject
 	float width_;			//ボタンの幅
 	float height_;			//ボタンの高さ
 	bool isButtonInactive_; //ボタンを押す感知しない
+	bool isFirstPoint;		//初回照準か
 	std::string name_;		//ボタンに表示するPngの
 	XMFLOAT3 widePos_;		//-1～1じゃなく,-1280～1280とかの座標
 	XMFLOAT3 frameSize_;	//Frameのサイズ

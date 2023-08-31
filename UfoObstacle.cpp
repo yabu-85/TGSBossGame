@@ -1,6 +1,7 @@
 #include "UfoObstacle.h"
 #include "Engine/SphereCollider.h"
 #include "Engine/Model.h"
+#include "Engine/Audio.h"
 #include "Engine/VFX.h"
 #include "Engine/Direct3D.h"
 #include "Player.h"
@@ -145,6 +146,7 @@ void UfoObstacle::UpdateDetection()
 		//‚±‚±‚ÍTarget‚ÌêŠ‚Ì”ÍˆÍ‚É“ü‚Á‚½‚ç
 		if (distance < (dist[i] + rad)) {
 			attack_ = true;
+			Audio::Play("Sound/UFO_Charging.wav");
 			ChangeState(S_PREARATION);
 		}
 	}
@@ -188,7 +190,7 @@ void UfoObstacle::UpdatePreparation()
 	VFX::Start(data1);
 
 
-	int shotTime = 100;
+	int shotTime = 220;
 	if (time_ > shotTime) {
 
 		//‘æ“ñ‚ÌTargetPositionŒˆ’è
@@ -202,7 +204,8 @@ void UfoObstacle::UpdatePreparation()
 		vMovePos += vPos;
 		XMStoreFloat3(&targetPos_, vMovePos);
 		targetPos_.y = height_;
-		
+
+		Audio::Play("Sound/UFO_Attack.wav");
 		ChangeState(S_SHOT);
 	}
 		

@@ -1,6 +1,7 @@
 #include "ButtonFactory.h"
 #include "Engine/Input.h"
 #include "Button.h"
+#include "Engine/Audio.h"
 
 ButtonFactory::ButtonFactory(GameObject* parent)
 	:GameObject(parent, "ButtonFactory")
@@ -31,7 +32,8 @@ std::string ButtonFactory::CheckButtonPressed()
 {
 	if (!Input::IsMouseButtonDown(0))
 		return "";
-
+	//サウンド重複する
+	//Audio::Play("Sound/EnterCursor.wav");
 	for (Button* obj : buttons_) {
 		if (obj->IsWithinBound()) {
 			std::string na = obj->GetName();

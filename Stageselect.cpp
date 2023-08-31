@@ -4,6 +4,8 @@
 #include "Button.h"
 #include "Engine/SceneManager.h"
 #include "Engine/Image.h"
+#include "Engine/Audio.h"
+#include <future>
 
 StageSelect::StageSelect(GameObject* parent)
 	:GameObject(parent, "StageSelect"), hPict_(-1), time_(0), pButtonFactory_(nullptr)
@@ -40,10 +42,15 @@ void StageSelect::Update()
 	if (time_ < 2) return;
 
 	if (pButtonFactory_->CheckButtonPressed() == "Clear") {
+		Audio::Play("Sound/EnterStage.wav"); // オーディオ再生
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
+
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "Over") {
+		Audio::Play("Sound/EnterStage.wav"); // オーディオ再生
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
