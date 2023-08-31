@@ -3,7 +3,7 @@
 #include "Engine/Input.h"
 #include "TitleScene.h"
 #include "Engine/Direct3D.h"
-#include "Engine/Audio.h"
+
 
 static XMFLOAT3 iSize = { 0.65f, 0.7f, 0 };
 static XMFLOAT3 nSize = { 0.6f, 0.6f, 0 };
@@ -24,7 +24,7 @@ void Button::Initialize()
 	frameAlpha_ = 255;
 
 	//サウンドデータのロード
-	hSound_ = Audio::Load("Sound/PointCursor.wav");
+	hSound_ = Audio::Load("Sound/PointCursor.wav",false,16);
 	assert(hSound_ >= 0);
 }
 

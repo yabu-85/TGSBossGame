@@ -8,6 +8,7 @@ class StageSelect : public GameObject
 {
     int hPict_;
     int hSound_;    //サウンド番号
+    int hSound2_;    //サウンド番号
     int time_;
     ButtonFactory* pButtonFactory_;
 
