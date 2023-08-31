@@ -1,6 +1,7 @@
 #include "WallObstacle.h"
 #include "Engine/Model.h"
 #include "Player.h"
+#include "PlayerSpeedController.h"
 
 namespace {
 	const float leng = 0.4f;
@@ -40,7 +41,8 @@ void WallObstacle::Update()
 			parcent = 1.0f;
 			XMFLOAT3 move = { 0, 0, 0 };
 			pPlayer_->SetPlayerMovement(move);
-			pPlayer_->ResetSpeed();
+			PlayerSpeedController* pSpeed = (PlayerSpeedController*)FindObject("PlayerSpeedController");
+			pSpeed->ResetSpeed();
 		}
 	}
 

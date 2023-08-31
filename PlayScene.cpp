@@ -10,6 +10,7 @@
 #include "SkyBox.h"
 #include "Aim.h"
 #include "HpGauge.h"
+#include "PlayerSpeedController.h"
 
 static int goal;
 
@@ -33,8 +34,10 @@ void PlayScene::Initialize()
 	pTimer_->SetLimit(30);
 	pTimer_->Start();
 
+	//描画順調整のためここで（他のも/Drawで優先度決めれるようにしたい
 	Instantiate<HpGauge>(this);
 	Instantiate<Aim>(this);
+	Instantiate<PlayerSpeedController>(this);
 
 	pPlayer_->SetPosition(pStage->GetPlaPos());
 	pPlayer_->SetActiveWithDelay(true, 10); //クリックの動作を入れないように遅延
