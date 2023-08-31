@@ -10,7 +10,7 @@ Stage::Stage(GameObject* parent)
 
     //CSVファイル読み込み
     CsvReader csv;
-    csv.Load("Map.csv");
+    csv.Load("Obstacle.csv");
 
     //ステージの幅と高さを設定
     width_ = (int)csv.GetWidth();
@@ -23,7 +23,18 @@ Stage::Stage(GameObject* parent)
         table_[x] = new int[height_];
         for (int y = 0; y < height_; y++)
         {
-            table_[x][height_ - 1 - y] = csv.GetValue(x, y);
+            if (csv.GetValue(x, y) == 10)
+            {
+                table_[x][height_ - 1 - y] = 10;
+            }
+            else if (csv.GetValue(x, y) != -1)
+            {
+                table_[x][height_ - 1 - y] = 0;
+            }
+            else
+            {
+                table_[x][height_ - 1 - y] = -1;
+            }
         }
     }
 }
