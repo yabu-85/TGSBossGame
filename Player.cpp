@@ -71,6 +71,7 @@ void Player::Initialize()
     assert(hPict_ >= 0);
 
     hSound_[1] = Audio::Load("Sound/Running.wav", true, 1);
+    hSound_[2] = Audio::Load("Sound/Missile_Reflection.wav", false, 8);
 
 }
 
@@ -140,7 +141,7 @@ void Player::Update()
     if (Input::IsMouseButtonDown(1)) {
         ObstacleManager* pObsM = (ObstacleManager*)FindObject("ObstacleManager");
         pObsM->a();
-
+        Audio::Play(hSound_[2]);
         //エフェクト
         EmitterData data;
         data.textureFileName = "Particle/defaultParticle.png";
