@@ -28,13 +28,6 @@ class UfoObstacle : public Obstacle
     XMVECTOR leavVec_;      //‹‚é‚Æ‚«‚Ì•ûŒü
     XMFLOAT3 targetPos_;    //ƒr[ƒ€‚ğ•ú‚ÂêŠ
 
-    struct Cone {
-        double h = 1.0;
-        double r = 1.0;
-        double min_h = 0.0;
-        double max_h = 1.0;
-    };
-
 public:
     UfoObstacle(GameObject* parent);
     ~UfoObstacle();

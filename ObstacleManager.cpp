@@ -93,6 +93,7 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     if (pObstacle)
     {
         pObstacle->SetPosition(_position);
+        pObstacle->SetCsvPos(_position);
         addObstacle(pObstacle);
     }
 
@@ -105,10 +106,10 @@ void ObstacleManager::LoadCsv()
 
         Obstacle* pObstacle = dynamic_cast<Obstacle*>(obj);
         if (!pObstacle) return;
-
+        
         // UFO‚Ìê‡Aƒ[ƒh”ÍˆÍ‚ð§ŒÀ‚·‚é
         if (pObstacle->GetObjectName() == "UfoObstacle") {
-            if (pObstacle->GetPosition().z <= activationZoneSub_ + ufoLoadRange) {
+            if (pObstacle->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
                 pObstacle->SetDraw(true);
                 pObstacle->SetActive(true);
             }
@@ -116,7 +117,7 @@ void ObstacleManager::LoadCsv()
 
         // ‘¼‚ÌáŠQ•¨‚Ìˆ—
         else {
-            if (pObstacle->GetPosition().z <= activationZoneSub_) {
+            if (pObstacle->GetCsvPos().z <= activationZoneSub_) {
                 pObstacle->SetDraw(true);
                 pObstacle->SetActive(true);
             }
@@ -144,8 +145,41 @@ void ObstacleManager::a()
 void ObstacleManager::SetAllObstacleActive(bool b)
 {
     isActive_ = b;
-    for (auto e : obstacles_) if(e != nullptr) e->SetActive(b);
 
+    if (!b) for (auto e : obstacles_) {
+        e->SetActive(b);
+        
+        for (GameObject* e : obstacles_) {
+            if (e->GetObjectName() == "RobotObstacle") {
+                RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
+                if (!pRobot) continue;
+
+                std::list<Missile*> mis = pRobot->GetMissiles();
+                for (Missile* missile : mis) {
+                    missile->SetActive(b);
+
+                }
+            }
+        }
+
+    }
+    else {
+        LoadCsv();
+
+        for (GameObject* e : obstacles_) {
+            if (e->GetObjectName() == "RobotObstacle") {
+                RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
+                if (!pRobot) continue;
+
+                std::list<Missile*> mis = pRobot->GetMissiles();
+                for (Missile* missile : mis) {
+                    missile->SetActive(b);
+
+                }
+            }
+        }
+
+    }
 }
 
 void ObstacleManager::InitCsv()
@@ -161,7 +195,7 @@ void ObstacleManager::InitCsv()
                 if (intValue != OBSTACLE_UFO) {
                     ObstacleType a = static_cast<ObstacleType>(intValue);
                     createAndAddObstacle(position, a);
-
+                    
                 }
             }
         }

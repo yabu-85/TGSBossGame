@@ -55,6 +55,7 @@ void UfoObstacle::Update()
 		UpdateLeaving();
 		break;
 	}
+
 }
 
 void UfoObstacle::Draw()

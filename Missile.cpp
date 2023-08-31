@@ -64,7 +64,7 @@ void Missile::Initialize()
 
 void Missile::Update()
 {
-    if (!isActive_) return;
+    if (isActive_ == false) return;
 
     //‰Î‚Ì•²
     dataExp_.position = transform_.position_;

@@ -39,7 +39,7 @@ void PauseMenu::Initialize()
 	pTimer->Stop();
 
 	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
-	//pObstacleManager->SetAllObstacleActive(false);
+	pObstacleManager->SetAllObstacleActive(false);
 
 	hPict_[0] = Image::Load("Png/Black.png");
 	assert(hPict_[0] >= 0);
@@ -60,7 +60,7 @@ void PauseMenu::Update()
 		pTimer->Start();
 		
 		ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
-		//pObstacleManager->SetAllObstacleActive(true);
+		pObstacleManager->SetAllObstacleActive(true);
 
 		KillMe();
 

@@ -8,6 +8,7 @@ protected:
     int hModel_;
     bool active_;
     bool isDraw_;
+    XMFLOAT3 csvPos_;
 
 public:
     Obstacle(GameObject* parent);
@@ -19,7 +20,9 @@ public:
     
     void SetActive(bool b) { active_ = b; };
     void SetDraw(bool b) { isDraw_ = b; };
-    bool IsActive() { return active_; };
 
+    void SetCsvPos(XMFLOAT3 pos) { csvPos_ = pos; };
+    XMFLOAT3 GetCsvPos() { return csvPos_ ; };
+    
 };
 
