@@ -103,20 +103,20 @@ void ObstacleManager::LoadCsv()
 {
     //CSVデータをテーブルに格納
     for (auto obj : obstacles_) {
-
-        Obstacle* pObstacle = dynamic_cast<Obstacle*>(obj);
-        if (!pObstacle) return;
-        
-        // UFOの場合、ロード範囲を制限する
-        if (pObstacle->GetObjectName() == "UfoObstacle") {
-            if (pObstacle->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
-                pObstacle->SetDraw(true);
-                pObstacle->SetActive(true);
+        if (!obj) continue;
+        //UFOの場合
+        if (obj->GetObjectName() == "UfoObstacle") {
+            Obstacle* pObstacle = dynamic_cast<Obstacle*>(obj);
+            if (pObstacle->GetObjectName() == "UfoObstacle") {
+                if (pObstacle->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
+                    pObstacle->SetDraw(true);
+                    pObstacle->SetActive(true);
+                }
             }
         }
 
-        // 他の障害物の処理
-        else {
+        else {  //他の障害物の処理
+            Obstacle* pObstacle = dynamic_cast<Obstacle*>(obj);
             if (pObstacle->GetCsvPos().z <= activationZoneSub_) {
                 pObstacle->SetDraw(true);
                 pObstacle->SetActive(true);
