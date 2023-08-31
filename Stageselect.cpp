@@ -35,7 +35,8 @@ void StageSelect::Initialize()
 	pButtonFactory_->SetBlendMode(0);
 
 	//サウンドデータのロード
-	hSound_ = Audio::Load("Sound/EnterStage.wav");
+	hSound_ = Audio::Load("Sound/EnterStage.wav", false, 3);
+	hSound2_ = Audio::Load("Sound/EnterCursor.wav", false, 3);
 	assert(hSound_ >= 0);
 
 }
@@ -63,6 +64,7 @@ void StageSelect::Update()
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "Back") {
+		Audio::Play(hSound2_);
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;
 		pB->SetActive(true);
