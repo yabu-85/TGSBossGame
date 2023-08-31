@@ -43,7 +43,7 @@ void TitleScene::Initialize()
 		disp_ = true;
 		pButtonFactory_ = Instantiate<ButtonFactory>(this);
 		pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Start");
-		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Quit");
+		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Exit");
 		pButtonFactory_->SetAlpha(200);
 		pButtonFactory_->SetFrameAlpha(200);
 		pButtonFactory_->SetBlendMode(0);
@@ -80,7 +80,7 @@ void TitleScene::Update()
 		pButtonFactory_->SetFrameAlpha(10);
 
 	}
-	else if (pButtonFactory_->CheckButtonPressed() == "Quit") {
+	else if (pButtonFactory_->CheckButtonPressed() == "Exit") {
 		Instantiate<ExitMenu>(this);
 		Audio::Play(hSound_);//‘I‘ð‰¹
 		pButtonFactory_->SetActive(false);

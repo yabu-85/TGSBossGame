@@ -27,8 +27,8 @@ void StageSelect::Initialize()
 	//1 = AddModeで加算合成、重ねると明るくなる設定
 
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
-	pButtonFactory_->ButtonCreate(-1000.0f, -200.0f, 0.4f, 0.4f, "Clear", "Stage01");
-	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.4f, 0.4f, "Over", "Stage02");
+	pButtonFactory_->ButtonCreate(-1000.0f, -200.0f, 0.4f, 0.4f, "txtStage01", "Stage01");
+	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 0.4f, 0.4f, "txtStage02", "Stage02");
 	pButtonFactory_->ButtonCreate(0.0f, -700.0f, 1.0f, 1.0f, "Back");
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
@@ -46,14 +46,14 @@ void StageSelect::Update()
 	time_++;
 	if (time_ < 2) return;
 
-	if (pButtonFactory_->CheckButtonPressed() == "Clear") {
+	if (pButtonFactory_->CheckButtonPressed() == "txtStage01") {
 		Audio::Play(hSound_);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
-	else if (pButtonFactory_->CheckButtonPressed() == "Over") {
+	else if (pButtonFactory_->CheckButtonPressed() == "txtStage02") {
 		Audio::Play(hSound_);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
