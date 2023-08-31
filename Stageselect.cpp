@@ -64,7 +64,6 @@ void StageSelect::Update()
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "Back") {
-		Audio::Play(hSound2_);
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;
 		pB->SetActive(true);

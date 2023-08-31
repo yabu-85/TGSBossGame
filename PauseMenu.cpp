@@ -11,9 +11,11 @@
 #include "Engine/Model.h"
 #include "Timer.h"
 #include "ObstacleManager.h"
+#include "Engine/Audio.h"
+#include <future>
 
 PauseMenu::PauseMenu(GameObject* parent)
-	:GameObject(parent, "PauseMenu"), hPict_{-1,-1}, pButtonFactory_(nullptr)
+	:GameObject(parent, "PauseMenu"), hPict_{ -1,-1 }, pButtonFactory_(nullptr), hSound_(-1)
 {
 }
 
@@ -43,9 +45,12 @@ void PauseMenu::Initialize()
 
 	hPict_[0] = Image::Load("Png/Black.png");
 	assert(hPict_[0] >= 0);
-
 	hPict_[1] = Image::Load("Png/cross.png");
 	assert(hPict_[1] >= 0);
+
+	//サウンドデータのロード
+	hSound_= Audio::Load("Sound/EnterCursor.wav", false, 1);
+	assert(hSound_ >= 0);
 }
 
 void PauseMenu::Update()
@@ -66,6 +71,8 @@ void PauseMenu::Update()
 
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
+		Audio::Play(hSound_);//選択音
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_TITLE);
 
