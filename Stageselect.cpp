@@ -8,7 +8,7 @@
 #include <future>
 
 StageSelect::StageSelect(GameObject* parent)
-	:GameObject(parent, "StageSelect"), hPict_(-1), time_(0), pButtonFactory_(nullptr)
+	:GameObject(parent, "StageSelect"), hPict_(-1), time_(0), pButtonFactory_(nullptr), hSound_(-1)
 {
 }
 
@@ -34,6 +34,10 @@ void StageSelect::Initialize()
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
 
+	//サウンドデータのロード
+	hSound_ = Audio::Load("Sound/EnterStage.wav");
+	assert(hSound_ >= 0);
+
 }
 
 void StageSelect::Update()
@@ -42,14 +46,14 @@ void StageSelect::Update()
 	if (time_ < 2) return;
 
 	if (pButtonFactory_->CheckButtonPressed() == "Clear") {
-		Audio::Play("Sound/EnterStage.wav"); // オーディオ再生
+		Audio::Play(hSound_);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "Over") {
-		Audio::Play("Sound/EnterStage.wav"); // オーディオ再生
+		Audio::Play(hSound_);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);

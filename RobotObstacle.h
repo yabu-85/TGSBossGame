@@ -24,6 +24,7 @@ class RobotObstacle :
     void ChangeState(STATE s);
 
     int hModelHead_;
+    int hSound_[2];			//ƒTƒEƒ“ƒh”Ô†
     float count_;
     Player* pPlayer_;
     std::list<Missile*> missiles_;

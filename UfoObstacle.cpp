@@ -10,7 +10,7 @@ static const float height_ = 15.0f;
 
 UfoObstacle::UfoObstacle(GameObject* parent)
 	:Obstacle(parent), hModelSub_{-1, -1}, state_(S_ENTER), stateEnter_(true), targetPos_(0, 0, 0), moveSpeed_(0.0f), time_(0),
-	moveDist_(0), leavVec_{0,1,0,0}, leavYmoveSpeed_(0.0f), attack_(false)
+	moveDist_(0), leavVec_{0,1,0,0}, leavYmoveSpeed_(0.0f), attack_(false), hSound_{-1, -1}
 {
 	objectName_ = "UfoObstacle";
 }
@@ -33,6 +33,14 @@ void UfoObstacle::Initialize()
 	moveSpeed_ = 1.0f;
 	moveDist_ = 50.0f;
 	leavYmoveSpeed_ = 0.15f;
+
+	//サウンドデータのロード
+	hSound_[0] = Audio::Load("Sound/UFO_Charging.wav");
+	assert(hSound_[0] >= 0);
+
+	hSound_[1] = Audio::Load("Sound/UFO_Attack.wav");
+	assert(hSound_[1] >= 0);
+
 }
 
 void UfoObstacle::Update()
@@ -146,7 +154,7 @@ void UfoObstacle::UpdateDetection()
 		//ここはTargetの場所の範囲に入ったら
 		if (distance < (dist[i] + rad)) {
 			attack_ = true;
-			Audio::Play("Sound/UFO_Charging.wav");
+			Audio::Play(hSound_[0]);
 			ChangeState(S_PREARATION);
 		}
 	}
@@ -205,7 +213,7 @@ void UfoObstacle::UpdatePreparation()
 		XMStoreFloat3(&targetPos_, vMovePos);
 		targetPos_.y = height_;
 
-		Audio::Play("Sound/UFO_Attack.wav");
+		Audio::Play(hSound_[1]);
 		ChangeState(S_SHOT);
 	}
 		

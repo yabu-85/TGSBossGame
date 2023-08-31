@@ -10,7 +10,7 @@ static XMFLOAT3 nSize = { 0.6f, 0.6f, 0 };
 
 Button::Button(GameObject* parent):
 	GameObject(parent, "Button"), hPict_{-1,-1}, width_(0), height_(0), name_(""), widePos_{0,0,0}, alpha_(255), frameAlpha_(255),
-	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true)
+	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true), hSound_(-1)
 {
 }
 
@@ -22,6 +22,10 @@ void Button::Initialize()
 {
 	alpha_ = 255;
 	frameAlpha_ = 255;
+
+	//サウンドデータのロード
+	hSound_ = Audio::Load("Sound/PointCursor.wav");
+	assert(hSound_ >= 0);
 }
 
 void Button::Update()
@@ -33,7 +37,7 @@ void Button::Update()
 		//カーソルが重なってるとき一回再生
 		if(isFirstPoint)
 		{
-			Audio::Play("Sound/PointCursor.wav");
+			Audio::Play(hSound_);
 			isFirstPoint = false;
 		}
 		transform_.scale_.x = iSize.x * width_;

@@ -9,7 +9,7 @@
 #include "Engine/VFX.h"
 
 RobotObstacle::RobotObstacle(GameObject* parent)
-	:Obstacle(parent), pPlayer_(nullptr), hModelHead_(-1), count_(0), state_(S_ENTER), stateEnter_(true)
+	:Obstacle(parent), pPlayer_(nullptr), hModelHead_(-1), count_(0), state_(S_ENTER), stateEnter_(true), hSound_{ -1, -1 }
 {
 	objectName_ = "RobotObstacle";
 }
@@ -32,6 +32,14 @@ void RobotObstacle::Initialize()
 	transform_.rotate_.y = 180;
 
 	count_ = 90;
+
+	//サウンドデータのロード
+	hSound_[0] = Audio::Load("Sound/RobotHit.wav");
+	assert(hSound_[0] >= 0);
+
+	hSound_[1] = Audio::Load("Sound/MissileShot.wav");
+	assert(hSound_[1] >= 0);
+
 }
 
 void RobotObstacle::Update()
@@ -94,7 +102,7 @@ void RobotObstacle::UpdateEnter()
 	transform_.position_.y -= 2.0f;
 	if (transform_.position_.y <= 0.0f) {
 		transform_.position_.y = 0.0f;
-		Audio::Play("Sound/RobotHit.wav");
+		Audio::Play(hSound_[0]);
 
 		ChangeState(S_CHARGING);
 
@@ -111,7 +119,7 @@ void RobotObstacle::UpdateCharging()
 
 void RobotObstacle::UpdateShot()
 {
-	Audio::Play("Sound/MissileShot.wav");
+	Audio::Play(hSound_[1]);
 
 	ShotMissile();
 	ChangeState(S_IDLE);

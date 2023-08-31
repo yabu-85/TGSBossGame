@@ -12,19 +12,22 @@ namespace Audio
 	//サウンドファイル(.wav）をロード
 	//すでに同じ名前のファイルをロード済みの場合は、既存のデータの番号を返す
 	//引数：fileName	ファイル名
+	//引数：isLoop		ループ再生させたいならtrue
 	//引数：svNum　		同時に鳴らす最大数（省略可）
 	//戻値：そのデータに割り当てられた番号
-	int Load(std::string fileName,int svNum = 1);
+	int Load(std::string fileName, bool isLoop = false, int svNum = 1);
 
 	//再生
 	//引数：handle	鳴らしたいサウンドの番号
-	void Play(std::string fileName);
+	void Play(int ID);
 
-	//すべて開放
+	//停止
+	//引数：handle	止めたいサウンドの番号
+	void Stop(int ID);
+
+	//シーンごとの解放（ロードしたサウンドを解放）
 	void Release();
 
-	HRESULT FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition);
-	HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset);
-
+	//本体も解放
+	void AllRelease();
 };
-
