@@ -52,8 +52,8 @@ void Aim::Update()
         if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
         if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
 
-    //    if (transform_.rotate_.y <= -270.0f) transform_.rotate_.y = -270.0f;
-    //    if (transform_.rotate_.y >= -90.0f) transform_.rotate_.y = -90.0f;
+    if (transform_.rotate_.y <= -270.0f) transform_.rotate_.y = -270.0f;
+    if (transform_.rotate_.y >= -90.0f) transform_.rotate_.y = -90.0f;
     }
 
     //ƒJƒƒ‰‚Ì‰ñ“]

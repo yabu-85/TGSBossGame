@@ -4,7 +4,7 @@
 class PlayerSpeedController :
     public GameObject
 {
-    int hPict_[3];    //�摜�ԍ�
+    int hPict_[3];    //画像番号
     int hSound_;
     int runTime_;
     float moveSpeedUp_;

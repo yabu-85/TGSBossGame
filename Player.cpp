@@ -9,6 +9,7 @@
 #include <chrono>
 #include "ObstacleManager.h"
 #include "Engine/Image.h"
+#include "Engine/Audio.h"
 
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
@@ -32,7 +33,7 @@ Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false),
     isCrouching_(false), graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
-    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr)
+    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr),hSound_{-1,-1,-1,-1,-1}
 {
     moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
@@ -69,11 +70,24 @@ void Player::Initialize()
     hPict_ = Image::Load("Png/ColorDamage.png");
     assert(hPict_ >= 0);
 
+    hSound_[1] = Audio::Load("Sound/Running.wav", true, 1);
+
 }
 
 void Player::Update()
 {
     if (!isActive_) return;
+
+    if (transform_.position_.y <= -8.0f) {
+        transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
+
+        firstJump_ = false;
+        secondJump_ = false;
+        bulletJump_ = false;
+        playerMovement_ = { 0.0f , 0.0f , 0.0f };
+        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+        graY_ = 0.0f;
+    }
 
     switch (state_) {
     case STATE::S_IDLE:
@@ -154,7 +168,10 @@ void Player::Update()
     //SpeedCtrl
     if (IsMovementKeyPressed()) {
         if (IsPlayerOnGround())
+        {
             pSpeedCtrl_->AddRunTime();
+            Audio::Play(hSound_[1]);
+        }
     }
     else {
         pSpeedCtrl_->ResetSpeed();
@@ -162,6 +179,11 @@ void Player::Update()
 
     if (Input::IsKey(DIK_UPARROW)) {
         DecreaseHp(1);
+    }
+
+    if (!IsMovementKeyPressed()|| !IsPlayerOnGround())
+    {
+        Audio::Stop(hSound_[1]);
     }
 }
 

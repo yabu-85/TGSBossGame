@@ -8,7 +8,7 @@
 #include "RaserObstacle.h"
 
 //Ufo‚¾‚¯ƒ[ƒh”ÍˆÍ‚ğ‹·‚ß‚é
-static float ufoLoadRange = -40.0f;
+static float ufoLoadRange = -20.0f;
 
 ObstacleManager::ObstacleManager(GameObject* parent)
     :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),

@@ -141,3 +141,18 @@ XMFLOAT3 Stage::GetPlaPos()
     }
     return XMFLOAT3{ 0,0,0 };
 }
+
+XMFLOAT3 Stage::NearestFloorLocation(XMFLOAT3 pos)
+{
+    if (pos.z < 15) pos.z = 15;
+    for (int z = pos.z - 15; z > 0; z--) {
+        for (int x = 0; x < width_; x++)
+        {
+            if (table_[x][z] == 0) {
+                return XMFLOAT3((float)pos.x + 0.5f, 0.0f, (float)z + 0.5f);
+            }
+        }
+    }
+
+    return XMFLOAT3(3, 0, 0);
+}

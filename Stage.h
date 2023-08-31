@@ -55,5 +55,6 @@ public:
     XMFLOAT3 GetPlaPos(); 
     int GetHeight() { return height_; };
 
+    XMFLOAT3 NearestFloorLocation(XMFLOAT3 pos);
 };
 

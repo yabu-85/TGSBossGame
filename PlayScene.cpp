@@ -31,7 +31,7 @@ void PlayScene::Initialize()
 	Instantiate<ObstacleManager>(this);
 
 	pTimer_ = Instantiate<Timer>(this);
-	pTimer_->SetLimit(30);
+	pTimer_->SetLimit(100);
 	pTimer_->Start();
 
 	//•`‰æ‡’²®‚Ì‚½‚ß‚±‚±‚Åi‘¼‚Ì‚à/Draw‚Å—Dæ“xŒˆ‚ß‚ê‚é‚æ‚¤‚É‚µ‚½‚¢
