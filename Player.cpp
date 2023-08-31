@@ -12,27 +12,30 @@
 
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
-static const float airMoveSpeed = 0.002f;
-static const float crouchSpeed = 0.0005f;
+namespace {
+    static const float airMoveSpeed = 0.002f;
+    static const float crouchSpeed = 0.0005f;
 
-static const float noDe = 0.8f; //減速をやめる時間
-static const float deTime = 0.0055f; //時間の速さ
+    static const float noDe = 0.8f; //減速をやめる時間
+    static const float deTime = 0.0055f; //時間の速さ
 
-//バレットジャンプの強さ
-static const float buJumpY = 1.6f;
-static const float buJumpXZ = 0.28f;
+    //バレットジャンプの強さ
+    static const float buJumpY = 1.5f;
+    static const float buJumpXZ = 0.2f;
 
-static int hitPicTime;
-static int maxHitPicTime = 60;
+    //埋まった時用の
+    static float prevYHeight = 0;
 
-//埋まった時用の
-static float prevYHeight = 0;
+    //
+    static int runTime = 0;
+    static int speedUpPngDraw = 0;
+}
 
 Player::Player(GameObject* parent)
-    : GameObject(parent, "Player"), hModel_(-1), hPict_(-1), targetRotation_(0), firstJump_(false), secondJump_(false),
+    : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false),
     isCrouching_(false), graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
-    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr)
+    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), moveSpeedUp_(1.0f), hPict_(-1)
 {
     moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
@@ -64,15 +67,30 @@ void Player::Initialize()
     Model::SetAnimFrame(hModel_, 0, 0, 1);
 
     pStage_ = (Stage*)FindObject("Stage");
-    
+
     //画像データのロード
     hPict_ = Image::Load("Png/ColorDamage.png");
     assert(hPict_ >= 0);
+
 }
 
 void Player::Update()
 {
     if (!isActive_) return;
+
+    if (IsMovementKeyPressed()) {
+        runTime++;
+        if (runTime > (int)(moveSpeedUp_ * 300) ){
+            runTime = 0;
+            moveSpeedUp_ += 0.5f;
+            speedUpPngDraw = 60;
+        }
+    }
+    else {
+        ResetSpeed();
+    }
+
+
 
     switch (state_) {
     case STATE::S_IDLE:
@@ -89,8 +107,8 @@ void Player::Update()
         break;
     }
 
-    transform_.position_.x += (playerMovement_.x * moveSpeed_); // 移動！
-    transform_.position_.z += (playerMovement_.z * moveSpeed_); // z
+    transform_.position_.x += ((playerMovement_.x * moveSpeed_) * moveSpeedUp_); // 移動！
+    transform_.position_.z += ((playerMovement_.z * moveSpeed_) * moveSpeedUp_); // z
 
     IsInWall();
 
@@ -166,15 +184,14 @@ void Player::Draw()
     Model::Draw(hModel_);
 
     //ダメージ画面効果
-    if (hitPicTime > 0) {
+    if (speedUpPngDraw > 0) {
         Transform pict;
         pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_).x;
         pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_).y;
-        Image::SetAlpha(hPict_, 255.0f * ( (float)hitPicTime / maxHitPicTime));
         Image::SetTransform(hPict_, pict);
         Image::Draw(hPict_);
 
-        hitPicTime--;
+        speedUpPngDraw--;
     }
 
 }
@@ -201,8 +218,6 @@ void Player::DecreaseHp(int i)
 {
     hp_ -= i;
     pAim_->TriggerCameraShake(10, 1.0f);
-
-    hitPicTime = maxHitPicTime;
 
 }
 

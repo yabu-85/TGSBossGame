@@ -148,38 +148,26 @@ void ObstacleManager::SetAllObstacleActive(bool b)
 
     if (!b) for (auto e : obstacles_) {
         e->SetActive(b);
-        
-        for (GameObject* e : obstacles_) {
-            if (e->GetObjectName() == "RobotObstacle") {
-                RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
-                if (!pRobot) continue;
-
-                std::list<Missile*> mis = pRobot->GetMissiles();
-                for (Missile* missile : mis) {
-                    missile->SetActive(b);
-
-                }
-            }
-        }
 
     }
     else {
         LoadCsv();
 
-        for (GameObject* e : obstacles_) {
-            if (e->GetObjectName() == "RobotObstacle") {
-                RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
-                if (!pRobot) continue;
+    }
 
-                std::list<Missile*> mis = pRobot->GetMissiles();
-                for (Missile* missile : mis) {
-                    missile->SetActive(b);
+    for (GameObject* e : obstacles_) {
+        if (e->GetObjectName() == "RobotObstacle") {
+            RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
+            if (!pRobot) continue;
 
-                }
+            std::list<Missile*> mis = pRobot->GetMissiles();
+            for (Missile* missile : mis) {
+                missile->SetActive(b);
+
             }
         }
-
     }
+
 }
 
 void ObstacleManager::InitCsv()

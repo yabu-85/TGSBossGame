@@ -24,10 +24,11 @@ class Player : public GameObject
     void UpdateDead();
 
     int hModel_;                    //モデル番号
-    int hPict_;                    //画像番号
+    int hPict_;
     int hp_;                        //今のHP
     int maxHp_;                     //最大HP
     float moveSpeed_;               //移動
+    float moveSpeedUp_;             //上昇量
     float targetRotation_;          //目標の回転角度
     float rotationSpeed_;           //回転速度
     float graY_;                    //ジャンプ時の重力計算用
@@ -76,6 +77,9 @@ public:
     int GetHp() { return hp_; };
     int GetMaxHp() { return maxHp_; };
 
-    bool IsisCrouc() { isCrouching_; };
+    bool IsisCrouc() { return isCrouching_; };
+    void SetPlayerMovement(XMFLOAT3 _move) { playerMovement_ = _move; };
+
+    void ResetSpeed() { moveSpeedUp_ = 1.0f; };
 
 };
