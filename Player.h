@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
 #include "Engine/Text.h"
+#include "PlayerSpeedController.h"
 
 class Aim;
 class Stage;
@@ -28,7 +29,6 @@ class Player : public GameObject
     int hp_;                        //今のHP
     int maxHp_;                     //最大HP
     float moveSpeed_;               //移動
-    float moveSpeedUp_;             //上昇量
     float targetRotation_;          //目標の回転角度
     float rotationSpeed_;           //回転速度
     float graY_;                    //ジャンプ時の重力計算用
@@ -47,6 +47,7 @@ class Player : public GameObject
 
     Stage* pStage_;
     Aim* pAim_;
+    PlayerSpeedController* pSpeedCtrl_;
 
     void CalcMove();                    //移動方向計算・normalize
     void InstantRotate(float x, float z);               //即座に回転
@@ -68,7 +69,7 @@ public:
     void Release() override;
 
     //Activeを遅延を入れてセット/1000=1秒
-    void SetActiveWithDelay(bool isActive, int time);    
+    void SetActiveWithDelay(bool isActive, int time);
     void SetActive(bool b) { isActive_ = b; };  //Activeをセット
     void DecreaseHp(int i);       //Hpを減らす関数
 
@@ -79,7 +80,5 @@ public:
 
     bool IsisCrouc() { return isCrouching_; };
     void SetPlayerMovement(XMFLOAT3 _move) { playerMovement_ = _move; };
-
-    void ResetSpeed() { moveSpeedUp_ = 1.0f; };
 
 };

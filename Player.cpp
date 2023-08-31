@@ -26,16 +26,13 @@ namespace {
     //埋まった時用の
     static float prevYHeight = 0;
 
-    //
-    static int runTime = 0;
-    static int speedUpPngDraw = 0;
 }
 
 Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false),
     isCrouching_(false), graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
-    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), moveSpeedUp_(1.0f), hPict_(-1)
+    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr)
 {
     moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
@@ -78,20 +75,6 @@ void Player::Update()
 {
     if (!isActive_) return;
 
-    if (IsMovementKeyPressed()) {
-        runTime++;
-        if (runTime > (int)(moveSpeedUp_ * 300) ){
-            runTime = 0;
-            moveSpeedUp_ += 0.5f;
-            speedUpPngDraw = 60;
-        }
-    }
-    else {
-        ResetSpeed();
-    }
-
-
-
     switch (state_) {
     case STATE::S_IDLE:
         UpdateIdle();
@@ -107,8 +90,8 @@ void Player::Update()
         break;
     }
 
-    transform_.position_.x += ((playerMovement_.x * moveSpeed_) * moveSpeedUp_); // 移動！
-    transform_.position_.z += ((playerMovement_.z * moveSpeed_) * moveSpeedUp_); // z
+    transform_.position_.x += ((playerMovement_.x * moveSpeed_) * pSpeedCtrl_->GetMoveSpeed_()); // 移動！
+    transform_.position_.z += ((playerMovement_.z * moveSpeed_) * pSpeedCtrl_->GetMoveSpeed_()); // z
 
     IsInWall();
 
@@ -150,7 +133,7 @@ void Player::Update()
         data.position = transform_.position_;
         data.position.y += 0.9f;
         data.positionRnd = XMFLOAT3(0.1, 0, 0.1);
-        data.direction = XMFLOAT3(0,0,0);
+        data.direction = XMFLOAT3(0, 0, 0);
         data.directionRnd = XMFLOAT3(0, 0, 0);
         data.speed = 0.1f;
         data.speedRnd = 0.0;
@@ -166,7 +149,15 @@ void Player::Update()
         data.scale = XMFLOAT2(1.7, 1.7);
         data.isBillBoard = true;
         VFX::Start(data);
+    }
 
+    //SpeedCtrl
+    if (IsMovementKeyPressed()) {
+        if (IsPlayerOnGround())
+            pSpeedCtrl_->AddRunTime();
+    }
+    else {
+        pSpeedCtrl_->ResetSpeed();
     }
 
     if (Input::IsKey(DIK_UPARROW)) {
@@ -178,21 +169,10 @@ void Player::Draw()
 {
     pText->Draw(30, 30, (int)transform_.position_.x);
     pText->Draw(30, 70, (int)transform_.position_.z);
-    pText->Draw(30, 150, pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z));
+    pText->Draw(30, 150, (int)pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z));
 
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
-
-    //ダメージ画面効果
-    if (speedUpPngDraw > 0) {
-        Transform pict;
-        pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_).x;
-        pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_).y;
-        Image::SetTransform(hPict_, pict);
-        Image::Draw(hPict_);
-
-        speedUpPngDraw--;
-    }
 
 }
 
@@ -202,7 +182,7 @@ void Player::Release()
     SAFE_DELETE(pStage_);
 }
 
-void Player::SetActiveWithDelay(bool isActive,int time)
+void Player::SetActiveWithDelay(bool isActive, int time)
 {
     //1秒後に実際のアクティブ状態を設定するタイマーをセットアップ
     std::thread([this, isActive, time]() {
@@ -210,8 +190,9 @@ void Player::SetActiveWithDelay(bool isActive,int time)
         isActive_ = isActive;
         pAim_ = (Aim*)FindObject("Aim");
         pAim_->SetAimMove(true);
+        pSpeedCtrl_ = (PlayerSpeedController*)FindObject("PlayerSpeedController");
 
-    }).detach();    
+        }).detach();
 }
 
 void Player::DecreaseHp(int i)
@@ -236,7 +217,7 @@ void Player::UpdateIdle()
             Model::SetAnimFrame(hModel_, 30, 60, 1);
             stateEnter_ = false;
         }
-        
+
         ChangeState(S_MOVE);
     }
 }
@@ -359,18 +340,18 @@ void Player::CalcMove()
 
     XMVECTOR vMove = XMLoadFloat3(&fMove_);
     vMove = XMVector3Normalize(vMove);
-    
+
     if (IsPlayerOnGround()) {
         XMStoreFloat3(&fMove_, vMove * 0.1f);
         playerMovement_ = fMove_;
 
     }
-    else  {
+    else {
         XMStoreFloat3(&fMove_, vMove);
 
         //fMove_
         fMove_ = { ((fMove_.x - playerMovement_.x) * airMoveSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * airMoveSpeed) };
-        playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z};
+        playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z };
 
         XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
         float max = XMVectorGetX(XMVector3Length(vMax));
@@ -442,7 +423,7 @@ void Player::GradualRotate(float x, float z)
     targetRotation_ = XMConvertToDegrees(angle);
 
     // 回転角度をスムーズに変更
-    float rotationDiff = NormalizeAngle(targetRotation_ - (transform_.rotate_.y -180.0f) );  //Blender
+    float rotationDiff = NormalizeAngle(targetRotation_ - (transform_.rotate_.y - 180.0f));  //Blender
     if (rotationDiff != 0) {
         if (rotationSpeed_ > abs(rotationDiff)) {
             transform_.rotate_.y = targetRotation_;
@@ -470,7 +451,7 @@ void Player::Gravity()
         firstJump_ = false;
         secondJump_ = false;
         bulletJump_ = false;
-        playerMovement_ = { 0.0f , 0.0f , 0.0f};
+        playerMovement_ = { 0.0f , 0.0f , 0.0f };
         transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
         graY_ = 0.0f;
 
@@ -507,12 +488,12 @@ void Player::Jump()
             }
         }
         else  aimDirectionY *= buJumpY;
-        
+
         graY_ = initVy_ * (aimDirectionY - 1.0f);
         graY_ += gravity_;
         transform_.position_.y += gravity_;
 
-        playerMovement_ = { aimDirection.x * buJumpXZ, 0.0f , aimDirection.z * buJumpXZ};
+        playerMovement_ = { aimDirection.x * buJumpXZ, 0.0f , aimDirection.z * buJumpXZ };
 
         //maxSpeed
         XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
@@ -565,12 +546,12 @@ void Player::Jump()
 
             XMStoreFloat3(&fMove_, vMove * maxMoveSpeed_);
             playerMovement_ = fMove_;
-        
+
         }
 
         return;
     }
-    
+
     //FirstJump
     if (IsPlayerOnGround()) {
         graY_ = initVy_;

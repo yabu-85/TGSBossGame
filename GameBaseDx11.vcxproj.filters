@@ -171,6 +171,7 @@
     <ClCompile Include="SkyBox.cpp">
       <Filter>Scene\PlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerSpeedController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -303,6 +304,7 @@
     <ClInclude Include="SkyBox.h">
       <Filter>Scene\PlayScene</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerSpeedController.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

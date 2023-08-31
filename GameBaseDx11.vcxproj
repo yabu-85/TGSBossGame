@@ -152,6 +152,7 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="ExitMenu.cpp" />
+    <ClCompile Include="PlayerSpeedController.cpp" />
     <ClCompile Include="RaserObstacle.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="ResultScene.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="ExitMenu.h" />
+    <ClInclude Include="PlayerSpeedController.h" />
     <ClInclude Include="RaserObstacle.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="ResultScene.h" />

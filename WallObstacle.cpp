@@ -1,6 +1,7 @@
 #include "WallObstacle.h"
 #include "Engine/Model.h"
 #include "Player.h"
+#include "PlayerSpeedController.h"
 
 namespace {
 	const float leng = 0.4f;
@@ -20,7 +21,7 @@ WallObstacle::~WallObstacle()
 
 void WallObstacle::Initialize()
 {
-	//ƒ‚ƒfƒ‹ƒ[ƒh
+	//‚à‚Å‚é
 	hModel_ = Model::Load("Model/Wall_Stone.fbx");
 	assert(hModel_ >= 0);
 
@@ -36,11 +37,12 @@ void WallObstacle::Update()
 
 	if (!pPlayer_->IsisCrouc()) {
 		XMFLOAT3 plaPos = pPlayer_->GetPosition();
-		if ( (plaPos.z <= transform_.position_.z + leng ) && (plaPos.z > transform_.position_.z - leng) ) {
+		if ((plaPos.z <= transform_.position_.z + leng) && (plaPos.z > transform_.position_.z - leng)) {
 			parcent = 1.0f;
 			XMFLOAT3 move = { 0, 0, 0 };
 			pPlayer_->SetPlayerMovement(move);
-			pPlayer_->ResetSpeed();
+			PlayerSpeedController* pSpeed = (PlayerSpeedController*)FindObject("PlayerSpeedController");
+			pSpeed->ResetSpeed();
 		}
 	}
 
