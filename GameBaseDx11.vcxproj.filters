@@ -172,6 +172,7 @@
       <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="PlayerSpeedController.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -305,6 +306,7 @@
       <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="PlayerSpeedController.h" />
+    <ClInclude Include="AudioManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

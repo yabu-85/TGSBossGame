@@ -6,7 +6,6 @@ class ButtonFactory;
 class ExitMenu : public GameObject
 {
 	int hPict_;
-	int hSound_;
 	int time_;
 	ButtonFactory* pButtonFactory_;
 

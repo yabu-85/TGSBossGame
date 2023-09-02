@@ -8,10 +8,10 @@
 #include "Engine/Input.h"
 #include "ExitMenu.h"
 #include "Stageselect.h"
+#include "AudioManager.h"
 
 TitleScene::TitleScene(GameObject* parent)
-	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}, hSound_(-1),
-	pButtonFactory_(nullptr)
+	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}, pButtonFactory_(nullptr)
 {
 }
 
@@ -48,9 +48,9 @@ void TitleScene::Initialize()
 		pButtonFactory_->SetBlendMode(0);
 
 	}
-	//サウンドデータのロード
-	hSound_ = Audio::Load("Sound/EnterCursor.wav", false, 3);
-	assert(hSound_ >= 0);
+
+	AudioManager::Initialize(SCENE_ID_TITLE);
+
 }
 
 void TitleScene::Update()
@@ -72,8 +72,8 @@ void TitleScene::Update()
 	}
 
 	if (pButtonFactory_->CheckButtonPressed() == "Start") {
-		Instantiate<StageSelect>(this);
-		Audio::Play(hSound_);//選択音
+		Instantiate<StageSelect>(this);	
+
 		pButtonFactory_->SetActive(false);
 		pButtonFactory_->SetAlpha(10);
 		pButtonFactory_->SetFrameAlpha(10);
@@ -81,7 +81,8 @@ void TitleScene::Update()
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "Exit") {
 		Instantiate<ExitMenu>(this);
-		Audio::Play(hSound_);//選択音
+		AudioManager::PlaySoundMa(AUDIO_ENTERCURSOR);
+
 		pButtonFactory_->SetActive(false);
 		pButtonFactory_->SetAlpha(10);
 		pButtonFactory_->SetFrameAlpha(10);

@@ -3,14 +3,14 @@
 #include "Engine/Input.h"
 #include "TitleScene.h"
 #include "Engine/Direct3D.h"
-
+#include "AudioManager.h"
 
 static XMFLOAT3 iSize = { 0.65f, 0.7f, 0 };
 static XMFLOAT3 nSize = { 0.6f, 0.6f, 0 };
 
 Button::Button(GameObject* parent):
 	GameObject(parent, "Button"), hPict_{-1,-1}, width_(0), height_(0), name_(""), widePos_{0,0,0}, alpha_(255), frameAlpha_(255),
-	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true), hSound_(-1)
+	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true)
 {
 }
 
@@ -22,10 +22,6 @@ void Button::Initialize()
 {
 	alpha_ = 255;
 	frameAlpha_ = 255;
-
-	//サウンドデータのロード
-	hSound_ = Audio::Load("Sound/PointCursor.wav",false,16);
-	assert(hSound_ >= 0);
 }
 
 void Button::Update()
@@ -37,7 +33,7 @@ void Button::Update()
 		//カーソルが重なってるとき一回再生
 		if(isFirstPoint)
 		{
-			Audio::Play(hSound_);
+			AudioManager::PlaySoundMa(AUDIO_POINTCURSOR);
 			isFirstPoint = false;
 		}
 		transform_.scale_.x = iSize.x * width_;

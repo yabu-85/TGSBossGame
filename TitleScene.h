@@ -1,13 +1,12 @@
 #pragma once
 #include "Engine/GameObject.h"
 #include "Engine/Text.h"
-#include "Engine/Audio.h"
+
 class ButtonFactory;
 
 class TitleScene : public GameObject
 {
 	Text* pText_;		//テキスト
-	int hSound_;		//サウンド
 	int hPict_[3];		//画像番号
 	bool disp_;			//表示するかどうか
 	XMFLOAT3 mousePos_;	//マウス座標

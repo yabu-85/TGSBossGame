@@ -7,7 +7,6 @@ class TitleScene;
 class Button : public GameObject
 {
 	int hPict_[2];
-	int hSound_;			//サウンド番号
 	int alpha_;				//透明度
 	int frameAlpha_;		//透明度
 	float width_;			//ボタンの幅
