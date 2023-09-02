@@ -1,16 +1,16 @@
 #include "UfoObstacle.h"
 #include "Engine/SphereCollider.h"
 #include "Engine/Model.h"
-#include "Engine/Audio.h"
 #include "Engine/VFX.h"
 #include "Engine/Direct3D.h"
 #include "Player.h"
+#include "AudioManager.h"
 
 static const float height_ = 15.0f;
 
 UfoObstacle::UfoObstacle(GameObject* parent)
 	:Obstacle(parent), hModelSub_{-1, -1}, state_(S_ENTER), stateEnter_(true), targetPos_(0, 0, 0), moveSpeed_(0.0f), time_(0),
-	moveDist_(0), leavVec_{0,1,0,0}, leavYmoveSpeed_(0.0f), attack_(false), hSound_{-1, -1}
+	moveDist_(0), leavVec_{0,1,0,0}, leavYmoveSpeed_(0.0f), attack_(false)
 {
 	objectName_ = "UfoObstacle";
 }
@@ -33,13 +33,6 @@ void UfoObstacle::Initialize()
 	moveSpeed_ = 1.0f;
 	moveDist_ = 50.0f;
 	leavYmoveSpeed_ = 0.15f;
-
-	//サウンドデータのロード
-	hSound_[0] = Audio::Load("Sound/UFO_Charging.wav", false, 1);
-	assert(hSound_[0] >= 0);
-
-	hSound_[1] = Audio::Load("Sound/UFO_Attack.wav", false, 1);
-	assert(hSound_[1] >= 0);
 
 }
 
@@ -154,7 +147,7 @@ void UfoObstacle::UpdateDetection()
 		//ここはTargetの場所の範囲に入ったら
 		if (distance < (dist[i] + rad)) {
 			attack_ = true;
-			Audio::Play(hSound_[0]);
+			AudioManager::PlaySoundMa(AUDIO_UFO_CHARGING);
 			ChangeState(S_PREARATION);
 		}
 	}
@@ -213,7 +206,7 @@ void UfoObstacle::UpdatePreparation()
 		XMStoreFloat3(&targetPos_, vMovePos);
 		targetPos_.y = height_;
 
-		Audio::Play(hSound_[1]);
+		AudioManager::PlaySoundMa(AUDIO_UFO_ATTACK);
 		ChangeState(S_SHOT);
 	}
 		

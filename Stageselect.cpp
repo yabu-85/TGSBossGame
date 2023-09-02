@@ -4,6 +4,7 @@
 #include "Button.h"
 #include "Engine/SceneManager.h"
 #include "Engine/Image.h"
+#include "AudioManager.h"
 #include <future>
 
 StageSelect::StageSelect(GameObject* parent)
@@ -33,11 +34,6 @@ void StageSelect::Initialize()
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
 
-	//サウンドデータのロード
-//	hSound_ = Audio::Load("Sound/EnterStage.wav", false, 3);
-//	hSound2_ = Audio::Load("Sound/EnterCursor.wav", false, 3);
-//	assert(hSound_ >= 0);
-
 }
 
 void StageSelect::Update()
@@ -46,19 +42,16 @@ void StageSelect::Update()
 	if (time_ < 2) return;
 
 	if (pButtonFactory_->CheckButtonPressed() == "txtStage01") {
-//		Audio::Play(hSound_);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
+		AudioManager::PlaySoundMa(TITLE_AUDIO::AUDIO_ENTERSTAGE);
 
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "txtStage02") {
-//		Audio::Play(hSound_);
+		AudioManager::PlaySoundMa(TITLE_AUDIO::AUDIO_ENTERSTAGE);
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_PLAY);
-	}
-	else if (pButtonFactory_->CheckButtonPressed() == "Clear") {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}

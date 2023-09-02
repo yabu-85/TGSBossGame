@@ -4,6 +4,7 @@
 #include "ButtonFactory.h"
 #include "Button.h"
 #include "Engine/Input.h"
+#include "AudioManager.h"
 
 ResultScene::ResultScene(GameObject* parent)
 	:GameObject(parent, "ResultScene"), hPict_{ -1,-1,-1 }, pButtonFactory_(nullptr)
@@ -35,6 +36,12 @@ void ResultScene::Initialize()
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
 	pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "ReturnTitle");
 	pButtonFactory_->ButtonCreate(0.0f, -600.0f, 1.0f, 1.0f, "Quit");
+	pButtonFactory_->SetAlpha(200);
+	pButtonFactory_->SetFrameAlpha(200);
+	pButtonFactory_->SetBlendMode(0);
+
+	AudioManager::Release();
+	AudioManager::Initialize(AudioManager::RESULT);
 
 }
 

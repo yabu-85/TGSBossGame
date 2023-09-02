@@ -3,7 +3,6 @@
 #include "Engine/Input.h"
 #include "ButtonFactory.h"
 #include "Button.h"
-#include "PlayScene.h"
 #include "Aim.h"
 #include "ExitMenu.h"
 #include "Player.h"
@@ -11,11 +10,11 @@
 #include "Engine/Model.h"
 #include "Timer.h"
 #include "ObstacleManager.h"
-#include "Engine/Audio.h"
+#include "AudioManager.h"
 #include <future>
 
 PauseMenu::PauseMenu(GameObject* parent)
-	:GameObject(parent, "PauseMenu"), hPict_{ -1,-1 }, pButtonFactory_(nullptr), hSound_(-1)
+	:GameObject(parent, "PauseMenu"), hPict_{ -1,-1 }, pButtonFactory_(nullptr)
 {
 }
 
@@ -48,9 +47,9 @@ void PauseMenu::Initialize()
 	hPict_[1] = Image::Load("Png/cross.png");
 	assert(hPict_[1] >= 0);
 
-	//サウンドデータのロード
-	hSound_= Audio::Load("Sound/EnterCursor.wav", false, 1);
-	assert(hSound_ >= 0);
+	AudioManager::Release();
+	AudioManager::Initialize(AudioManager::PLAYMENUE);
+
 }
 
 void PauseMenu::Update()
@@ -67,11 +66,15 @@ void PauseMenu::Update()
 		ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
 		pObstacleManager->SetAllObstacleActive(true);
 
+		AudioManager::Release();
+		AudioManager::Initialize(AudioManager::PLAY);
+
 		KillMe();
 
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
-		Audio::Play(hSound_);//選択音
+		AudioManager::PlaySoundMa(AUDIO_ENTERCURSOR);
+		
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_TITLE);

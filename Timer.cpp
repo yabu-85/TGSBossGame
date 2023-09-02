@@ -2,9 +2,9 @@
 #include "Engine/Input.h"
 
 Timer::Timer(GameObject* parent)
-    :GameObject(parent, "Timer"), frame_(0), active_(false), drawX_(10), drawY_(20),
-    hPict_{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }, calcTime_(0)
+    :GameObject(parent, "Timer"), frame_(0), active_(false), drawX_(10), drawY_(20), calcTime_(0)
 {
+    for (int i = 0; i < pictSize; i++) { hPict_[i] = -1; };
 }
 
 Timer::~Timer()

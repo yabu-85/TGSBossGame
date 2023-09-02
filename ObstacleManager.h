@@ -6,19 +6,19 @@
 
 class Player;
 
-// è·äQï®î‘çÜ
-enum ObstacleType
-{
-    OBSTACLE_NORMAL = 0,
-    OBSTACLE_WALL,
-    OBSTACLE_UFO,
-    OBSTACLE_ROBOT,
-    OBSTACLE_RASER,
-    OBSTACLE_MAX,
-};
-
 class ObstacleManager : public GameObject
 {
+    // è·äQï®î‘çÜ
+    enum ObstacleType
+    {
+        OBSTACLE_NORMAL = 0,
+        OBSTACLE_WALL,
+        OBSTACLE_UFO,
+        OBSTACLE_ROBOT,
+        OBSTACLE_RASER,
+        OBSTACLE_MAX,
+    };
+
     std::vector<Obstacle*> obstacles_;
     CsvReader csv_;
     int width_;

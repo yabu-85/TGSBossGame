@@ -20,10 +20,6 @@
     <Filter Include="01Engine\ResourceManager">
       <UniqueIdentifier>{bedee914-5063-4c08-95bb-79c861b4969c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02Shader">
-      <UniqueIdentifier>{47a6a3f5-8cfd-436b-8d58-beccd108f3f3}</UniqueIdentifier>
-      <Extensions>hlsl</Extensions>
-    </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{344acb72-d4c5-4ea9-a165-39054669d290}</UniqueIdentifier>
     </Filter>
@@ -38,6 +34,10 @@
     </Filter>
     <Filter Include="Scene\PlayScene\Obstacle">
       <UniqueIdentifier>{ddf9ac54-66dc-42e9-bbdc-2d2ab18d969d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\02Shader">
+      <UniqueIdentifier>{47a6a3f5-8cfd-436b-8d58-beccd108f3f3}</UniqueIdentifier>
+      <Extensions>hlsl</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -310,25 +310,25 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
-      <Filter>02Shader</Filter>
+      <Filter>Scene\02Shader</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shader\Simple3D.hlsl">
-      <Filter>02Shader</Filter>
+      <Filter>Scene\02Shader</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shader\Debug3D.hlsl">
-      <Filter>02Shader</Filter>
+      <Filter>Scene\02Shader</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shader\BillBoard.hlsl">
-      <Filter>02Shader</Filter>
+      <Filter>Scene\02Shader</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shader\NoShadow.hlsl">
-      <Filter>02Shader</Filter>
+      <Filter>Scene\02Shader</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shader\NoShadowAlpha.hlsl">
-      <Filter>02Shader</Filter>
+      <Filter>Scene\02Shader</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shader\SkyBox.hlsl">
-      <Filter>02Shader</Filter>
+      <Filter>Scene\02Shader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

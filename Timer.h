@@ -2,12 +2,13 @@
 #include "Engine/Text.h"
 #include "Engine/GameObject.h"
 
-//フレームレート
-static const int FPS = 60;
-
 //タイマー管理するクラス
 class Timer : public GameObject
 {
+    //フレームレート
+    const int FPS = GetPrivateProfileInt("GAME", "Fps", 60, ".\\setup.ini");
+    const int pictSize = 12;
+
     int hPict_[12];    //画像番号
     bool active_;        //起動しているかどうか
     int frame_;          //一秒間に何回更新されるか

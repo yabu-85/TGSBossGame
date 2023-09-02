@@ -21,7 +21,6 @@ class UfoObstacle : public Obstacle
 
     bool attack_;           //攻撃するかどうか
     int hModelSub_[3];      //レイザーと検知用
-    int hSound_[2];			//サウンド番号
     int time_;              //チャージ時間とかに使う
     float moveSpeed_;       //移動スピード
     float moveDist_;        //移動する距離（上限値みたいなもの？

@@ -4,6 +4,7 @@
 #include "ButtonFactory.h"
 #include "Button.h"
 #include <future>
+#include "AudioManager.h"
 
 ExitMenu::ExitMenu(GameObject* parent) :
 	GameObject(parent, "ExitMenu"), hPict_(-1), time_(0), pButtonFactory_(nullptr)
@@ -23,10 +24,6 @@ void ExitMenu::Initialize()
 	pButtonFactory_->SetFrameAlpha(255);
 	pButtonFactory_->SetBlendMode(0);
 
-	//サウンドデータのロード
-//	hSound_ = Audio::Load("Sound/EnterStage.wav", false, 1);
-//	assert(hSound_ >= 0);
-	
 	time_ = 0;
 }
 
@@ -36,7 +33,7 @@ void ExitMenu::Update()
 	if (time_ < 2) return;
 
 	if (pButtonFactory_->CheckButtonPressed() == "Ok") {
-	//	Audio::Play(hSound_);//選択音
+		AudioManager::PlaySoundMa(AUDIO_ENTERSTAGE);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
 		PostQuitMessage(0); // プログラムを終了させるメッセージを送信

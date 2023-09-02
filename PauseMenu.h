@@ -7,7 +7,6 @@ class PauseMenu :
     public GameObject
 {
     int hPict_[2];
-    int hSound_;
     ButtonFactory* pButtonFactory_;
 
 public:

@@ -9,7 +9,6 @@ class Missile :
     public GameObject
 {	
 	int hModel_;
-	int hSound_[2];					//ƒTƒEƒ“ƒh”Ô†
 	EmitterData dataExp_;
 
     XMFLOAT3 launchPoint_;          //”­ËêŠ

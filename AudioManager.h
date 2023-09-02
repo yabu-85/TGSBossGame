@@ -1,29 +1,43 @@
 #pragma once
-#include "Engine/SceneManager.h"
-
-enum AUDIO_ID
+enum TITLE_AUDIO
 {
 	AUDIO_ENTERCURSOR = 0,
 	AUDIO_POINTCURSOR,
+	AUDIO_ENTERSTAGE,
 
-	AUDIO_MAX,
+};
+
+enum PLAY_AUDIO
+{
+	AUDIO_ROBOT_HIT,
+	AUDIO_MISSILE_EXPLODE,
+	AUDIO_MISSILE_SHOT,
+	AUDIO_UFO_CHARGING,
+	AUDIO_UFO_ATTACK,
+	AUDIO_RUNNING,
+	AUDIO_REFLECTION,
+	AUDIO_JUNPING_START,
+	AUDIO_JUNPING_END,
 };
 
 namespace AudioManager {
+	enum INIT_TYPE {
+		TITLE = 0,
+		PLAY,
+		PLAYMENUE,
+		RESULT,
+		MAX,
 
-	void Initialize(SCENE_ID i);
+	};
+
+	void Initialize(INIT_TYPE i);
 	void Release();
 
-	//Ç±ÇÍÇÕAUDIOIDÇë≈ÇƒÇŒégÇ¶ÇÈ
-	//ButtonÇ∆TitleÇ≈ééÇµÇ…égÇ¡ÇƒÇÈ
-	void PlaySoundMa(AUDIO_ID i);
-	void StopSoundMa(AUDIO_ID i);
 
-	//âπÇÃêîÇæÇØÇ±ÇÍÇçÏÇ¡ÇƒÇªÇÍÇåƒÇ‘
-	void PlaySoundEnterCurSor();
-	void StopSoundEnterCursor();
-	void PlaySoundPointCurSor();
-	void StopSoundPointCursor();
+	void PlaySoundMa(TITLE_AUDIO i);
+	void PlaySoundMa(PLAY_AUDIO i);
 
+	void StopSoundMa(TITLE_AUDIO i);
+	void StopSoundMa(PLAY_AUDIO i);
 
 };

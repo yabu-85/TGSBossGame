@@ -5,57 +5,90 @@
 
 namespace AudioManager
 {
-	int hSound_[AUDIO_MAX];
+    std::vector<int> hSound_;
 
-	void Initialize(SCENE_ID type) {
-		Audio::Release();
+    void Initialize(INIT_TYPE type) {
 
-		struct MyStruct
-		{
-			std::string fileName;
-			bool loop;
-			int max;
-		};
+        struct MyStruct
+        {
+            std::string fileName;
+            bool loop;
+            int max;
+        };
+        std::vector<MyStruct> sceneTables;
 
-		// シーンごとのテーブルを初期化
-		std::vector<MyStruct> sceneTables[SCENE_ID_MAX];
+        //ヘッダーの順番と合わせないといけない
+        switch (type) {
+        case TITLE:
+            sceneTables = {
+                {"Sound/EnterCursor.wav", false, 3},
+                {"Sound/PointCursor.wav", false, 10},
+                {"Sound/EnterStage.wav",  false, 3},
+            };
+            break;
+        case PLAY:
+            sceneTables = {
+                //敵のAudio
+                {"Sound/RobotHit.wav", false, 3},
+                {"Sound/MissileExplode.wav", false, 3},
+                {"Sound/MissileShot.wav", false, 1},
+                {"Sound/UFO_Charging.wav", false, 1},
+                {"Sound/UFO_Attack.wav", false, 1},
 
-		if (type == SCENE_ID::SCENE_ID_TITLE) {
-			sceneTables[0] = {
-				{ "Sound/EnterCursor.wav", false, 3 },
-				{ "Sound/PointCursor.wav", false, 16 },
-			};
-		}
-		else if (type == SCENE_ID::SCENE_ID_PLAY) {
-			sceneTables[1] = {
-				{ "Sound/EnterCursor.wav", false, 3 },
-			};
-		}
-		else if (type == SCENE_ID::SCENE_ID_RESULT) {
-			sceneTables[2] = {
-				{ "Sound/EnterCursor.wav", false, 3 },
-			};
-		}
+                //PlayerのAudio
+                {"Sound/Running.wav", true, 1},
+                {"Sound/Missile_Reflection.wav", false, 1},
+                {"Sound/JumpingEnd.wav", false, 1}, //ここ変えよう
+                {"Sound/JumpingEnd.wav", false, 1},
 
-		for (int i = 0; i < AUDIO_MAX; i++) {
-			hSound_[i] = Audio::Load(sceneTables[type][i].fileName, sceneTables[type][i].loop, sceneTables[type][i].max);
-			assert(hSound_[i] >= 0);
-		}
-	}
+            };
+            break;
+        case PLAYMENUE:
+            sceneTables = {
+                {"Sound/EnterCursor.wav", false, 3},
+                {"Sound/PointCursor.wav", false, 10},
+            };
+            break;
+        case RESULT:
+            sceneTables = {
+                { "Sound/EnterCursor.wav", false, 3 },
+                { "Sound/PointCursor.wav", false, 10 },
+            };
+            break;
+        }
+
+        hSound_.resize(sceneTables.size()); //hSound_ベクターのサイズを設定
+
+        for (int i = 0; i < sceneTables.size(); i++) {
+            hSound_[i] = Audio::Load(sceneTables[i].fileName, sceneTables[i].loop, sceneTables[i].max);
+            assert(hSound_[i] >= 0);
+        }
+    }
+
 
 	void Release()
 	{
 		Audio::Release();
 	}
 
-	void PlaySoundMa(AUDIO_ID i)
+	void PlaySoundMa(TITLE_AUDIO i)
 	{
 		Audio::Play(hSound_[i]);
 	}
 
-	void StopSoundMa(AUDIO_ID i)
+	void PlaySoundMa(PLAY_AUDIO i)
+	{
+		Audio::Play(hSound_[i]);
+	}
+
+	void StopSoundMa(TITLE_AUDIO i)
 	{
 		Audio::Stop(hSound_[i]);
+	}
+
+	void StopSoundMa(PLAY_AUDIO i)
+	{
+        Audio::Stop(hSound_[i]);
 	}
 
 }

@@ -3,14 +3,14 @@
 #include "Player.h"
 #include "Engine/VFX.h"
 #include "RobotObstacle.h"
-#include "Engine/Audio.h"
+#include "AudioManager.h"
 
 #define SAFE_DELETE(p) {if ((p)!=nullptr) { delete (p); (p)=nullptr;}}
 
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
     propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
-    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), isActive_(true), hSound_{-1, -1}
+    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), isActive_(true)
 {
 }
 
@@ -60,13 +60,6 @@ void Missile::Initialize()
     dataExp_.deltaColor = XMFLOAT4(0, 0, 0, 0);
     dataExp_.gravity = 0.003f;
 
-    //サウンドデータのロード
-    hSound_[0] = Audio::Load("Sound/RobotHit.wav");
-    assert(hSound_[0] >= 0);
-
-    hSound_[1] = Audio::Load("Sound/MissileExplode.wav");
-    assert(hSound_[1] >= 0);
-
 }
 
 void Missile::Update()
@@ -103,7 +96,7 @@ void Missile::Update()
                 pRobotObstacle_->KillMe();
             }
 
-            Audio::Play(hSound_[0]);
+            AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);
             KillMe();
         }
 
@@ -146,7 +139,7 @@ void Missile::Update()
     //ここはTargetの場所の範囲に入ったら
     if (distance < impact) {
         CreateExplodeParticle();        
-        Audio::Play(hSound_[1]);
+        AudioManager::PlaySoundMa(AUDIO_MISSILE_EXPLODE);
         
         if (!pRobotObstacle_->IsDead())
             pRobotObstacle_->NotifyMissileDestroyed(this);
@@ -182,7 +175,8 @@ void Missile::Update()
     );
     if (distance < 1.0f) {
         CreateExplodeParticle();
-        Audio::Play(hSound_[1]);
+        AudioManager::PlaySoundMa(AUDIO_MISSILE_EXPLODE);
+
         pPlayer_->DecreaseHp(5);
 
         if (!pRobotObstacle_->IsDead())

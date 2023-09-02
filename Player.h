@@ -26,7 +26,6 @@ class Player : public GameObject
 
     int hModel_;                    //ƒ‚ƒfƒ‹”Ô†
     int hPict_;
-    int hSound_[5];
     int hp_;                        //¡‚ÌHP
     int maxHp_;                     //Å‘åHP
     float moveSpeed_;               //ˆÚ“®

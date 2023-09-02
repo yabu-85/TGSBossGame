@@ -11,6 +11,7 @@
 #include "Aim.h"
 #include "HpGauge.h"
 #include "PlayerSpeedController.h"
+#include "AudioManager.h"
 
 static int goal;
 
@@ -41,6 +42,9 @@ void PlayScene::Initialize()
 
 	pPlayer_->SetPosition(pStage->GetPlaPos());
 	pPlayer_->SetActiveWithDelay(true, 10); //クリックの動作を入れないように遅延
+
+	AudioManager::Release();
+	AudioManager::Initialize(AudioManager::PLAY);
 }
 
 //更新

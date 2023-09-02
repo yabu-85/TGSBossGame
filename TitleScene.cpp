@@ -49,7 +49,8 @@ void TitleScene::Initialize()
 
 	}
 
-	AudioManager::Initialize(SCENE_ID_TITLE);
+	AudioManager::Release();
+	AudioManager::Initialize(AudioManager::TITLE);
 
 }
 

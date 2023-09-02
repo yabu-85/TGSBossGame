@@ -1,6 +1,5 @@
 #include "PlayerSpeedController.h"
 #include "Engine/Image.h"
-#include "Engine/Audio.h"
 
 namespace {
     static int speedUpPngDraw = 0;
@@ -8,7 +7,7 @@ namespace {
 }
 
 PlayerSpeedController::PlayerSpeedController(GameObject* parent)
-    :GameObject(parent, "PlayerSpeedController"), hPict_{ -1, -1, -1 }, hSound_(-1), moveSpeedUp_(1.0f), runTime_(0)
+    :GameObject(parent, "PlayerSpeedController"), hPict_{ -1, -1, -1 }, moveSpeedUp_(1.0f), runTime_(0)
 {
 }
 
@@ -19,7 +18,6 @@ PlayerSpeedController::~PlayerSpeedController()
 void PlayerSpeedController::Initialize()
 {
     std::string fileName[] = { "ColorDamage", "SpeedGauge", "SpeedGaugeFrame" };
-    //画像データのロード
     for (int i = 0; i < 3; i++) {
         hPict_[i] = Image::Load("Png/" + fileName[i] + ".png");
         assert(hPict_[i] >= 0);
@@ -52,9 +50,6 @@ void PlayerSpeedController::Draw()
     gauge.scale_.x = 1.0f;
     Image::SetTransform(hPict_[2], gauge);
     Image::Draw(hPict_[2]);
-
-
-
 
     //ダメージ画面効果
     if (speedUpPngDraw > 0) {

@@ -3,13 +3,13 @@
 #include "Engine/Model.h"
 #include "Player.h"
 #include "ObstacleManager.h"
-#include <vector>
 #include "Missile.h"
-#include "Engine/Audio.h"
 #include "Engine/VFX.h"
+#include "AudioManager.h"
+#include <vector>
 
 RobotObstacle::RobotObstacle(GameObject* parent)
-	:Obstacle(parent), pPlayer_(nullptr), hModelHead_(-1), count_(0), state_(S_ENTER), stateEnter_(true), hSound_{ -1, -1 }
+	:Obstacle(parent), pPlayer_(nullptr), hModelHead_(-1), count_(0), state_(S_ENTER), stateEnter_(true)
 {
 	objectName_ = "RobotObstacle";
 }
@@ -32,13 +32,6 @@ void RobotObstacle::Initialize()
 	transform_.rotate_.y = 180;
 
 	count_ = 90;
-
-	//サウンドデータのロード
-	hSound_[0] = Audio::Load("Sound/RobotHit.wav", false, 1);
-	assert(hSound_[0] >= 0);
-
-	hSound_[1] = Audio::Load("Sound/MissileShot.wav", false, 1);
-	assert(hSound_[1] >= 0);
 
 }
 
@@ -102,7 +95,7 @@ void RobotObstacle::UpdateEnter()
 	transform_.position_.y -= 2.0f;
 	if (transform_.position_.y <= 0.0f) {
 		transform_.position_.y = 0.0f;
-		Audio::Play(hSound_[0]);
+		AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);
 
 		ChangeState(S_CHARGING);
 
@@ -119,7 +112,7 @@ void RobotObstacle::UpdateCharging()
 
 void RobotObstacle::UpdateShot()
 {
-	Audio::Play(hSound_[1]);
+	AudioManager::PlaySoundMa(AUDIO_MISSILE_SHOT);
 
 	ShotMissile();
 	ChangeState(S_IDLE);

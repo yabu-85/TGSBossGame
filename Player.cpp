@@ -9,7 +9,7 @@
 #include <chrono>
 #include "ObstacleManager.h"
 #include "Engine/Image.h"
-#include "Engine/Audio.h"
+#include "AudioManager.h"
 
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
@@ -33,7 +33,7 @@ Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false),
     isCrouching_(false), graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
-    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr),hSound_{-1,-1,-1,-1,-1}
+    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr)
 {
     moveSpeed_ = 1.5f;
     rotationSpeed_ = 13.0f;
@@ -70,12 +70,6 @@ void Player::Initialize()
     hPict_ = Image::Load("Png/ColorDamage.png");
     assert(hPict_ >= 0);
 
-    hSound_[1] = Audio::Load("Sound/Running.wav", true, 1);
-    hSound_[2] = Audio::Load("Sound/Missile_Reflection.wav", false, 1);
-
-    hSound_[3] = Audio::Load("Sound/JumpingEnd.wav", false, 1);
-    hSound_[0] = Audio::Load("Sound/JumpingEnd.wav", false, 1);
-    
 }
 
 void Player::Update()
@@ -133,7 +127,7 @@ void Player::Update()
     //jump
     if (Input::IsKeyDown(DIK_SPACE))
     {
-        Audio::Play(hSound_[3]);
+        AudioManager::PlaySoundMa(AUDIO_JUNPING_START);
         Jump();
     }
     //しゃがんでない時カメラの高さリセット
@@ -147,7 +141,7 @@ void Player::Update()
     if (Input::IsMouseButtonDown(1)) {
         ObstacleManager* pObsM = (ObstacleManager*)FindObject("ObstacleManager");
         pObsM->a();
-        Audio::Play(hSound_[2]);
+        AudioManager::PlaySoundMa(AUDIO_REFLECTION);
         //エフェクト
         EmitterData data;
         data.textureFileName = "Particle/defaultParticle.png";
@@ -177,7 +171,7 @@ void Player::Update()
         if (IsPlayerOnGround())
         {
             pSpeedCtrl_->AddRunTime();
-            Audio::Play(hSound_[1]);
+            AudioManager::PlaySoundMa(AUDIO_RUNNING);
         }
     }
     else {
@@ -190,7 +184,7 @@ void Player::Update()
 
     if (!IsMovementKeyPressed()|| !IsPlayerOnGround())
     {
-        Audio::Stop(hSound_[1]);
+        AudioManager::StopSoundMa(AUDIO_RUNNING);
     }
 }
 
@@ -477,7 +471,7 @@ void Player::Gravity()
     firstJump_ = true;
 
     if (IsPlayerOnGround()) {
-        Audio::Play(hSound_[0]);
+        AudioManager::PlaySoundMa(AUDIO_JUNPING_START);
         firstJump_ = false;
         secondJump_ = false;
         bulletJump_ = false;
