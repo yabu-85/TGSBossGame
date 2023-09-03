@@ -34,8 +34,8 @@ namespace AudioManager {
 	void Release();
 
 
-	void PlaySoundMa(TITLE_AUDIO i);
-	void PlaySoundMa(PLAY_AUDIO i);
+	void PlaySoundMa(TITLE_AUDIO i, float volume = 1.0f);
+	void PlaySoundMa(PLAY_AUDIO i, float volume = 1.0f);
 
 	void StopSoundMa(TITLE_AUDIO i);
 	void StopSoundMa(PLAY_AUDIO i);

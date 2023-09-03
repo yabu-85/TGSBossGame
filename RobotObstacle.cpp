@@ -103,7 +103,7 @@ void RobotObstacle::UpdateEnter()
 	transform_.position_.y -= 2.0f;
 	if (transform_.position_.y <= 0.0f) {
 		transform_.position_.y = 0.0f;
-		AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);
+		AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT, 0.5f);
 
 		ChangeState(S_CHARGING);
 
