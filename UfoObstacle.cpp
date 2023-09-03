@@ -10,7 +10,7 @@ static const float height_ = 15.0f;
 
 UfoObstacle::UfoObstacle(GameObject* parent)
 	:Obstacle(parent), hModelSub_{-1, -1}, state_(S_ENTER), stateEnter_(true), targetPos_(0, 0, 0), moveSpeed_(0.0f), time_(0),
-	moveDist_(0), leavVec_{0,1,0,0}, leavYmoveSpeed_(0.0f), attack_(false)
+	moveDist_(0), leavVec_{0,1,0,0}, leavYmoveSpeed_(0.0f), attack_(false), attackDon_(false)
 {
 	objectName_ = "UfoObstacle";
 }
@@ -255,6 +255,18 @@ void UfoObstacle::UpdateShot()
 	data.scale = XMFLOAT2(0.8f, 0.8f);
 	data.isBillBoard = true;
 	VFX::Start(data);
+
+	//ƒ_ƒ[ƒW”»’è
+	XMFLOAT2 lPos = { transform_.position_.x, transform_.position_.z };
+	Player* pPla = (Player*)FindObject("Player");
+	XMFLOAT2 pPos = { pPla->GetPosition().x, pPla->GetPosition().z };
+	float distanceSquared = XMVectorGetX(XMVector2LengthSq(XMLoadFloat2(&lPos) - XMLoadFloat2(&pPos)));
+	float plaRadius = 0.3f, lRadius = 0.8f;
+	if (!attackDon_ && distanceSquared <= (lRadius + plaRadius) * (lRadius + plaRadius))
+	{
+		pPla->DecreaseHp(15);
+		attackDon_ = true;
+	}
 
 	int shotTime = 30;
 	if (time_ > shotTime) ChangeState(S_LEAVING);

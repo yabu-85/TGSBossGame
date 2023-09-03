@@ -46,5 +46,9 @@ public:
 
     //ミサイルのリスト取得
     std::list<Missile*> GetMissiles() { return missiles_; };
+
+    //
+    void KillMeSub();
+
 };
 

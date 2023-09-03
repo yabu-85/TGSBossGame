@@ -85,6 +85,14 @@ void RobotObstacle::NotifyMissileDestroyed(Missile* destMissile) {
 	}
 }
 
+void RobotObstacle::KillMeSub()
+{
+	ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
+	pOM->removeObstacle(this);
+
+	KillMe();
+}
+
 void RobotObstacle::UpdateEnter()
 {
 	if (stateEnter_) {

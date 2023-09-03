@@ -93,7 +93,7 @@ void Missile::Update()
 
             //‚Ü‚¾Œ‚‚Á‚½e‚ª¶‚«‚Ä‚¢‚ê‚Î“|‚·
             if (pRobotObstacle_ != nullptr) {
-                pRobotObstacle_->KillMe();
+                pRobotObstacle_->KillMeSub();
             }
 
             AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);

@@ -141,7 +141,9 @@ void Player::Update()
     if (Input::IsMouseButtonDown(1)) {
         ObstacleManager* pObsM = (ObstacleManager*)FindObject("ObstacleManager");
         pObsM->a();
+        
         AudioManager::PlaySoundMa(AUDIO_REFLECTION);
+
         //エフェクト
         EmitterData data;
         data.textureFileName = "Particle/defaultParticle.png";

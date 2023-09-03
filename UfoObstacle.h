@@ -20,6 +20,7 @@ class UfoObstacle : public Obstacle
     void ChangeState(STATE s);
 
     bool attack_;           //攻撃するかどうか
+    bool attackDon_;        //一回だけ攻撃が当たるように
     int hModelSub_[3];      //レイザーと検知用
     int time_;              //チャージ時間とかに使う
     float moveSpeed_;       //移動スピード

@@ -69,6 +69,14 @@ void ObstacleManager::addObstacle(Obstacle* _obstacle)
     obstacles_.push_back(_obstacle);
 }
 
+void ObstacleManager::removeObstacle(Obstacle* _obstacle)
+{
+    if (_obstacle != nullptr) {
+        auto newEnd = std::remove(obstacles_.begin(), obstacles_.end(), _obstacle);
+        obstacles_.erase(newEnd, obstacles_.end());
+    }
+}
+
 void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type)
 {
     Obstacle* pObstacle = nullptr;
@@ -102,21 +110,25 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
 void ObstacleManager::LoadCsv()
 {
     //CSVデータをテーブルに格納
-    for (auto obj : obstacles_) {
-        if (!obj) continue;
-        //UFOの場合
-        if (obj->GetObjectName() == "UfoObstacle") {
-            Obstacle* pObstacle = dynamic_cast<Obstacle*>(obj);
-            if (pObstacle->GetObjectName() == "UfoObstacle") {
-                if (pObstacle->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
-                    pObstacle->SetDraw(true);
-                    pObstacle->SetActive(true);
-                }
+    for (Obstacle* e : obstacles_) {
+        if (!e) continue;
+
+        if (e->GetObjectName() == "UfoObstacle"){ 
+            Obstacle* pObstacle = dynamic_cast<Obstacle*>(e);
+            int a = 100;
+            Obstacle* pp = pObstacle;
+
+            if (pObstacle->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
+                pObstacle->SetDraw(true);
+                pObstacle->SetActive(true);
+
             }
         }
 
         else {  //他の障害物の処理
-            Obstacle* pObstacle = dynamic_cast<Obstacle*>(obj);
+            Obstacle* pObstacle = dynamic_cast<Obstacle*>(e);
+            Obstacle* pp = pObstacle;
+
             if (pObstacle->GetCsvPos().z <= activationZoneSub_) {
                 pObstacle->SetDraw(true);
                 pObstacle->SetActive(true);
@@ -129,10 +141,11 @@ void ObstacleManager::LoadCsv()
 //これを読んだらManegerのobstacles_のRobotの子供Missile達にプレイヤーの衝突距離かを計算している
 void ObstacleManager::a()
 {
-    for (GameObject* e : obstacles_) {
+    for (Obstacle* e : obstacles_) {
+        if (!e) continue;
+        
         if (e->GetObjectName() == "RobotObstacle") {
             RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
-            if (!pRobot) continue;
 
             std::list<Missile*> mis = pRobot->GetMissiles();
             for (Missile* missile : mis) {

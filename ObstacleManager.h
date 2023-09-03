@@ -41,6 +41,8 @@ public:
     // áŠQ•¨‚ğ’Ç‰Á‚·‚é
     void addObstacle(Obstacle* _obstacle);
 
+    void removeObstacle(Obstacle* _obstacle);
+
     // áŠQ•¨‚ğ¶¬‚µ‚Ä’Ç‰Á‚·‚é
     void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);
 
