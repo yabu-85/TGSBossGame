@@ -1,5 +1,6 @@
 #include "Global.h"
 #include "Model.h"
+#include <algorithm>
 
 //3Dモデル（FBXファイル）を管理する
 namespace Model
@@ -14,54 +15,56 @@ namespace Model
 	}
 
 	//モデルをロード
-	int Load(std::string fileName)
+	int Load(std::string fileName, int _order)
 	{
-			ModelData* pData = new ModelData;
+		ModelData* pData = new ModelData;
 
-			
-			//開いたファイル一覧から同じファイル名のものが無いか探す
-			bool isExist = false;
-			for (int i = 0; i < _datas.size(); i++)
+		if (_order >= 0) {
+			pData->drawOrder_ = _order;
+		}
+
+		//開いたファイル一覧から同じファイル名のものが無いか探す
+		bool isExist = false;
+		for (int i = 0; i < _datas.size(); i++)
+		{
+			//すでに開いている場合
+			if (_datas[i] != nullptr && _datas[i]->fileName == fileName)
 			{
-				//すでに開いている場合
-				if (_datas[i] != nullptr && _datas[i]->fileName == fileName)
-				{
-					pData->pFbx = _datas[i]->pFbx;
-					isExist = true;
-					break;
-				}
+				pData->pFbx = _datas[i]->pFbx;
+				isExist = true;
+				break;
+			}
+		}
+
+		//新たにファイルを開く
+		if (isExist == false)
+		{
+			pData->pFbx = new Fbx;
+			if (FAILED(pData->pFbx->Load(fileName)))
+			{
+				//開けなかった
+				SAFE_DELETE(pData->pFbx);
+				SAFE_DELETE(pData);
+				return -1;
 			}
 
-			//新たにファイルを開く
-			if (isExist == false)
+			//無事開けた
+			pData->fileName = fileName;
+		}
+
+		//使ってない番号が無いか探す
+		for (int i = 0; i < _datas.size(); i++)
+		{
+			if (_datas[i] == nullptr)
 			{
-				pData->pFbx = new Fbx;
-				if (FAILED(pData->pFbx->Load(fileName)))
-				{
-					//開けなかった
-					SAFE_DELETE(pData->pFbx);
-					SAFE_DELETE(pData);
-					return -1;
-				}
-
-				//無事開けた
-				pData->fileName = fileName;
+				_datas[i] = pData;
+				return i;
 			}
+		}
 
-
-			//使ってない番号が無いか探す
-			for (int i = 0; i < _datas.size(); i++)
-			{
-				if (_datas[i] == nullptr)
-				{
-					_datas[i] = pData;
-					return i;
-				}
-			}
-
-			//新たに追加
-			_datas.push_back(pData);
-			return (int)_datas.size() - 1;
+		//新たに追加
+		_datas.push_back(pData);
+		return (int)_datas.size() - 1;
 	}
 
 	//描画
@@ -79,27 +82,73 @@ namespace Model
 		if (_datas[handle]->nowFrame > (float)_datas[handle]->endFrame)
 			_datas[handle]->nowFrame = (float)_datas[handle]->startFrame;
 
-		if (_datas[handle]->isBlending) {
+		/* Blend
+		if (e->isBlending) {
 			//アニメーションを進める
-			_datas[handle]->blendNowFrame += _datas[handle]->animSpeed;
+			e->blendNowFrame += e->animSpeed;
 
 			//最後までアニメーションしたら戻す
-			if (_datas[handle]->blendNowFrame > (float)_datas[handle]->blendEndFrame)
-				_datas[handle]->blendNowFrame = (float)_datas[handle]->blendStartFrame;
+			if (e->blendNowFrame > (float)e->blendEndFrame)
+				e->blendNowFrame = (float)e->blendStartFrame;
 
-			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame,
-				(int)_datas[handle]->blendNowFrame, (float)_datas[handle]->blendWeight);
+			e->pFbx->Draw(e->transform, (int)e->nowFrame,
+				(int)e->blendNowFrame, (float)e->blendWeight);
 
 			return;
 		}
+		*/
 
 		if (_datas[handle]->pFbx)
 		{
 			// 現在のアニメーションフレームでモデルを描画
 			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame, type);
 
-
 		}
+	}
+
+	void DrawOrder(int type)
+	{
+		for (ModelData *e : _datas) {
+			if (e->drawOrder_ != 0) continue;
+
+			if (e->drawOrder_ == -1 || e == nullptr) continue;
+
+			//アニメーションを進める
+			if (e->isAimeStop == false) e->nowFrame += e->animSpeed;
+
+			//最後までアニメーションしたら戻す
+			if (e->nowFrame > (float)e->endFrame)
+				e->nowFrame = (float)e->startFrame;
+
+			if (e->pFbx)
+			{
+				// 現在のアニメーションフレームでモデルを描画
+				e->pFbx->Draw(e->transform, (int)e->nowFrame, type);
+
+			}
+		}
+
+		for (ModelData* e : _datas) {
+			if (e->drawOrder_ != 1) continue;
+
+			if (e->drawOrder_ == -1 || e == nullptr) continue;
+
+			//アニメーションを進める
+			if (e->isAimeStop == false) e->nowFrame += e->animSpeed;
+
+			//最後までアニメーションしたら戻す
+			if (e->nowFrame > (float)e->endFrame)
+				e->nowFrame = (float)e->startFrame;
+
+			if (e->pFbx)
+			{
+				// 現在のアニメーションフレームでモデルを描画
+				e->pFbx->Draw(e->transform, (int)e->nowFrame, type);
+
+			}
+		}
+
+
 	}
 
 

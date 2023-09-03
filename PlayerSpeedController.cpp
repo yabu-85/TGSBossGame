@@ -1,5 +1,6 @@
 #include "PlayerSpeedController.h"
 #include "Engine/Image.h"
+#include "Engine/Model.h"
 
 namespace {
     static int speedUpPngDraw = 0;
@@ -62,6 +63,10 @@ void PlayerSpeedController::Draw()
 
         speedUpPngDraw--;
     }
+
+
+    Model::DrawOrder();
+
 }
 
 void PlayerSpeedController::Release()

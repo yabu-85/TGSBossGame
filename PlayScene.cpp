@@ -97,9 +97,9 @@ void PlayScene::Update()
 //•`‰æ
 void PlayScene::Draw()
 {
-	Image::SetAlpha(hPict_, 255);
-	Image::SetTransform(hPict_, transform_);
-	Image::Draw(hPict_);
+	//Image::SetAlpha(hPict_, 255);
+	//Image::SetTransform(hPict_, transform_);
+	//Image::Draw(hPict_);
 
 }
 

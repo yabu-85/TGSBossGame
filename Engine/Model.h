@@ -17,6 +17,9 @@ namespace Model
 		//ファイル名
 		std::string fileName;
 
+		//描画する順番
+		int drawOrder_;
+
 		//ロードしたモデルデータのアドレス
 		Fbx*		pFbx;
 
@@ -38,7 +41,7 @@ namespace Model
 
 		//初期化
 		ModelData() : pFbx(nullptr), isAimeStop(false), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0),
-			isBlending(false), blendNowFrame(0.0f), blendStartFrame(0), blendEndFrame(0), blendWeight(0.0f)
+			isBlending(false), blendNowFrame(0.0f), blendStartFrame(0), blendEndFrame(0), blendWeight(0.0f), drawOrder_(-1)
 		{
 		}
 
@@ -80,12 +83,14 @@ namespace Model
 	//モデルをロード
 	//引数：fileName　ファイル名
 	//戻値：そのモデルデータに割り当てられた番号
-	int Load(std::string fileName);
+	int Load(std::string fileName, int _order = -1);
 
 	//描画
 	//引数：handle	描画したいモデルの番号
 	//引数：matrix	ワールド行列
 	void Draw(int handle, int type = 0);
+
+	void DrawOrder(int type = 0);
 
 	//任意のモデルを開放
 	//引数：handle	開放したいモデルの番号
