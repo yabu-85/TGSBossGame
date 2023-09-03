@@ -42,19 +42,17 @@ void Aim::Update()
         return;
     }
 
-    //ƒ}ƒEƒXˆÚ“®—Ê
-    if (aimMove_) {
-        XMFLOAT3 mouseMove = Input::GetMouseMove(); //ƒ}ƒEƒX‚ÌˆÚ“®—Ê‚ğæ“¾
+    if (!aimMove_) return;
 
-        //ˆÚ“®—Ê‚ğŒvZ
-        transform_.rotate_.y += (mouseMove.x * 0.05f) * mouseSensitivity; //‰¡•ûŒü‚Ì‰ñ“]
-        transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //c•ûŒü‚Ì‰ñ“]
-        if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
-        if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
+    XMFLOAT3 mouseMove = Input::GetMouseMove(); //ƒ}ƒEƒX‚ÌˆÚ“®—Ê‚ğæ“¾
 
+    //ˆÚ“®—Ê‚ğŒvZ
+    transform_.rotate_.y += (mouseMove.x * 0.05f) * mouseSensitivity; //‰¡•ûŒü‚Ì‰ñ“]
+    transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //c•ûŒü‚Ì‰ñ“]
+    if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
+    if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
     if (transform_.rotate_.y <= -270.0f) transform_.rotate_.y = -270.0f;
     if (transform_.rotate_.y >= -90.0f) transform_.rotate_.y = -90.0f;
-    }
 
     //ƒJƒƒ‰‚Ì‰ñ“]
     XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(transform_.rotate_.x));
@@ -111,6 +109,7 @@ void Aim::Update()
 
     Camera::SetPosition(cameraPos_);
     Camera::SetTarget(cameraTarget_);
+
 
 }
 

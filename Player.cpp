@@ -76,13 +76,13 @@ void Player::Update()
 {
     if (!isActive_) return;
 
-    if (transform_.position_.y <= -8.0f) {
-        transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
-
+    if (transform_.position_.y <= -9.0f) {
+        pSpeedCtrl_->ResetSpeed();
         firstJump_ = false;
         secondJump_ = false;
         bulletJump_ = false;
         playerMovement_ = { 0.0f , 0.0f , 0.0f };
+        transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
         transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
         graY_ = 0.0f;
     }
@@ -115,14 +115,6 @@ void Player::Update()
 
     //重力
     if (!IsPlayerOnGround()) Gravity();
-
-    //埋まった時の対処をここでやる
-    if (transform_.position_.y < 0.0f && prevYHeight == transform_.position_.y) {
-        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
-        if (!IsMovementKeyPressed()) playerMovement_ = { 0,0,0 };
-    }
-    prevYHeight = transform_.position_.y;
-
 
     //jump
     if (Input::IsKeyDown(DIK_SPACE))
@@ -618,55 +610,57 @@ void Player::IsInWall()
     int checkZ1, checkZ2;
     float ground1, ground2;
 
-    checkX1 = (int)(transform_.position_.x + 0.15f); //前
-    checkZ1 = (int)(transform_.position_.z + 0.3f);
-    checkX2 = (int)(transform_.position_.x - 0.15f);
-    checkZ2 = (int)(transform_.position_.z + 0.3f);
+    float speedUp = pSpeedCtrl_->GetMoveSpeed_() + 0.5f;
+
+    checkX1 = (int)(transform_.position_.x + (0.15f * speedUp)); //前
+    checkZ1 = (int)(transform_.position_.z + (0.3f * speedUp));
+    checkX2 = (int)(transform_.position_.x - (0.15f * speedUp));
+    checkZ2 = (int)(transform_.position_.z + (0.3f * speedUp));
 
     ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
     ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
     if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
 
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) { //床やけやったら
-            transform_.position_.z = (float)((int)transform_.position_.z) + (1.0f - 0.3f);
+            transform_.position_.z = (float)((int)transform_.position_.z) + (1.0f - (0.3f * speedUp));
         }
 
-    checkX1 = (int)(transform_.position_.x + 0.3f); //右
-    checkZ1 = (int)(transform_.position_.z + 0.15f);
-    checkX2 = (int)(transform_.position_.x + 0.3f);
-    checkZ2 = (int)(transform_.position_.z - 0.15f);
+    checkX1 = (int)(transform_.position_.x + (0.3f * speedUp)); //右
+    checkZ1 = (int)(transform_.position_.z + (0.15f * speedUp));
+    checkX2 = (int)(transform_.position_.x + (0.3f * speedUp));
+    checkZ2 = (int)(transform_.position_.z - (0.15f * speedUp));
 
     ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
     ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
     if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
 
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
-            transform_.position_.x = (float)((int)transform_.position_.x + 1) - 0.3f;  // x　だけ戻すことで斜め移動ができるようになる     
+            transform_.position_.x = (float)((int)transform_.position_.x + 1) - (0.3f * speedUp);  // x　だけ戻すことで斜め移動ができるようになる     
         }
 
-    checkX1 = (int)(transform_.position_.x + 0.15f); //後ろ
-    checkZ1 = (int)(transform_.position_.z - 0.3f);
-    checkX2 = (int)(transform_.position_.x - 0.15f);
-    checkZ2 = (int)(transform_.position_.z - 0.3f);
+    checkX1 = (int)(transform_.position_.x + (0.15f * speedUp)); //後ろ
+    checkZ1 = (int)(transform_.position_.z - (0.3f * speedUp));
+    checkX2 = (int)(transform_.position_.x - (0.15f * speedUp));
+    checkZ2 = (int)(transform_.position_.z - (0.3f * speedUp));
 
     ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
     ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
     if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
 
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
-            transform_.position_.z = (float)((int)transform_.position_.z) + 0.3f;
+            transform_.position_.z = (float)((int)transform_.position_.z) + (0.3f * speedUp);
         }
 
-    checkX1 = (int)(transform_.position_.x - 0.3f); //左
-    checkZ1 = (int)(transform_.position_.z + 0.15f);
-    checkX2 = (int)(transform_.position_.x - 0.3f);
-    checkZ2 = (int)(transform_.position_.z - 0.15f);
+    checkX1 = (int)(transform_.position_.x - (0.3f * speedUp)); //左
+    checkZ1 = (int)(transform_.position_.z + (0.15f * speedUp));
+    checkX2 = (int)(transform_.position_.x - (0.3f * speedUp));
+    checkZ2 = (int)(transform_.position_.z - (0.15f * speedUp));
 
     ground1 = pStage_->GetFloorHeight(checkX1, checkZ1);
     ground2 = pStage_->GetFloorHeight(checkX2, checkZ2);
     if (transform_.position_.y < ground1 || transform_.position_.y < ground2)
 
         if (pStage_->IsWall(checkX1, checkZ1) == true || pStage_->IsWall(checkX2, checkZ2) == true) {
-            transform_.position_.x = (float)((int)transform_.position_.x) + 0.3f;
+            transform_.position_.x = (float)((int)transform_.position_.x) + (0.3f * speedUp);
         }
 }

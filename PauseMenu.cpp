@@ -1,16 +1,10 @@
 #include "PauseMenu.h"
-#include "Engine/Model.h"
 #include "Engine/Input.h"
 #include "ButtonFactory.h"
-#include "Button.h"
-#include "Aim.h"
 #include "ExitMenu.h"
-#include "Player.h"
 #include "Engine/SceneManager.h"
-#include "Engine/Model.h"
-#include "Timer.h"
-#include "ObstacleManager.h"
 #include "AudioManager.h"
+#include "PlayScene.h"
 #include <future>
 
 PauseMenu::PauseMenu(GameObject* parent)
@@ -32,15 +26,8 @@ void PauseMenu::Initialize()
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
 
-	Aim* pAim = (Aim*)FindObject("Aim");
-	pAim->SetAimMove(false);
-	Player* pPlayer = (Player*)FindObject("Player");
-	Model::SetAnimeStop(pPlayer->GetModelHandle(), true);
-	Timer* pTimer = (Timer*)FindObject("Timer");
-	pTimer->Stop();
-
-	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
-	pObstacleManager->SetAllObstacleActive(false);
+	PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
+	pPlayScene->SetObjectActive(false);
 
 	hPict_[0] = Image::Load("Png/Black.png");
 	assert(hPict_[0] >= 0);
@@ -55,16 +42,8 @@ void PauseMenu::Initialize()
 void PauseMenu::Update()
 {
 	if (pButtonFactory_->CheckButtonPressed() == "ReturnGame") {
-		Aim* pAim = (Aim*)FindObject("Aim");
-		pAim->SetAimMove(true);
-		Player* pPlayer = (Player*)FindObject("Player");
-		pPlayer->SetActive(true);
-		Model::SetAnimeStop(pPlayer->GetModelHandle(), false);
-		Timer* pTimer = (Timer*)FindObject("Timer");
-		pTimer->Start();
-		
-		ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
-		pObstacleManager->SetAllObstacleActive(true);
+		PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
+		pPlayScene->SetObjectActive(true);
 
 		AudioManager::Release();
 		AudioManager::Initialize(AudioManager::PLAY);
