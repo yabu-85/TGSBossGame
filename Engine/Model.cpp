@@ -23,6 +23,7 @@ namespace Model
 
 			pData->drawOrder_ = _order;
 			pData->shadeType_ = _type;
+			pData->isDraw_ = true;
 
 		}
 
@@ -114,7 +115,7 @@ namespace Model
 		for (ModelData *e : _datas) {
 			if (e->drawOrder_ != 0) continue;
 
-			if (e->drawOrder_ == -1 || e == nullptr) continue;
+			if (!e->isDraw_ || e == nullptr) continue;
 
 			//アニメーションを進める
 			if (e->isAimeStop == false) e->nowFrame += e->animSpeed;
@@ -134,7 +135,7 @@ namespace Model
 		for (ModelData* e : _datas) {
 			if (e->drawOrder_ != 1) continue;
 
-			if (e->drawOrder_ == -1 || e == nullptr) continue;
+			if (!e->isDraw_ || e == nullptr) continue;
 
 			//アニメーションを進める
 			if (e->isAimeStop == false) e->nowFrame += e->animSpeed;
@@ -273,5 +274,9 @@ namespace Model
 			XMStoreFloat3(&data->dir, vecDir);
 
 			_datas[handle]->pFbx->RayCast(data); 
+	}
+	void SetDraw(int handle, bool b)
+	{
+		_datas[handle]->isDraw_ = b;
 	}
 }

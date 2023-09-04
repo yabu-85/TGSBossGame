@@ -16,6 +16,7 @@ Missile::Missile(GameObject* parent)
 
 Missile::~Missile()
 {
+    Model::SetDraw(hModel_, false);
 }
 
 void Missile::Initialize()

@@ -74,8 +74,6 @@ void UfoObstacle::Draw()
 		pos.position_.y -= 1.0f;
 		Model::SetTransform(hModelSub_[2], pos);
 		
-		//Model::Draw(hModelSub_[2], 5);
-		
 	}
 
 	if (state_ == S_SHOT || (state_ == S_LEAVING && attack_) ) {
@@ -161,6 +159,7 @@ void UfoObstacle::UpdatePreparation()
 	if (stateEnter_) {
 		stateEnter_ = false;
 		time_ = 0;
+		Model::SetDraw(hModel_, false);
 
 	}
 
