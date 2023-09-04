@@ -5,6 +5,7 @@
 #include "Engine/Direct3D.h"
 #include "Player.h"
 #include "AudioManager.h"
+#include "ObstacleManager.h"
 
 static const float height_ = 15.0f;
 
@@ -307,8 +308,13 @@ void UfoObstacle::UpdateLeaving()
 		VFX::Start(data);
 	}
 
-	if (transform_.position_.y >= 20.0f) KillMe();
+	if (transform_.position_.y >= 20.0f)
+	{
+		ObstacleManager* pObstacleMa = (ObstacleManager*)FindObject("ObstacleManager");
+		pObstacleMa->removeObstacle(this);
 
+		KillMe();
+	}
 }
 
 void UfoObstacle::ChangeState(STATE s)

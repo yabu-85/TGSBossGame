@@ -74,6 +74,7 @@ void ObstacleManager::removeObstacle(Obstacle* _obstacle)
     if (_obstacle != nullptr) {
         auto newEnd = std::remove(obstacles_.begin(), obstacles_.end(), _obstacle);
         obstacles_.erase(newEnd, obstacles_.end());
+        _obstacle = nullptr;
     }
 }
 
@@ -111,7 +112,10 @@ void ObstacleManager::LoadCsv()
 {
     //CSVデータをテーブルに格納
     for (Obstacle* e : obstacles_) {
-        if (!e) continue;
+        if (!e) {
+            removeObstacle(e);
+            continue;
+        }
 
         if (e->GetObjectName() == "UfoObstacle"){ 
             Obstacle* pObstacle = dynamic_cast<Obstacle*>(e);
