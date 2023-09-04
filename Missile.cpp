@@ -20,7 +20,7 @@ Missile::~Missile()
 
 void Missile::Initialize()
 {
-	hModel_ = Model::Load("Model/Missile.fbx", 0);
+	hModel_ = Model::Load("Model/Missile.fbx", 0, 0);
 	assert(hModel_ >= 0);
 	transform_.position_.y = 1.0f;
     rotationAngle_ = { -(float)(rand() % 5), (float)(rand() % 10), (float)(rand() % 10) };

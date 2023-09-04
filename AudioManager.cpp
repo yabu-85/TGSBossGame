@@ -73,12 +73,12 @@ namespace AudioManager
 
 	void PlaySoundMa(TITLE_AUDIO i, float volume)
 	{
-		Audio::Play(hSound_[i], volume);
+		Audio::Play(hSound_[i], volume * 0.5f);
 	}
 
 	void PlaySoundMa(PLAY_AUDIO i, float volume)
 	{
-        Audio::Play(hSound_[i], volume);
+        Audio::Play(hSound_[i], volume * 0.5f);
 	}
 
 	void StopSoundMa(TITLE_AUDIO i)

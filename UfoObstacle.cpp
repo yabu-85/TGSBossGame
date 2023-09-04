@@ -26,8 +26,9 @@ void UfoObstacle::Initialize()
 
 	std::string fileName[] = { "RaserCenter", "RaserOuter", "RaserDetect" };
 	int order[3] = {-1, -1, 1};
+	int shade[3] = {0, 0, 5};
 	for (int i = 0; i < 3; i++) {
-		hModelSub_[i] = Model::Load("Model/" + fileName[i] + ".fbx", order[i]);
+		hModelSub_[i] = Model::Load("Model/" + fileName[i] + ".fbx", order[i], shade[i]	);
 		assert(hModelSub_[i] >= 0);
 	}
 

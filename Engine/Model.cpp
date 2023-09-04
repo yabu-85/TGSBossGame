@@ -15,12 +15,15 @@ namespace Model
 	}
 
 	//モデルをロード
-	int Load(std::string fileName, int _order)
+	int Load(std::string fileName, int _order, int _type)
 	{
 		ModelData* pData = new ModelData;
 
 		if (_order >= 0) {
+
 			pData->drawOrder_ = _order;
+			pData->shadeType_ = _type;
+
 		}
 
 		//開いたファイル一覧から同じファイル名のものが無いか探す
@@ -106,7 +109,7 @@ namespace Model
 		}
 	}
 
-	void DrawOrder(int type)
+	void DrawOrder()
 	{
 		for (ModelData *e : _datas) {
 			if (e->drawOrder_ != 0) continue;
@@ -123,7 +126,7 @@ namespace Model
 			if (e->pFbx)
 			{
 				// 現在のアニメーションフレームでモデルを描画
-				e->pFbx->Draw(e->transform, (int)e->nowFrame, type);
+				e->pFbx->Draw(e->transform, (int)e->nowFrame, e->shadeType_);
 
 			}
 		}
@@ -143,7 +146,7 @@ namespace Model
 			if (e->pFbx)
 			{
 				// 現在のアニメーションフレームでモデルを描画
-				e->pFbx->Draw(e->transform, (int)e->nowFrame, type);
+				e->pFbx->Draw(e->transform, (int)e->nowFrame, e->shadeType_);
 
 			}
 		}

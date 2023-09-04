@@ -64,7 +64,6 @@ void PlayerSpeedController::Draw()
         speedUpPngDraw--;
     }
 
-
     Model::DrawOrder();
 
 }
