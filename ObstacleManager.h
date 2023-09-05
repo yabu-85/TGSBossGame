@@ -23,6 +23,7 @@ class ObstacleManager : public GameObject
     };
 
     std::vector<Obstacle*> obstacles_;
+    std::vector<Obstacle*> inactiveObstacles_;
     CsvReader csv_;
     int width_;
     int height_;
@@ -41,7 +42,10 @@ public:
     void Draw() override;
     void Release() override;
 
+    //リストから削除
     void removeObstacle(Obstacle* _obstacle);
+    //リストから削除
+    void removeInActiveObstacle(Obstacle* _obstacle);
 
     // 障害物を生成して追加する
     void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);

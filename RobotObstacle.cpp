@@ -38,6 +38,7 @@ void RobotObstacle::Update()
 {
 	if (!active_) return;
 
+	//デバッグ用ブレイクポイント
 	if (Input::IsKeyDown(DIK_4)) {
 		std::vector<Missile*> b = missiles_;
 	}

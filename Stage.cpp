@@ -145,12 +145,14 @@ XMFLOAT3 Stage::GetPlaPos()
 
 XMFLOAT3 Stage::NearestFloorLocation(XMFLOAT3 pos)
 {
-    if (pos.z < 0) pos.z = 0;
-    for (int z = pos.z - 0; z > 0; z--) {
+    const float leng = 15.0f;
+
+    if (pos.z < leng) pos.z = leng;
+    for (int z = pos.z - leng; z > 0; z--) {
         for (int x = 0; x < width_; x++)
         {
             if (table_[x][z] == 0) {
-                return XMFLOAT3((float)pos.x + 0.5f, 0.0f, (float)z + 0.5f);
+                return XMFLOAT3(3.5f, 0.0f, (float)z);
             }
         }
     }

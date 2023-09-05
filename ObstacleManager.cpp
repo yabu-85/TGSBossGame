@@ -50,7 +50,8 @@ void ObstacleManager::Update()
     }
 
     if (Input::IsKeyDown(DIK_3)) {
-        std::vector <Obstacle*> b = obstacles_;
+        std::vector <Obstacle*> e = obstacles_;
+        std::vector <Obstacle*> bi = inactiveObstacles_;
     }
     
     int plaPosZ = (int)pPlayer_->GetPosition().z;
@@ -75,6 +76,20 @@ void ObstacleManager::removeObstacle(Obstacle* _obstacle)
         for (auto it = obstacles_.begin(); it != obstacles_.end();) {
             if (*it == _obstacle) {
                 it = obstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+            }
+            else {
+                it++;
+            }
+        }
+    }
+}
+
+void ObstacleManager::removeInActiveObstacle(Obstacle* _obstacle)
+{
+    if (_obstacle != nullptr) {
+        for (auto it = inactiveObstacles_.begin(); it != inactiveObstacles_.end();) {
+            if (*it == _obstacle) {
+                it = inactiveObstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
             }
             else {
                 it++;
@@ -109,13 +124,13 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
         pObstacle->SetPosition(_position);
         pObstacle->SetCsvPos(_position);
         obstacles_.push_back(pObstacle);
+        inactiveObstacles_.push_back(pObstacle);
     }
 }
 
 void ObstacleManager::LoadCsv()
 {
-    //CSVデータをテーブルに格納
-    for (Obstacle* e : obstacles_) {
+    for (Obstacle* e : inactiveObstacles_) {
         if (!e) {
             continue;
         }
@@ -124,6 +139,7 @@ void ObstacleManager::LoadCsv()
             if (e->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
                 e->SetDraw(true);
                 e->SetActive(true);
+                removeInActiveObstacle(e);
             }
         }
 
@@ -131,6 +147,7 @@ void ObstacleManager::LoadCsv()
             if (e->GetCsvPos().z <= activationZoneSub_) {
                 e->SetDraw(true);
                 e->SetActive(true);
+                removeInActiveObstacle(e);
             }
         }
     }
@@ -165,23 +182,35 @@ void ObstacleManager::SetAllObstacleActive(bool b)
 
     }
     else {
-        LoadCsv();
+        for (Obstacle* e : obstacles_) {
+            if (!e) {
+                continue;
+            }
 
-    }
+            if (e->GetObjectName() == "UfoObstacle") {
+                if (e->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
+                    e->SetDraw(true);
+                    e->SetActive(true);
+                }
+            }
 
-    for (GameObject* e : obstacles_) {
-        if (e->GetObjectName() == "RobotObstacle") {
-            RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
-            if (!pRobot) continue;
+            else if (e->GetObjectName() == "RobotObstacle") {
+                RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
+                std::vector<Missile*> mis = pRobot->GetMissiles();
+                for (Missile* missile : mis) {
+                    missile->SetActive(b);
+                }
+            }
 
-            std::vector<Missile*> mis = pRobot->GetMissiles();
-            for (Missile* missile : mis) {
-                missile->SetActive(b);
-
+            else {  //他の障害物の処理
+                if (e->GetCsvPos().z <= activationZoneSub_) {
+                    e->SetDraw(true);
+                    e->SetActive(true);
+                }
             }
         }
-    }
 
+    }
 }
 
 void ObstacleManager::InitCsv()
