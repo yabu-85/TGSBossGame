@@ -142,6 +142,6 @@ namespace Model
 	//引数：data	必要なものをまとめたデータ
 	void RayCast(int handle, RayCastData *data);
 
-	void SetDraw(int handle, bool b);
+	void StopDraw(int handle);
 
 };

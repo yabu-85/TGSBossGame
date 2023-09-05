@@ -1,5 +1,4 @@
 #include "RobotObstacle.h"
-#include "Engine/SphereCollider.h"
 #include "Engine/Model.h"
 #include "Player.h"
 #include "ObstacleManager.h"
@@ -16,13 +15,6 @@ RobotObstacle::RobotObstacle(GameObject* parent)
 
 RobotObstacle::~RobotObstacle()
 {
-	for (auto it = missiles_.begin(); it != missiles_.end();) {
-		*it = nullptr;
-		delete* it; // メモリを解放
-		it = missiles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
-	
-	}
-	
 }
 
 void RobotObstacle::Initialize()
@@ -47,10 +39,7 @@ void RobotObstacle::Update()
 	if (!active_) return;
 
 	if (Input::IsKeyDown(DIK_4)) {
-		int a = 0;
-
 		std::vector<Missile*> b = missiles_;
-	
 	}
 
 	Rotate();
@@ -158,6 +147,9 @@ void RobotObstacle::UpdateLeaving()
 {
 	transform_.position_.y += 2.0f;
 	if (transform_.position_.y > 40.0f) {
+		ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
+		pOM->removeObstacle(this);
+
 		KillMe();
 	}
 

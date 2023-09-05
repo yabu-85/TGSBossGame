@@ -8,8 +8,6 @@
 #include "RaserObstacle.h"
 #include "Engine/Input.h"
 
-#define SAFE_DELETE(p) {if ((p)!=nullptr) { delete (p); (p)=nullptr;}}
-
 //Ufoだけロード範囲を狭める
 static float ufoLoadRange = -20.0f;
 
@@ -52,7 +50,6 @@ void ObstacleManager::Update()
     }
 
     if (Input::IsKeyDown(DIK_3)) {
-        int a = 0;
         std::vector <Obstacle*> b = obstacles_;
     }
     
@@ -72,18 +69,11 @@ void ObstacleManager::Release()
 {
 }
 
-void ObstacleManager::addObstacle(Obstacle* _obstacle)
-{
-    obstacles_.push_back(_obstacle);
-}
-
 void ObstacleManager::removeObstacle(Obstacle* _obstacle)
 {
     if (_obstacle != nullptr) {
         for (auto it = obstacles_.begin(); it != obstacles_.end();) {
             if (*it == _obstacle) {
-                *it = nullptr;
-                delete* it; // メモリを解放
                 it = obstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
             }
             else {
@@ -91,28 +81,6 @@ void ObstacleManager::removeObstacle(Obstacle* _obstacle)
             }
         }
     }
-}
-
-void ObstacleManager::removeObstacle(RobotObstacle* _obstacle)
-{
-    if (_obstacle != nullptr) {
-        for (auto it = obstacles_.begin(); it != obstacles_.end();) {
-            if (*it == _obstacle) {
-                *it = nullptr;
-                delete* it; // メモリを解放
-                it = obstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
-            }
-            else {
-                it++;
-            }
-        }
-    }
-}
-
-void ObstacleManager::removeObstacle(UfoObstacle* _obstacle)
-{
-    removeObstacle((RobotObstacle*)_obstacle);
-
 }
 
 void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type)
@@ -140,9 +108,8 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     {
         pObstacle->SetPosition(_position);
         pObstacle->SetCsvPos(_position);
-        addObstacle(pObstacle);
+        obstacles_.push_back(pObstacle);
     }
-
 }
 
 void ObstacleManager::LoadCsv()
@@ -150,7 +117,6 @@ void ObstacleManager::LoadCsv()
     //CSVデータをテーブルに格納
     for (Obstacle* e : obstacles_) {
         if (!e) {
-            removeObstacle(e);
             continue;
         }
 
@@ -176,7 +142,6 @@ void ObstacleManager::a()
 {
     for (Obstacle* e : obstacles_) {
         if (!e) {
-            removeObstacle(e);
             continue;
         }
         

@@ -91,6 +91,7 @@ void Stage::Release()
         delete[] table_[x];
     }
     delete[] table_;
+    table_ = nullptr;
 }
 
 float Stage::GetFloorHeight(int x, int z)

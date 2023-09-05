@@ -41,12 +41,7 @@ public:
     void Draw() override;
     void Release() override;
 
-    // è·äQï®Çí«â¡Ç∑ÇÈ
-    void addObstacle(Obstacle* _obstacle);
-
     void removeObstacle(Obstacle* _obstacle);
-    void removeObstacle(RobotObstacle* _obstacle);
-    void removeObstacle(UfoObstacle* _obstacle);
 
     // è·äQï®Çê∂ê¨ÇµÇƒí«â¡Ç∑ÇÈ
     void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);

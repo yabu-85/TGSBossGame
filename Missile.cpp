@@ -97,7 +97,7 @@ void Missile::Update()
             }
 
             AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);
-            Model::SetDraw(hModel_, false);
+            Model::StopDraw(hModel_);
             KillMe();
         }
 
@@ -145,7 +145,7 @@ void Missile::Update()
         if (!pRobotObstacle_->IsDead())
             pRobotObstacle_->NotifyMissileDestroyed(this);
 
-        Model::SetDraw(hModel_, false);
+        Model::StopDraw(hModel_);
         KillMe();
 
     }
@@ -184,7 +184,7 @@ void Missile::Update()
         if (!pRobotObstacle_->IsDead())
             pRobotObstacle_->NotifyMissileDestroyed(this);
 
-        Model::SetDraw(hModel_, false);
+        Model::StopDraw(hModel_);
         KillMe();
     }
 }

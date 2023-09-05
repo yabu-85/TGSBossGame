@@ -71,6 +71,12 @@ namespace Model
 					pOr->shadeType_ = _type;
 					pOr->isDraw_ = true;
 					_orderDatas.push_back(pOr);
+
+					// 描画順序に基づいてソート
+					std::sort(_orderDatas.begin(), _orderDatas.end(),
+						[](const OrderModel* a, const OrderModel* b) {
+							return a->drawOrder_ < b->drawOrder_;
+						});
 				}
 
 				return i;
@@ -87,6 +93,12 @@ namespace Model
 			pOr->shadeType_ = _type;
 			pOr->isDraw_ = true;
 			_orderDatas.push_back(pOr);
+
+			// 描画順序に基づいてソート
+			std::sort(_orderDatas.begin(), _orderDatas.end(),
+				[](const OrderModel* a, const OrderModel* b) {
+					return a->drawOrder_ < b->drawOrder_;
+				});
 		}
 
 		return (int)_datas.size() - 1;
@@ -300,8 +312,16 @@ namespace Model
 			_datas[handle]->pFbx->RayCast(data); 
 	}
 
-	void SetDraw(int handle, bool b)
+	void StopDraw(int handle)
 	{
-	
+		for (auto it = _orderDatas.begin(); it != _orderDatas.end(); ++it)
+		{
+			if ((*it)->handle_ == handle)
+			{
+				delete* it;
+				_orderDatas.erase(it);
+				break;
+			}
+		}
 	}
 }

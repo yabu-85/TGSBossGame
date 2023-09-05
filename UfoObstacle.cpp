@@ -1,5 +1,4 @@
 #include "UfoObstacle.h"
-#include "Engine/SphereCollider.h"
 #include "Engine/Model.h"
 #include "Engine/VFX.h"
 #include "Engine/Direct3D.h"
@@ -160,7 +159,7 @@ void UfoObstacle::UpdatePreparation()
 	if (stateEnter_) {
 		stateEnter_ = false;
 		time_ = 0;
-		Model::SetDraw(hModel_, false);
+		Model::StopDraw(hModelSub_[2]);
 
 	}
 

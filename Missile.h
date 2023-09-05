@@ -24,6 +24,7 @@ class Missile :
 	float impact;					//衝突距離
     bool missileReflected_;         //反射されたかどうか falseされてない
 	bool isActive_;					//アクティブ状態か
+	
 	RobotObstacle* pRobotObstacle_;	
 	Player* pPlayer_;
 
