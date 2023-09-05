@@ -32,8 +32,6 @@ class ObstacleManager : public GameObject
     bool isActive_;
     Player* pPlayer_;
 
-    void InitCsv();
-
 public:
     ObstacleManager(GameObject* parent);
     ~ObstacleManager();
@@ -41,6 +39,9 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+
+    //障害物初期配置
+    void InitCsv(std::string mp);
 
     //リストから削除
     void removeObstacle(Obstacle* _obstacle);

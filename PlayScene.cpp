@@ -31,6 +31,7 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	std::string stageName[] = { "Map1", "Map2" };
+	int time[] = { 80, 50 };
 
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	int stage = pSceneManager->GetPlayStage() - 1;
@@ -43,10 +44,11 @@ void PlayScene::Initialize()
 
 	pPlayer_ = Instantiate<Player>(this);
 	Instantiate<SkyBox>(this);
-	Instantiate<ObstacleManager>(this);
+	ObstacleManager* pObstacleManager = Instantiate<ObstacleManager>(this);
+	pObstacleManager->InitCsv(stageName[stage]);
 
 	pTimer_ = Instantiate<Timer>(this);
-	pTimer_->SetLimit(100);
+	pTimer_->SetLimit(time[stage]);
 	pTimer_->Start();
 
 	//•`‰æ‡’²®‚Ì‚½‚ß‚±‚±‚Åi‘¼‚Ì‚à/Draw‚Å—Dæ“xŒˆ‚ß‚ê‚é‚æ‚¤‚É‚µ‚½‚¢

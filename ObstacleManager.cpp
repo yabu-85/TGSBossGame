@@ -36,7 +36,6 @@ void ObstacleManager::Update()
     if (pPlayer_ == nullptr) {
         if (FindObject("Player")) {
             pPlayer_ = (Player*)FindObject("Player");
-            InitCsv();
         }
 
         return;
@@ -62,6 +61,50 @@ void ObstacleManager::Draw()
 
 void ObstacleManager::Release()
 {
+}
+
+void ObstacleManager::InitCsv(std::string mp)
+{
+    // CSVファイル読み込み
+    csv_.Load(mp + ".csv");
+
+    //ステージの幅と高さを設定
+    width_ = (int)csv_.GetWidth();
+    height_ = (int)csv_.GetHeight();
+
+    //レーザーの描画の問題でUFOを先にInitializeしておく
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < width_; x++) {
+        for (int y = 0; y < height_; y++) {
+            if (csv_.GetValue(x, y) != 0)
+            {
+                XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
+                int intValue = csv_.GetValue(x, y);
+                if (intValue != OBSTACLE_UFO) {
+                    ObstacleType a = static_cast<ObstacleType>(intValue);
+                    createAndAddObstacle(position, a);
+
+                }
+            }
+        }
+    }
+
+    //UFO以外のをInitializeする
+    //CSVデータをテーブルに格納
+    for (int x = 0; x < width_; x++) {
+        for (int y = 0; y < height_; y++) {
+            if (csv_.GetValue(x, y) != 0)
+            {
+                XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
+                int intValue = csv_.GetValue(x, y);
+                if (intValue == OBSTACLE_UFO) {
+                    ObstacleType a = static_cast<ObstacleType>(intValue);
+                    createAndAddObstacle(position, a);
+
+                }
+            }
+        }
+    }
 }
 
 void ObstacleManager::removeObstacle(Obstacle* _obstacle)
@@ -204,49 +247,5 @@ void ObstacleManager::SetAllObstacleActive(bool b)
             }
         }
 
-    }
-}
-
-void ObstacleManager::InitCsv()
-{
-    // CSVファイル読み込み
-    csv_.Load("Map1.csv");
-
-    //ステージの幅と高さを設定
-    width_ = (int)csv_.GetWidth();
-    height_ = (int)csv_.GetHeight();
-
-    //レーザーの描画の問題でUFOを先にInitializeしておく
-    //CSVデータをテーブルに格納
-    for (int x = 0; x < width_; x++) {
-        for (int y = 0; y < height_; y++) {
-            if (csv_.GetValue(x, y) != 0)
-            {
-                XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
-                int intValue = csv_.GetValue(x, y);
-                if (intValue != OBSTACLE_UFO) {
-                    ObstacleType a = static_cast<ObstacleType>(intValue);
-                    createAndAddObstacle(position, a);
-                    
-                }
-            }
-        }
-    }
-
-    //UFO以外のをInitializeする
-    //CSVデータをテーブルに格納
-    for (int x = 0; x < width_; x++) {
-        for (int y = 0; y < height_; y++) {
-            if (csv_.GetValue(x, y) != 0)
-            {
-                XMFLOAT3 position((float)x + 0.5f, 50, (float)(height_ - y) - 0.5f);
-                int intValue = csv_.GetValue(x, y);
-                if (intValue == OBSTACLE_UFO) {
-                    ObstacleType a = static_cast<ObstacleType>(intValue);
-                    createAndAddObstacle(position, a);
-
-                }
-            }
-        }
     }
 }
