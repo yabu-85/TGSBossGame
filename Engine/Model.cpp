@@ -212,6 +212,16 @@ namespace Model
 			}
 		}
 		_datas.clear();
+
+		for (int i = 0; i < _orderDatas.size(); i++)
+		{
+			if (_orderDatas[i] != nullptr)
+			{
+				Release(i);
+			}
+		}
+		_orderDatas.clear();
+
 	}
 
 	void SetAnimeStop(int handle, bool b)
@@ -292,9 +302,6 @@ namespace Model
 
 	void SetDraw(int handle, bool b)
 	{
-		OrderModel* e = (OrderModel*)_datas[handle];
-		e->isDraw_ = b;
-
-		_orderDatas[handle]->isDraw_ = b;
+	
 	}
 }

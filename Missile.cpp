@@ -16,7 +16,6 @@ Missile::Missile(GameObject* parent)
 
 Missile::~Missile()
 {
-    Model::SetDraw(hModel_, false);
 }
 
 void Missile::Initialize()
@@ -98,6 +97,7 @@ void Missile::Update()
             }
 
             AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);
+            Model::SetDraw(hModel_, false);
             KillMe();
         }
 
@@ -144,7 +144,8 @@ void Missile::Update()
         
         if (!pRobotObstacle_->IsDead())
             pRobotObstacle_->NotifyMissileDestroyed(this);
-        
+
+        Model::SetDraw(hModel_, false);
         KillMe();
 
     }
@@ -182,12 +183,10 @@ void Missile::Update()
 
         if (!pRobotObstacle_->IsDead())
             pRobotObstacle_->NotifyMissileDestroyed(this);
-        
+
+        Model::SetDraw(hModel_, false);
         KillMe();
     }
-
-
-
 }
 
 void Missile::Draw()

@@ -6,7 +6,7 @@
 #include "Missile.h"
 #include "Engine/VFX.h"
 #include "AudioManager.h"
-#include <vector>
+#include "Engine/Input.h"
 
 RobotObstacle::RobotObstacle(GameObject* parent)
 	:Obstacle(parent), pPlayer_(nullptr), hModelHead_(-1), count_(0), state_(S_ENTER), stateEnter_(true)
@@ -16,6 +16,13 @@ RobotObstacle::RobotObstacle(GameObject* parent)
 
 RobotObstacle::~RobotObstacle()
 {
+	for (auto it = missiles_.begin(); it != missiles_.end();) {
+		*it = nullptr;
+		delete* it; // メモリを解放
+		it = missiles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+	
+	}
+	
 }
 
 void RobotObstacle::Initialize()
@@ -38,6 +45,13 @@ void RobotObstacle::Initialize()
 void RobotObstacle::Update()
 {
 	if (!active_) return;
+
+	if (Input::IsKeyDown(DIK_4)) {
+		int a = 0;
+
+		std::vector<Missile*> b = missiles_;
+	
+	}
 
 	Rotate();
 
@@ -80,8 +94,16 @@ void RobotObstacle::Release()
 
 void RobotObstacle::NotifyMissileDestroyed(Missile* destMissile) {
 	if (destMissile != nullptr) {
-		auto newEnd = std::remove(missiles_.begin(), missiles_.end(), destMissile);
-		missiles_.erase(newEnd, missiles_.end());
+		for (auto it = missiles_.begin(); it != missiles_.end();) {
+			if (*it == destMissile) {
+				*it = nullptr;
+				delete* it; // メモリを解放
+				it = missiles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+			}
+			else {
+				it++;
+			}
+		}
 	}
 }
 

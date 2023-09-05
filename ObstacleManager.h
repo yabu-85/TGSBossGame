@@ -6,6 +6,9 @@
 
 class Player;
 
+class RobotObstacle;
+class UfoObstacle;
+
 class ObstacleManager : public GameObject
 {
     // è·äQï®î‘çÜ
@@ -42,6 +45,8 @@ public:
     void addObstacle(Obstacle* _obstacle);
 
     void removeObstacle(Obstacle* _obstacle);
+    void removeObstacle(RobotObstacle* _obstacle);
+    void removeObstacle(UfoObstacle* _obstacle);
 
     // è·äQï®Çê∂ê¨ÇµÇƒí«â¡Ç∑ÇÈ
     void createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type);

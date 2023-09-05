@@ -51,7 +51,7 @@ void ObstacleManager::Update()
         return;
     }
 
-    if (Input::IsKeyDown(DIK_F)) {
+    if (Input::IsKeyDown(DIK_3)) {
         int a = 0;
         std::vector <Obstacle*> b = obstacles_;
     }
@@ -82,8 +82,8 @@ void ObstacleManager::removeObstacle(Obstacle* _obstacle)
     if (_obstacle != nullptr) {
         for (auto it = obstacles_.begin(); it != obstacles_.end();) {
             if (*it == _obstacle) {
-            //    *it = nullptr;
-            //    delete* it; // メモリを解放
+                *it = nullptr;
+                delete* it; // メモリを解放
                 it = obstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
             }
             else {
@@ -93,6 +93,28 @@ void ObstacleManager::removeObstacle(Obstacle* _obstacle)
     }
 }
 
+void ObstacleManager::removeObstacle(RobotObstacle* _obstacle)
+{
+    if (_obstacle != nullptr) {
+        for (auto it = obstacles_.begin(); it != obstacles_.end();) {
+            if (*it == _obstacle) {
+                *it = nullptr;
+                delete* it; // メモリを解放
+                it = obstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+            }
+            else {
+                it++;
+            }
+        }
+    }
+}
+
+void ObstacleManager::removeObstacle(UfoObstacle* _obstacle)
+{
+    removeObstacle((RobotObstacle*)_obstacle);
+
+}
+
 void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _type)
 {
     Obstacle* pObstacle = nullptr;
@@ -100,16 +122,16 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     switch (_type)
     {
     case ObstacleType::OBSTACLE_WALL:
-        pObstacle = Instantiate<WallObstacle>(this);
+        pObstacle = (WallObstacle*)Instantiate<WallObstacle>(this);
         break;
     case ObstacleType::OBSTACLE_UFO:
-        pObstacle = Instantiate<UfoObstacle>(this);
+        pObstacle = (UfoObstacle*)Instantiate<UfoObstacle>(this);
         break;
     case ObstacleType::OBSTACLE_ROBOT:
-        pObstacle = Instantiate<RobotObstacle>(this);
+        pObstacle = (RobotObstacle*)Instantiate<RobotObstacle>(this);
         break;
     case ObstacleType::OBSTACLE_RASER:
-        pObstacle = Instantiate<RaserObstacle>(this);
+        pObstacle = (RaserObstacle*)Instantiate<RaserObstacle>(this);
         break;
     }
 
@@ -161,7 +183,7 @@ void ObstacleManager::a()
         if (e->GetObjectName() == "RobotObstacle") {
             RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
 
-            std::list<Missile*> mis = pRobot->GetMissiles();
+            std::vector<Missile*> mis = pRobot->GetMissiles();
             for (Missile* missile : mis) {
                 missile->Reflect();
             }
@@ -187,7 +209,7 @@ void ObstacleManager::SetAllObstacleActive(bool b)
             RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
             if (!pRobot) continue;
 
-            std::list<Missile*> mis = pRobot->GetMissiles();
+            std::vector<Missile*> mis = pRobot->GetMissiles();
             for (Missile* missile : mis) {
                 missile->SetActive(b);
 

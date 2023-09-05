@@ -76,17 +76,6 @@ void Player::Update()
 {
     if (!isActive_) return;
 
-    if (transform_.position_.y <= -9.0f) {
-        pSpeedCtrl_->ResetSpeed();
-        firstJump_ = false;
-        secondJump_ = false;
-        bulletJump_ = false;
-        playerMovement_ = { 0.0f , 0.0f , 0.0f };
-        transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
-        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
-        graY_ = 0.0f;
-    }
-
     switch (state_) {
     case STATE::S_IDLE:
         UpdateIdle();
@@ -114,7 +103,18 @@ void Player::Update()
     IsInWall();
 
     if (transform_.position_.x <= 0.0f) transform_.position_.x = 0.0f;
-    if (transform_.position_.x >= 7.0f) transform_.position_.x = 6.99f;
+    if (transform_.position_.x >= 6.9f) transform_.position_.x = 6.9f;
+
+    if (transform_.position_.y <= -9.0f) {
+        pSpeedCtrl_->ResetSpeed();
+        firstJump_ = false;
+        secondJump_ = false;
+        bulletJump_ = false;
+        playerMovement_ = { 0.0f , 0.0f , 0.0f };
+        transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
+        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+        graY_ = 0.0f;
+    }
 
     //ˆÚ“®‚·‚é‚È‚çŒü‚«‚ð•Ï‚¦‚é
     if (IsMovementKeyPressed()) GradualRotate(playerMovement_.x, playerMovement_.z);

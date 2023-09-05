@@ -144,8 +144,8 @@ XMFLOAT3 Stage::GetPlaPos()
 
 XMFLOAT3 Stage::NearestFloorLocation(XMFLOAT3 pos)
 {
-    if (pos.z < 15) pos.z = 15;
-    for (int z = pos.z - 15; z > 0; z--) {
+    if (pos.z < 0) pos.z = 0;
+    for (int z = pos.z - 0; z > 0; z--) {
         for (int x = 0; x < width_; x++)
         {
             if (table_[x][z] == 0) {

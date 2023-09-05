@@ -1,5 +1,6 @@
 #pragma once
 #include "Obstacle.h"
+#include <vector>
 
 class Player;
 class Missile;
@@ -26,7 +27,8 @@ class RobotObstacle :
     int hModelHead_;
     float count_;
     Player* pPlayer_;
-    std::list<Missile*> missiles_;
+
+    std::vector<Missile*> missiles_;
 
     //回転する
     void Rotate();
@@ -45,7 +47,7 @@ public:
     void NotifyMissileDestroyed(Missile* destMissile);
 
     //ミサイルのリスト取得
-    std::list<Missile*> GetMissiles() { return missiles_; };
+    std::vector<Missile*> GetMissiles() { return missiles_; };
 
     //
     void KillMeSub();
