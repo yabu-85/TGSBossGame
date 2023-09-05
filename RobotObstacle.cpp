@@ -23,7 +23,6 @@ void RobotObstacle::Initialize()
 	hModel_ = Model::Load("Model/Robot_Body.fbx");
 	assert(hModel_ >= 0);
 
-	//ƒ‚ƒfƒ‹ƒ[ƒh
 	hModelHead_ = Model::Load("Model/Robot_Head.fbx");
 	assert(hModelHead_ >= 0);
 

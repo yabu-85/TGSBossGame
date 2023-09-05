@@ -19,6 +19,7 @@ class ObstacleManager : public GameObject
         OBSTACLE_UFO,
         OBSTACLE_ROBOT,
         OBSTACLE_RASER,
+        OBSTACLE_BOSS,
         OBSTACLE_MAX,
     };
 

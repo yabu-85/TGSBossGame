@@ -17,7 +17,6 @@ void RaserObstacle::Initialize()
 	hModel_ = Model::Load("Model/Robot_Body_Raser.fbx");
 	assert(hModel_ >= 0);
 
-	//ƒ‚ƒfƒ‹ƒ[ƒh
 	hModelHead_ = Model::Load("Model/Robot_Head_Raser.fbx");
 	assert(hModelHead_ >= 0);
 

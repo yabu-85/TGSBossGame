@@ -34,8 +34,6 @@ PlayScene::PlayScene(GameObject* parent)
 //‰Šú‰»
 void PlayScene::Initialize()
 {
-
-
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	int stage = pSceneManager->GetPlayStage() - 1;
 

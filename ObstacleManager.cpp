@@ -7,6 +7,7 @@
 #include "Missile.h"
 #include "RaserObstacle.h"
 #include "Engine/Input.h"
+#include "BossObstacle.h"
 
 //UfoÇæÇØÉçÅ[ÉhîÕàÕÇã∑ÇﬂÇÈ
 static float ufoLoadRange = -20.0f;
@@ -153,6 +154,9 @@ void ObstacleManager::createAndAddObstacle(XMFLOAT3 _position, ObstacleType _typ
     case ObstacleType::OBSTACLE_RASER:
         pObstacle = (RaserObstacle*)Instantiate<RaserObstacle>(this);
         break;
+    case ObstacleType::OBSTACLE_BOSS:
+        pObstacle = (BossObstacle*)Instantiate<BossObstacle>(this);
+        break;
     }
 
     //nullptrÇ∂Ç·Ç»ÇØÇÍÇŒ
@@ -246,6 +250,5 @@ void ObstacleManager::SetAllObstacleActive(bool b)
                 }
             }
         }
-
     }
 }
