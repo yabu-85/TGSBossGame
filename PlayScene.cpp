@@ -19,6 +19,10 @@ namespace {
 	int stopTime;	//resultシーン移行までの待機時間
 	int result;		//1=クリア 2=ゲームオーバー
 
+	//ステージごとの設定
+	std::string stageName[] = { "Map1", "Map2" };
+	int stageTime[] = { 80, 50 };
+
 }
 
 //コンストラクタ
@@ -30,8 +34,7 @@ PlayScene::PlayScene(GameObject* parent)
 //初期化
 void PlayScene::Initialize()
 {
-	std::string stageName[] = { "Map1", "Map2" };
-	int time[] = { 80, 50 };
+
 
 	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 	int stage = pSceneManager->GetPlayStage() - 1;
@@ -48,7 +51,7 @@ void PlayScene::Initialize()
 	pObstacleManager->InitCsv(stageName[stage]);
 
 	pTimer_ = Instantiate<Timer>(this);
-	pTimer_->SetLimit(time[stage]);
+	pTimer_->SetLimit(stageTime[stage]);
 	pTimer_->Start();
 
 	//描画順調整のためここで（他のも/Drawで優先度決めれるようにしたい
