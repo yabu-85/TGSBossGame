@@ -105,6 +105,12 @@ void Player::Update()
     transform_.position_.x += ((playerMovement_.x * moveSpeed_) * pSpeedCtrl_->GetMoveSpeed_()); // ˆÚ“®I
     transform_.position_.z += ((playerMovement_.z * moveSpeed_) * pSpeedCtrl_->GetMoveSpeed_()); // z
 
+    if (transform_.position_.y < 0.0f && prevYHeight == transform_.position_.y) {
+        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+        if (!IsMovementKeyPressed()) playerMovement_ = { 0,0,0 };
+    }
+    prevYHeight = transform_.position_.y;
+
     IsInWall();
 
     if (transform_.position_.x <= 0.0f) transform_.position_.x = 0.0f;

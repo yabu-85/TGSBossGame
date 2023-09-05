@@ -6,6 +6,9 @@
 #include "Player.h"
 #include "Missile.h"
 #include "RaserObstacle.h"
+#include "Engine/Input.h"
+
+#define SAFE_DELETE(p) {if ((p)!=nullptr) { delete (p); (p)=nullptr;}}
 
 //Ufoだけロード範囲を狭める
 static float ufoLoadRange = -20.0f;
@@ -47,6 +50,11 @@ void ObstacleManager::Update()
 
         return;
     }
+
+    if (Input::IsKeyDown(DIK_F)) {
+        int a = 0;
+        std::vector <Obstacle*> b = obstacles_;
+    }
     
     int plaPosZ = (int)pPlayer_->GetPosition().z;
     if (activationZoneSub_ < activationZone_ + plaPosZ) {
@@ -72,9 +80,16 @@ void ObstacleManager::addObstacle(Obstacle* _obstacle)
 void ObstacleManager::removeObstacle(Obstacle* _obstacle)
 {
     if (_obstacle != nullptr) {
-        auto newEnd = std::remove(obstacles_.begin(), obstacles_.end(), _obstacle);
-        obstacles_.erase(newEnd, obstacles_.end());
-        _obstacle = nullptr;
+        for (auto it = obstacles_.begin(); it != obstacles_.end();) {
+            if (*it == _obstacle) {
+            //    *it = nullptr;
+            //    delete* it; // メモリを解放
+                it = obstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+            }
+            else {
+                it++;
+            }
+        }
     }
 }
 
@@ -118,24 +133,16 @@ void ObstacleManager::LoadCsv()
         }
 
         if (e->GetObjectName() == "UfoObstacle"){ 
-            Obstacle* pObstacle = dynamic_cast<Obstacle*>(e);
-            int a = 100;
-            Obstacle* pp = pObstacle;
-
-            if (pObstacle->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
-                pObstacle->SetDraw(true);
-                pObstacle->SetActive(true);
-
+            if (e->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
+                e->SetDraw(true);
+                e->SetActive(true);
             }
         }
 
         else {  //他の障害物の処理
-            Obstacle* pObstacle = dynamic_cast<Obstacle*>(e);
-            Obstacle* pp = pObstacle;
-
-            if (pObstacle->GetCsvPos().z <= activationZoneSub_) {
-                pObstacle->SetDraw(true);
-                pObstacle->SetActive(true);
+            if (e->GetCsvPos().z <= activationZoneSub_) {
+                e->SetDraw(true);
+                e->SetActive(true);
             }
         }
     }
@@ -146,7 +153,10 @@ void ObstacleManager::LoadCsv()
 void ObstacleManager::a()
 {
     for (Obstacle* e : obstacles_) {
-        if (!e) continue;
+        if (!e) {
+            removeObstacle(e);
+            continue;
+        }
         
         if (e->GetObjectName() == "RobotObstacle") {
             RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);

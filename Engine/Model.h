@@ -17,15 +17,6 @@ namespace Model
 		//ファイル名
 		std::string fileName;
 
-		//描画する順番
-		int drawOrder_;
-
-		//シェーダーのタイプ
-		int shadeType_;
-
-		//描画するかどうか
-		bool isDraw_;
-
 		//ロードしたモデルデータのアドレス
 		Fbx*		pFbx;
 
@@ -47,8 +38,7 @@ namespace Model
 
 		//初期化
 		ModelData() : pFbx(nullptr), isAimeStop(false), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0),
-			isBlending(false), blendNowFrame(0.0f), blendStartFrame(0), blendEndFrame(0), blendWeight(0.0f), drawOrder_(-1),
-			shadeType_(0)
+			isBlending(false), blendNowFrame(0.0f), blendStartFrame(0), blendEndFrame(0), blendWeight(0.0f)
 		{
 		}
 

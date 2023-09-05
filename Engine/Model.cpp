@@ -8,6 +8,15 @@ namespace Model
 	//ロード済みのモデルデータ一覧
 	std::vector<ModelData*>	_datas;
 
+	struct OrderModel
+	{
+		int handle_;
+		int drawOrder_;		//描画する順番
+		int shadeType_;		//シェーダーのタイプ
+		bool isDraw_;		//描画するかどうか
+	};
+	std::vector <OrderModel*> _orderDatas;
+
 	//初期化
 	void Initialize()
 	{
@@ -18,14 +27,6 @@ namespace Model
 	int Load(std::string fileName, int _order, int _type)
 	{
 		ModelData* pData = new ModelData;
-
-		if (_order >= 0) {
-
-			pData->drawOrder_ = _order;
-			pData->shadeType_ = _type;
-			pData->isDraw_ = true;
-
-		}
 
 		//開いたファイル一覧から同じファイル名のものが無いか探す
 		bool isExist = false;
@@ -62,12 +63,32 @@ namespace Model
 			if (_datas[i] == nullptr)
 			{
 				_datas[i] = pData;
+
+				if (_order >= 0) {
+					OrderModel* pOr = new OrderModel;
+					pOr->handle_ = (int)_datas.size() - 1;
+					pOr->drawOrder_ = _order;
+					pOr->shadeType_ = _type;
+					pOr->isDraw_ = true;
+					_orderDatas.push_back(pOr);
+				}
+
 				return i;
 			}
 		}
 
 		//新たに追加
 		_datas.push_back(pData);
+
+		if (_order >= 0) {
+			OrderModel* pOr = new OrderModel;
+			pOr->handle_ = (int)_datas.size() - 1;
+			pOr->drawOrder_ = _order;
+			pOr->shadeType_ = _type;
+			pOr->isDraw_ = true;
+			_orderDatas.push_back(pOr);
+		}
+
 		return (int)_datas.size() - 1;
 	}
 
@@ -112,47 +133,40 @@ namespace Model
 
 	void DrawOrder()
 	{
-		for (ModelData *e : _datas) {
-			if (e->drawOrder_ != 0) continue;
-
-			if (!e->isDraw_ || e == nullptr) continue;
+		for (OrderModel *e : _orderDatas) {
+			if (!e->isDraw_ || e->drawOrder_ != 0 || e == nullptr) continue;
 
 			//アニメーションを進める
-			if (e->isAimeStop == false) e->nowFrame += e->animSpeed;
+			if (_datas[e->handle_]->isAimeStop == false) _datas[e->handle_]->nowFrame += _datas[e->handle_]->animSpeed;
 
 			//最後までアニメーションしたら戻す
-			if (e->nowFrame > (float)e->endFrame)
-				e->nowFrame = (float)e->startFrame;
+			if (_datas[e->handle_]->nowFrame > (float)_datas[e->handle_]->endFrame)
+				_datas[e->handle_]->nowFrame = (float)_datas[e->handle_]->startFrame;
 
-			if (e->pFbx)
+			if (_datas[e->handle_]->pFbx)
 			{
 				// 現在のアニメーションフレームでモデルを描画
-				e->pFbx->Draw(e->transform, (int)e->nowFrame, e->shadeType_);
-
+				_datas[e->handle_]->pFbx->Draw(_datas[e->handle_]->transform, (int)_datas[e->handle_]->nowFrame, e->shadeType_);
 			}
 		}
-
-		for (ModelData* e : _datas) {
-			if (e->drawOrder_ != 1) continue;
-
-			if (!e->isDraw_ || e == nullptr) continue;
+	
+		for (OrderModel* e : _orderDatas) {
+			if (!e->isDraw_ || e->drawOrder_ != 1 || e == nullptr) continue;
 
 			//アニメーションを進める
-			if (e->isAimeStop == false) e->nowFrame += e->animSpeed;
+			if (_datas[e->handle_]->isAimeStop == false) _datas[e->handle_]->nowFrame += _datas[e->handle_]->animSpeed;
 
 			//最後までアニメーションしたら戻す
-			if (e->nowFrame > (float)e->endFrame)
-				e->nowFrame = (float)e->startFrame;
+			if (_datas[e->handle_]->nowFrame > (float)_datas[e->handle_]->endFrame)
+				_datas[e->handle_]->nowFrame = (float)_datas[e->handle_]->startFrame;
 
-			if (e->pFbx)
+			if (_datas[e->handle_]->pFbx)
 			{
 				// 現在のアニメーションフレームでモデルを描画
-				e->pFbx->Draw(e->transform, (int)e->nowFrame, e->shadeType_);
-
+				_datas[e->handle_]->pFbx->Draw(_datas[e->handle_]->transform, (int)_datas[e->handle_]->nowFrame, e->shadeType_);
 			}
 		}
-
-
+	
 	}
 
 
@@ -275,8 +289,12 @@ namespace Model
 
 			_datas[handle]->pFbx->RayCast(data); 
 	}
+
 	void SetDraw(int handle, bool b)
 	{
-		_datas[handle]->isDraw_ = b;
+		OrderModel* e = (OrderModel*)_datas[handle];
+		e->isDraw_ = b;
+
+		_orderDatas[handle]->isDraw_ = b;
 	}
 }
