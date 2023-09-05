@@ -47,17 +47,17 @@ void Missile::Initialize()
     dataExp_.delay = 0;
     dataExp_.number = 1;
     dataExp_.lifeTime = 60;
-    dataExp_.positionRnd = XMFLOAT3(0.5, 0, 0.5);
-    dataExp_.direction = XMFLOAT3(0, 1, 0);
-    dataExp_.directionRnd = XMFLOAT3(90, 90, 90);
+    dataExp_.positionRnd = XMFLOAT3(0.5f, 0.0f, 0.5f);
+    dataExp_.direction = XMFLOAT3(0.0f, 1.0f, 0.0f);
+    dataExp_.directionRnd = XMFLOAT3(90.0f, 90.0f, 90.0f);
     dataExp_.speed = 0.1f;
     dataExp_.speedRnd = 1.0f;
-    dataExp_.accel = 0.93;
-    dataExp_.size = XMFLOAT2(0.4, 0.4);
-    dataExp_.sizeRnd = XMFLOAT2(0.4, 0.4);
-    dataExp_.scale = XMFLOAT2(0.9, 0.9);
-    dataExp_.color = XMFLOAT4(1, 1, 0.1, 1);
-    dataExp_.deltaColor = XMFLOAT4(0, 0, 0, 0);
+    dataExp_.accel = 0.93f;
+    dataExp_.size = XMFLOAT2(0.4f, 0.4f);
+    dataExp_.sizeRnd = XMFLOAT2(0.4f, 0.4f);
+    dataExp_.scale = XMFLOAT2(0.9f, 0.9f);
+    dataExp_.color = XMFLOAT4(1.0f, 1.0f, 0.1f, 1.0f);
+    dataExp_.deltaColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
     dataExp_.gravity = 0.003f;
 
 }
@@ -132,7 +132,7 @@ void Missile::Update()
     XMFLOAT3 tar;
     pos = transform_.position_;
     XMStoreFloat3(&tar, target);
-    float distance = sqrt(
+    float distance = (float)sqrt(
         (tar.x - pos.x) * (tar.x - pos.x) +
         (tar.y - pos.y) * (tar.y - pos.y) +
         (tar.z - pos.z) * (tar.z - pos.z)
@@ -170,7 +170,7 @@ void Missile::Update()
     //‚±‚Á‚¿‚ÍƒvƒŒƒCƒ„[‚Æ‚Ì”ÍˆÍ“à‚©
     XMFLOAT3 pPos = pPlayer_->GetPosition();
     pPos.y += 0.5f;
-    distance = sqrt(
+    distance = (float)sqrt(
         (pPos.x - pos.x) * (pPos.x - pos.x) +
         (pPos.y - pos.y) * (pPos.y - pos.y) +
         (pPos.z - pos.z) * (pPos.z - pos.z)
@@ -215,7 +215,7 @@ void Missile::Reflect()
     pPos.y += 0.5f;
     XMFLOAT3 pos = transform_.position_;
 
-    float distance = sqrt(
+    float distance = (float)sqrt(
         (pPos.x - pos.x) * (pPos.x - pos.x) +
         (pPos.y - pos.y) * (pPos.y - pos.y) +
         (pPos.z - pos.z) * (pPos.z - pos.z)
@@ -239,15 +239,15 @@ void Missile::CreateExplodeParticle()
     data.delay = 0;
     data.number = 3;
     data.lifeTime = 30;
-    data.direction = XMFLOAT3(0, 1, 0);
-    data.directionRnd = XMFLOAT3(90, 90, 90);
+    data.direction = XMFLOAT3(0.0f, 1.0f, 0.0f);
+    data.directionRnd = XMFLOAT3(90.0f, 90.0f, 90.0f);
     data.speed = 0.1f;
-    data.speedRnd = 0.8;
-    data.size = XMFLOAT2(0.4, 0.4);
-    data.sizeRnd = XMFLOAT2(0.4, 0.4);
-    data.scale = XMFLOAT2(1.05, 1.05);
-    data.color = XMFLOAT4(1, 1, 0.1, 1);
-    data.deltaColor = XMFLOAT4(0, -1.0 / 20, 0, -1.0 / 20);
+    data.speedRnd = 0.8f;
+    data.size = XMFLOAT2(0.4f, 0.4f);
+    data.sizeRnd = XMFLOAT2(0.4f, 0.4f);
+    data.scale = XMFLOAT2(1.05f, 1.05f);
+    data.color = XMFLOAT4(1.0f, 1.0f, 0.1f, 1.0f);
+    data.deltaColor = XMFLOAT4(0.0f, -1.0f / 20.0f, 0.0f, -1.0f / 20.0f);
     VFX::Start(data);
 
 }

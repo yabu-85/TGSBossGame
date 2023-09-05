@@ -98,7 +98,7 @@ void Logo::Update()
 	if (seq_line + 1 == A_SLIDEIN || seq_line + 1 == A_SLIDEOUT) {
 		float t = currentTime / totalTime;
 		if (tbl[seq_line].alpha == 0.0f) t = 1.0f - t;
-		Image::SetAlpha(hPict_[0], 255 * t );
+		Image::SetAlpha(hPict_[0], (int)(255.0f * t) );
 	}
 
 

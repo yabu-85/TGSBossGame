@@ -23,38 +23,25 @@ class Stage : public GameObject
     int** table_;               //ステージセルのデータ
 
 public:
-    //コンストラクタ
     Stage(GameObject* parent);
-
-    //デストラクタ
     ~Stage();
-
-    //初期化
     void Initialize() override;
-
-    //更新
     void Update() override;
-
-    //描画
     void Draw() override;
-
-    //開放
     void Release() override;
 
-
-    //床の高さを取得する関数
-    float GetFloorHeight(int x, int z);
-
-    //壁であるか判定する関数
-    bool IsWall(int x, int z);
-
-    //モデル番号を取得する関数
-    int GetModelHandle(int i) { return hModel_[i]; }
-
-    //CSV上でのプレイヤー座標を取得する関数
-    XMFLOAT3 GetPlaPos(); 
-    int GetHeight() { return height_; };
-
+    
+    float GetFloorHeight(int x, int z);     //床の高さを取得する関数
+    bool IsWall(int x, int z);              //壁であるか判定する関数
+    int GetModelHandle(int i) { return hModel_[i]; } //モデル番号を取得する関数
+    XMFLOAT3 GetPlaPos();                   //CSV上でのプレイヤー座標を取得する関数
+    int GetHeight() { return height_; };    //マップの高さ（ゴールまで）
+    
+    //プレイヤーが落ちた時の一番近い床
     XMFLOAT3 NearestFloorLocation(XMFLOAT3 pos);
+
+    //
+    void InitMapData(std::string mp);
+
 };
 

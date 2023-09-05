@@ -17,7 +17,7 @@
 namespace {
 	int goal;
 	int stopTime;	//resultシーン移行までの待機時間
-	bool result;	//1=クリア 2=ゲームオーバー
+	int result;		//1=クリア 2=ゲームオーバー
 
 }
 
@@ -30,7 +30,13 @@ PlayScene::PlayScene(GameObject* parent)
 //初期化
 void PlayScene::Initialize()
 {
+	std::string stageName[] = { "Map1", "Map2" };
+
+	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+	int stage = pSceneManager->GetPlayStage() - 1;
+
 	Stage* pStage = Instantiate<Stage>(this);
+ 	pStage->InitMapData(stageName[stage]);
 	goal = pStage->GetHeight();
 	stopTime = 100;
 	result = 0;

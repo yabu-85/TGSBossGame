@@ -23,13 +23,6 @@ ObstacleManager::~ObstacleManager()
 
 void ObstacleManager::Initialize()
 {
-    // CSVファイル読み込み
-    csv_.Load("Obstacle.csv");
-
-    //ステージの幅と高さを設定
-    width_ = (int)csv_.GetWidth();
-    height_ = (int)csv_.GetHeight();
-
     activationZone_ = 70;
     activationZoneSub_ = activationZone_;
 
@@ -49,6 +42,7 @@ void ObstacleManager::Update()
         return;
     }
 
+    //デバッグ用ブレイクポイント
     if (Input::IsKeyDown(DIK_3)) {
         std::vector <Obstacle*> e = obstacles_;
         std::vector <Obstacle*> bi = inactiveObstacles_;
@@ -215,6 +209,13 @@ void ObstacleManager::SetAllObstacleActive(bool b)
 
 void ObstacleManager::InitCsv()
 {
+    // CSVファイル読み込み
+    csv_.Load("Map1.csv");
+
+    //ステージの幅と高さを設定
+    width_ = (int)csv_.GetWidth();
+    height_ = (int)csv_.GetHeight();
+
     //レーザーの描画の問題でUFOを先にInitializeしておく
     //CSVデータをテーブルに格納
     for (int x = 0; x < width_; x++) {

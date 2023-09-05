@@ -6,8 +6,8 @@
 enum SCENE_ID
 {
 	SCENE_ID_TITLE = 0,
-	SCENE_ID_PLAY = 1,
-	SCENE_ID_RESULT = 2,
+	SCENE_ID_PLAY,
+	SCENE_ID_RESULT,
 	
 	SCENE_ID_MAX,
 };
@@ -38,10 +38,17 @@ public:
 	void SetResult(bool b) { result_ = b; };
 	bool GetResult() { return result_; };
 
+	//PlaySceneに移動する時のStageをセット１，２
+	void SetPlayStage(int i) { playStage_ = i; };
+	int GetPlayStage() { return playStage_; };
+
 private:
 	SCENE_ID currentSceneID_;	//現在のシーン
 	SCENE_ID nextSceneID_;		//次のシーン
 
 	bool logoShown_;			//ロゴ表示したか（falseまだ
 	bool result_;				//クリアの場合はtrue
+
+	int playStage_;				//どのステージに移行するか
+
 };

@@ -46,6 +46,7 @@ void StageSelect::Update()
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //‘Ò‹@
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->SetPlayStage(1);
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "txtStage02") {
@@ -53,6 +54,7 @@ void StageSelect::Update()
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //‘Ò‹@
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->SetPlayStage(2);
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 	else if (pButtonFactory_->CheckButtonPressed() == "Back") {

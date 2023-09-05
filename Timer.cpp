@@ -36,7 +36,7 @@ void Timer::Update()
         if (frame_ > 0)
             frame_--;
 
-        calcTime_ -= (100.0 / FPS);
+        calcTime_ -= (100 / FPS);
         if (calcTime_ < 0) calcTime_ = 100;
 
     }
@@ -61,7 +61,7 @@ void Timer::Draw()
     Transform pic1 = transform_;
     pic1.scale_.x += 1.2f;
     pic1.scale_.y += 1.2f;
-    pic1.position_ = { -0.1f, 0.8, 0.0f };
+    pic1.position_ = { -0.1f, 0.8f, 0.0f };
     Image::SetTransform(hPict_[firstDigit], pic1);
     Image::Draw(hPict_[firstDigit]);
     

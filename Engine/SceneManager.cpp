@@ -11,7 +11,7 @@
 //コンストラクタ
 SceneManager::SceneManager(GameObject * parent)
 	: GameObject(parent, "SceneManager"), logoShown_(true), currentSceneID_(SCENE_ID_TITLE), nextSceneID_(SCENE_ID_TITLE),
-	result_(false)
+	result_(false), playStage_(0)
 {
 }
 

@@ -4,39 +4,10 @@
 
 
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), table_(nullptr)
+    :GameObject(parent, "Stage"), table_(nullptr), width_(0), height_(0)
 {
     for (int i = 0; i < TYPE_MAX; i++) hModel_[i] = -1;
 
-    //CSVファイル読み込み
-    CsvReader csv;
-    csv.Load("Obstacle.csv");
-
-    //ステージの幅と高さを設定
-    width_ = (int)csv.GetWidth();
-    height_ = (int)csv.GetHeight();
-
-    //CSVデータをテーブルに格納
-    table_ = new int* [width_];
-    for (int x = 0; x < width_; x++) 
-    {
-        table_[x] = new int[height_];
-        for (int y = 0; y < height_; y++)
-        {
-            if (csv.GetValue(x, y) == 10)
-            {
-                table_[x][height_ - 1 - y] = 10;
-            }
-            else if (csv.GetValue(x, y) != -1)
-            {
-                table_[x][height_ - 1 - y] = 0;
-            }
-            else
-            {
-                table_[x][height_ - 1 - y] = -1;
-            }
-        }
-    }
 }
 
 Stage::~Stage()
@@ -148,7 +119,7 @@ XMFLOAT3 Stage::NearestFloorLocation(XMFLOAT3 pos)
     const float leng = 15.0f;
 
     if (pos.z < leng) pos.z = leng;
-    for (int z = pos.z - leng; z > 0; z--) {
+    for (int z = (int)pos.z - leng; z > 0; z--) {
         for (int x = 0; x < width_; x++)
         {
             if (table_[x][z] == 0) {
@@ -158,4 +129,37 @@ XMFLOAT3 Stage::NearestFloorLocation(XMFLOAT3 pos)
     }
 
     return XMFLOAT3(3, 0, 0);
+}
+
+void Stage::InitMapData(std::string mp)
+{
+    //CSVファイル読み込み
+    CsvReader csv;
+    csv.Load(mp + ".csv");
+
+    //ステージの幅と高さを設定
+    width_ = (int)csv.GetWidth();
+    height_ = (int)csv.GetHeight();
+
+    //CSVデータをテーブルに格納
+    table_ = new int* [width_];
+    for (int x = 0; x < width_; x++)
+    {
+        table_[x] = new int[height_];
+        for (int y = 0; y < height_; y++)
+        {
+            if (csv.GetValue(x, y) == 10)
+            {
+                table_[x][height_ - 1 - y] = 10;
+            }
+            else if (csv.GetValue(x, y) != -1)
+            {
+                table_[x][height_ - 1 - y] = 0;
+            }
+            else
+            {
+                table_[x][height_ - 1 - y] = -1;
+            }
+        }
+    }
 }

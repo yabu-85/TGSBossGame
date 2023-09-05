@@ -68,7 +68,7 @@ void HpGauge::Draw()
         Transform pict;
         pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[2]).x;
         pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[2]).y;
-        Image::SetAlpha(hPict_[2], 255.0f * ((float)hitPicTime / maxHitPicTime));
+        Image::SetAlpha(hPict_[2], (int)(255.0f * ((float)hitPicTime / maxHitPicTime) ));
         Image::SetTransform(hPict_[2], pict);
         Image::Draw(hPict_[2]);
 
