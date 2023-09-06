@@ -12,7 +12,7 @@ namespace {
 
 	int maxNum = 100;
 	int num = 80;
-
+	bool isDragging_;
 }
 
 SliderButton::SliderButton(GameObject* parent):
@@ -46,28 +46,16 @@ void SliderButton::Update()
 
 	XMFLOAT3 mouse = Input::GetMousePositionSub();
 	if (IsWithinBound()) {
-		//カーソルが重なってるとき一回再生
-		if(isFirstPoint)
+		// カーソルが重なってるとき一回再生
+		if (isFirstPoint)
 		{
 			AudioManager::PlaySoundMa(AUDIO_POINTCURSOR);
 			isFirstPoint = false;
 		}
 
-		if (Input::IsMouseButton(0)) {
-			int frameSizeX = 512;
-			float scrX = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
-			float scrY = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");
-
-			XMFLOAT3 mouse = Input::GetMousePositionSub();
-			mouse = { mouse.x / scrX, -(mouse.y / scrY), 0 };
-			float gauge = (float)((num * 100) / maxNum) * 0.01f;
-
-			if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX < mouse.x) {
-				num++;
-			}
-			if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX > mouse.x) {
-				num--;
-			}
+		// マウスの左ボタンが押されたとき、ドラッグを開始
+		if (Input::IsMouseButtonDown(0)) {
+			isDragging_ = true;
 		}
 
 		transform_.scale_.x = iSize.x * width_;
@@ -75,10 +63,32 @@ void SliderButton::Update()
 	}
 	else {
 		isFirstPoint = true;
-
 		transform_.scale_.x = nSize.x * width_;
 		transform_.scale_.y = nSize.y * height_;
 	}
+
+	// マウスの左ボタンが離されたとき、ドラッグを停止
+	if (Input::IsMouseButtonUp(0)) {
+		isDragging_ = false;
+	}
+
+	if (isDragging_) {
+		int frameSizeX = 512;
+		float scrX = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
+		float scrY = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");
+
+		XMFLOAT3 mouse = Input::GetMousePositionSub();
+		mouse = { mouse.x / scrX, -(mouse.y / scrY), 0 };
+		float gauge = (float)((num * 100) / maxNum) * 0.01f;
+
+		if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX < mouse.x) {
+			num++;
+		}
+		if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX > mouse.x) {
+			num--;
+		}
+	}
+
 }
 
 void SliderButton::Draw()
