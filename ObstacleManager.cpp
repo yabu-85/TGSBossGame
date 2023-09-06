@@ -218,37 +218,29 @@ void ObstacleManager::SetAllObstacleActive(bool b)
 {
     isActive_ = b;
 
-    if (!b) for (auto e : obstacles_) {
-        e->SetActive(b);
+    for (Obstacle* e : obstacles_) {
+        if (!e) {
+            continue;
+        }
 
-    }
-    else {
-        for (Obstacle* e : obstacles_) {
-            if (!e) {
-                continue;
+        if (e->GetObjectName() == "UfoObstacle") {
+            if (e->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
+                e->SetActive(b);
             }
-
-            if (e->GetObjectName() == "UfoObstacle") {
-                if (e->GetCsvPos().z <= activationZoneSub_ + ufoLoadRange) {
-                    e->SetDraw(true);
-                    e->SetActive(true);
-                }
+        }
+        else {  //‘¼‚ÌáŠQ•¨‚Ìˆ—
+            if (e->GetCsvPos().z <= activationZoneSub_) {
+                e->SetActive(b);
             }
+        }
 
-            else if (e->GetObjectName() == "RobotObstacle") {
-                RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
-                std::vector<Missile*> mis = pRobot->GetMissiles();
-                for (Missile* missile : mis) {
-                    missile->SetActive(b);
-                }
-            }
-
-            else {  //‘¼‚ÌáŠQ•¨‚Ìˆ—
-                if (e->GetCsvPos().z <= activationZoneSub_) {
-                    e->SetDraw(true);
-                    e->SetActive(true);
-                }
+        if (e->GetObjectName() == "RobotObstacle") {
+            RobotObstacle* pRobot = dynamic_cast<RobotObstacle*>(e);
+            std::vector<Missile*> mis = pRobot->GetMissiles();
+            for (Missile* missile : mis) {
+                missile->SetActive(b);
             }
         }
     }
+
 }
