@@ -10,6 +10,7 @@ class Setting :
     int hPict_[2];
     ButtonFactory* pButtonFactory_;
     SliderButton* pSlider_;
+    SliderButton* pSlider2_;
 
 public:
     Setting(GameObject* parent);

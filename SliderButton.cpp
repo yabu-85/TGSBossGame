@@ -9,15 +9,11 @@ namespace {
 	const XMFLOAT3 iSize = { 0.65f, 0.7f, 0 };
 	const XMFLOAT3 nSize = { 0.6f, 0.6f, 0 };
 	const int buttonPng = 3;
-
-	int maxNum = 100;
-	int num = 80;
-	bool isDragging_;
 }
 
 SliderButton::SliderButton(GameObject* parent):
 	GameObject(parent, "SliderButton"), hPict_{-1,-1, -1}, width_(0), height_(0), name_(""), widePos_{0,0,0}, alpha_(255), frameAlpha_(255),
-	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true), buttonPosX_(0.0f)
+	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true), buttonPosX_(0.0f), num_(50), maxNum_(100)
 {
 }
 
@@ -30,9 +26,9 @@ void SliderButton::Initialize()
 	alpha_ = 255;
 	frameAlpha_ = 255;
 
-	std::string fileName[] = { "SliderFrame", "Slider", "SliderButton" };
+	std::string fileName[buttonPng] = { "SliderFrame", "Slider", "SliderButton" };
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < buttonPng; i++) {
 		hPict_[i] = Image::Load("Png/" + fileName[i] + ".png");
 		assert(hPict_[i] >= 0);
 	}
@@ -46,14 +42,14 @@ void SliderButton::Update()
 
 	XMFLOAT3 mouse = Input::GetMousePositionSub();
 	if (IsWithinBound()) {
-		// カーソルが重なってるとき一回再生
+		//カーソルが重なってるとき一回再生
 		if (isFirstPoint)
 		{
 			AudioManager::PlaySoundMa(AUDIO_POINTCURSOR);
 			isFirstPoint = false;
 		}
 
-		// マウスの左ボタンが押されたとき、ドラッグを開始
+		//マウスの左ボタンが押されたとき、ドラッグを開始
 		if (Input::IsMouseButtonDown(0)) {
 			isDragging_ = true;
 		}
@@ -67,11 +63,12 @@ void SliderButton::Update()
 		transform_.scale_.y = nSize.y * height_;
 	}
 
-	// マウスの左ボタンが離されたとき、ドラッグを停止
+	//マウスの左ボタンが離されたとき、ドラッグを停止
 	if (Input::IsMouseButtonUp(0)) {
 		isDragging_ = false;
 	}
 
+	//値を変える
 	if (isDragging_) {
 		int frameSizeX = 512;
 		float scrX = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
@@ -79,13 +76,18 @@ void SliderButton::Update()
 
 		XMFLOAT3 mouse = Input::GetMousePositionSub();
 		mouse = { mouse.x / scrX, -(mouse.y / scrY), 0 };
-		float gauge = (float)((num * 100) / maxNum) * 0.01f;
+		float gauge = (float)((num_ * 100) / maxNum_) * 0.01f;
 
 		if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX < mouse.x) {
-			num++;
+			num_++;
+
+			if (num_ > maxNum_) num_ = maxNum_;
 		}
-		if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX > mouse.x) {
-			num--;
+
+		else if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX > mouse.x) {
+			num_--;
+			
+			if (num_ < 0) num_ = 0;
 		}
 	}
 
@@ -96,7 +98,7 @@ void SliderButton::Draw()
 	Direct3D::SetBlendMode(mode_);
 
 	int frameSizeX = 512;
-	float gauge = (float)((num * 100) / maxNum) * 0.01f;
+	float gauge = (float)((num_ * 100) / maxNum_) * 0.01f;
 	const int screnWidth = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
 
 	//濃いほうのバー

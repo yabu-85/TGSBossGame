@@ -10,11 +10,14 @@ class SliderButton : public GameObject
 	int alpha_;				//透明度
 	int frameAlpha_;		//透明度
 
+	int num_;				//値
+	int maxNum_;			//値の最大値
 	float width_;			//ボタンの幅
 	float height_;			//ボタンの高さ
 	float buttonPosX_;		//X軸のボタンの座標（0~1
 	bool isButtonInactive_; //ボタンを押す感知しない
 	bool isFirstPoint;		//初回照準か
+	bool isDragging_;		//ボタンを押しているか
 	std::string name_;		//ボタンに表示するPngの
 	XMFLOAT3 widePos_;		//-1～1じゃなく,-1280～1280とかの座標
 	XMFLOAT3 frameSize_;	//Frameのサイズ

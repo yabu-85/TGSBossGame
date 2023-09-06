@@ -31,6 +31,12 @@ void Setting::Initialize()
 	pSlider_->SetFrameAlpha(200);
 	pSlider_->SetBlendMode(0);
 
+	pSlider2_ = Instantiate<SliderButton>(this);
+	pSlider2_->SetValue(0.0f, 0.0f, 1.0f, 1.0f, "ReturnGame");
+	pSlider2_->SetAlpha(200);
+	pSlider2_->SetFrameAlpha(200);
+	pSlider2_->SetBlendMode(0);
+
 	hPict_[0] = Image::Load("Png/Black.png");
 	assert(hPict_[0] >= 0);
 	hPict_[1] = Image::Load("Png/cross.png");
