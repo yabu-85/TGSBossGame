@@ -15,7 +15,8 @@ namespace {
 
 SliderButton::SliderButton(GameObject* parent):
 	GameObject(parent, "SliderButton"), hPict_{-1,-1, -1}, width_(0), height_(0), name_(""), widePos_{0,0,0}, alpha_(255), frameAlpha_(255),
-	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true), buttonPosX_(0.0f), num_(50), maxNum_(100)
+	isButtonInactive_(true), frameSize_{0, 0, 0}, mode_(Direct3D::BLEND_ADD),isFirstPoint(true), buttonPosX_(0.0f), num_(50), maxNum_(100),
+	isDragging_(false)
 {
 }
 

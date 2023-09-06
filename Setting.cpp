@@ -53,7 +53,6 @@ void Setting::Update()
 		pB->SetAlpha(200);
 		pB->SetFrameAlpha(200);
 		KillMe();
-
 	}
 
 }
