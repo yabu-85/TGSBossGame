@@ -9,6 +9,7 @@
 #include "ExitMenu.h"
 #include "Stageselect.h"
 #include "AudioManager.h"
+#include "Setting.h"
 
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"), hPict_{-1, -1, -1}, pText_(nullptr), disp_(false), mousePos_{0,0,0}, pButtonFactory_(nullptr)
@@ -42,7 +43,8 @@ void TitleScene::Initialize()
 		disp_ = true;
 		pButtonFactory_ = Instantiate<ButtonFactory>(this);
 		pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Start");
-		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Exit");
+		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "Setting");
+		pButtonFactory_->ButtonCreate(0.0f, -600.0f, 1.0f, 1.0f, "Exit");
 		pButtonFactory_->SetAlpha(200);
 		pButtonFactory_->SetFrameAlpha(200);
 		pButtonFactory_->SetBlendMode(0);
@@ -74,6 +76,15 @@ void TitleScene::Update()
 
 	if (pButtonFactory_->CheckButtonPressed() == "Start") {
 		Instantiate<StageSelect>(this);	
+
+		pButtonFactory_->SetActive(false);
+		pButtonFactory_->SetAlpha(10);
+		pButtonFactory_->SetFrameAlpha(10);
+
+	}
+	else if (pButtonFactory_->CheckButtonPressed() == "Setting") {
+		Instantiate<Setting>(this);
+		AudioManager::PlaySoundMa(AUDIO_ENTERCURSOR);
 
 		pButtonFactory_->SetActive(false);
 		pButtonFactory_->SetAlpha(10);

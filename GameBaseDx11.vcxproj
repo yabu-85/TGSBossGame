@@ -166,6 +166,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="RobotObstacle.cpp" />
+    <ClCompile Include="Setting.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Stageselect.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="RobotObstacle.h" />
+    <ClInclude Include="Setting.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Stageselect.h" />

@@ -173,6 +173,8 @@
     </ClCompile>
     <ClCompile Include="PlayerSpeedController.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="BossObstacle.cpp" />
+    <ClCompile Include="Setting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -307,6 +309,8 @@
     </ClInclude>
     <ClInclude Include="PlayerSpeedController.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="BossObstacle.h" />
+    <ClInclude Include="Setting.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

@@ -1,4 +1,4 @@
-#include "PauseMenu.h"
+#include "Setting.h"
 #include "Engine/Input.h"
 #include "ButtonFactory.h"
 #include "ExitMenu.h"
@@ -7,28 +7,16 @@
 #include "PlayScene.h"
 #include <future>
 
-//メニュークラスを作るとして
-//Pause、Settingクラスを継承して作ることになる　と思う
-
-//Pauseはプレイシーン限定で出す
-//Settign画面はすべてのシーンで出す
-//二つともPlayシーンの動きを止めることは確定
-
-//Setting画面に必要な機能絶対なやつ
-//マウス感度と、キーコンフィグの設定が欲しい
-//あと音量の設定、
-
-
-PauseMenu::PauseMenu(GameObject* parent)
-	:GameObject(parent, "PauseMenu"), hPict_{ -1,-1 }, pButtonFactory_(nullptr)
+Setting::Setting(GameObject* parent)
+	:GameObject(parent, "Setting"), hPict_{ -1,-1 }, pButtonFactory_(nullptr)
 {
 }
 
-PauseMenu::~PauseMenu()
+Setting::~Setting()
 {
 }
 
-void PauseMenu::Initialize()
+void Setting::Initialize()
 {
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
 	pButtonFactory_->ButtonCreate(0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame");
@@ -37,10 +25,7 @@ void PauseMenu::Initialize()
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
 
-	PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
-	pPlayScene->SetObjectActive(false);
-
-	hPict_[0] = Image::Load("Png/Black.png");
+	hPict_[0] = Image::Load("Png/White.png");
 	assert(hPict_[0] >= 0);
 	hPict_[1] = Image::Load("Png/cross.png");
 	assert(hPict_[1] >= 0);
@@ -50,14 +35,10 @@ void PauseMenu::Initialize()
 
 }
 
-void PauseMenu::Update()
+void Setting::Update()
 {
 	if (pButtonFactory_->CheckButtonPressed() == "ReturnGame") {
-		PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
-		pPlayScene->SetObjectActive(true);
 
-		AudioManager::Release();
-		AudioManager::Initialize(AudioManager::PLAY);
 
 		KillMe();
 
@@ -65,25 +46,13 @@ void PauseMenu::Update()
 	else if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
 		AudioManager::PlaySoundMa(AUDIO_ENTERCURSOR);
 		
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //待機
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_TITLE);
+		KillMe();
 
-	}
-	else if (pButtonFactory_->CheckButtonPressed() == "Quit") {
-		Instantiate<ExitMenu>(this);
-
-		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
-		ButtonFactory* pB = (ButtonFactory*)gs2;
-		pB->SetActive(false);
-		pB->SetAlpha(10);
-		pB->SetFrameAlpha(10);
-	
 	}
 
 }
 
-void PauseMenu::Draw()
+void Setting::Draw()
 {
 
 	Image::SetAlpha(hPict_[0], 100);
@@ -100,6 +69,6 @@ void PauseMenu::Draw()
 	Image::Draw(hPict_[1]);
 }
 
-void PauseMenu::Release()
+void Setting::Release()
 {
 }
