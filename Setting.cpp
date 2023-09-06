@@ -32,7 +32,7 @@ void Setting::Initialize()
 	pSlider_->SetBlendMode(0);
 
 	pSlider2_ = Instantiate<SliderButton>(this);
-	pSlider2_->SetValue(0.0f, 0.0f, 1.0f, 1.0f, "ReturnGame");
+	pSlider2_->SetValue(0.0f, -150.0f, 1.0f, 1.0f, "ReturnGame");
 	pSlider2_->SetAlpha(200);
 	pSlider2_->SetFrameAlpha(200);
 	pSlider2_->SetBlendMode(0);

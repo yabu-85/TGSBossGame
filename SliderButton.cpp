@@ -9,6 +9,8 @@ namespace {
 	const XMFLOAT3 iSize = { 0.65f, 0.7f, 0 };
 	const XMFLOAT3 nSize = { 0.6f, 0.6f, 0 };
 	const int buttonPng = 3;
+	int frameSizeX = 512;
+
 }
 
 SliderButton::SliderButton(GameObject* parent):
@@ -70,7 +72,6 @@ void SliderButton::Update()
 
 	//’l‚ð•Ï‚¦‚é
 	if (isDragging_) {
-		int frameSizeX = 512;
 		float scrX = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
 		float scrY = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");
 
@@ -78,13 +79,13 @@ void SliderButton::Update()
 		mouse = { mouse.x / scrX, -(mouse.y / scrY), 0 };
 		float gauge = (float)((num_ * 100) / maxNum_) * 0.01f;
 
-		if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX < mouse.x) {
+		if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX < mouse.x - 0.01f) {
 			num_++;
 
 			if (num_ > maxNum_) num_ = maxNum_;
 		}
 
-		else if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX > mouse.x) {
+		else if ((float)frameSizeX / (float)scrX * 2.0f * gauge - (float)frameSizeX / (float)scrX > mouse.x + 0.01f) {
 			num_--;
 			
 			if (num_ < 0) num_ = 0;
@@ -97,7 +98,6 @@ void SliderButton::Draw()
 {
 	Direct3D::SetBlendMode(mode_);
 
-	int frameSizeX = 512;
 	float gauge = (float)((num_ * 100) / maxNum_) * 0.01f;
 	const int screnWidth = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
 
@@ -161,12 +161,11 @@ bool SliderButton::IsWithinBound()
 
 	XMFLOAT3 button = { buttonPosX_, widePos_.y / scrY, 0 };
 
-	float distance = (float)sqrt(
-		(mouse.x - button.x) * (mouse.x - button.x) +
-		(mouse.y - button.y) * (mouse.y - button.y)
-	);
+	float distanceX = (float)sqrt( (mouse.x - button.x) * (mouse.x - button.x) );
+	float distanceY = (float)sqrt( (mouse.y - button.y) * (mouse.y - button.y) );
+	distanceX = distanceX * ( scrX / scrY);
 
-	if (distance <= 0.05f) {
+	if (distanceX + distanceY <= 0.05f) {
 		return true;
 	}
 
