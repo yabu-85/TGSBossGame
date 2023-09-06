@@ -1,6 +1,7 @@
 #include "Setting.h"
 #include "Engine/Input.h"
 #include "ButtonFactory.h"
+#include "SliderButton.h"
 #include "ExitMenu.h"
 #include "Engine/SceneManager.h"
 #include "AudioManager.h"
@@ -19,33 +20,32 @@ Setting::~Setting()
 void Setting::Initialize()
 {
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
-	pButtonFactory_->ButtonCreate(0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame");
-	pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "ReturnTitle");
+	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "ReturnTitle");
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
 
-	hPict_[0] = Image::Load("Png/White.png");
+	pSlider_ = Instantiate<SliderButton>(this);
+	pSlider_->SetValue(0.0f, 150.0f, 1.0f, 1.0f, "ReturnGame");
+	pSlider_->SetAlpha(200);
+	pSlider_->SetFrameAlpha(200);
+	pSlider_->SetBlendMode(0);
+
+	hPict_[0] = Image::Load("Png/Black.png");
 	assert(hPict_[0] >= 0);
 	hPict_[1] = Image::Load("Png/cross.png");
 	assert(hPict_[1] >= 0);
-
-	AudioManager::Release();
-	AudioManager::Initialize(AudioManager::PLAYMENUE);
 
 }
 
 void Setting::Update()
 {
-	if (pButtonFactory_->CheckButtonPressed() == "ReturnGame") {
-
-
-		KillMe();
-
-	}
-	else if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
-		AudioManager::PlaySoundMa(AUDIO_ENTERCURSOR);
-		
+	if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
+		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
+		ButtonFactory* pB = (ButtonFactory*)gs2;
+		pB->SetActive(true);
+		pB->SetAlpha(200);
+		pB->SetFrameAlpha(200);
 		KillMe();
 
 	}
@@ -54,7 +54,6 @@ void Setting::Update()
 
 void Setting::Draw()
 {
-
 	Image::SetAlpha(hPict_[0], 100);
 	Image::SetTransform(hPict_[0], transform_);
 	Image::Draw(hPict_[0]);

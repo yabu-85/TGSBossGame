@@ -168,6 +168,7 @@
     <ClCompile Include="RobotObstacle.cpp" />
     <ClCompile Include="Setting.cpp" />
     <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="SliderButton.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Stageselect.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="RobotObstacle.h" />
     <ClInclude Include="Setting.h" />
     <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="SliderButton.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Stageselect.h" />
     <ClInclude Include="Timer.h" />
