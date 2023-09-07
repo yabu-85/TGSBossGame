@@ -39,6 +39,9 @@
       <UniqueIdentifier>{47a6a3f5-8cfd-436b-8d58-beccd108f3f3}</UniqueIdentifier>
       <Extensions>hlsl</Extensions>
     </Filter>
+    <Filter Include="Scene\PlayScene\Player">
+      <UniqueIdentifier>{b1981811-f3a6-44ef-a6a4-16131faac1b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -128,9 +131,6 @@
     <ClCompile Include="PauseMenu.cpp">
       <Filter>Scene\PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Scene\PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Stage.cpp">
       <Filter>Scene\PlayScene</Filter>
     </ClCompile>
@@ -157,7 +157,6 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Missile.cpp" />
-    <ClCompile Include="HpGauge.cpp" />
     <ClCompile Include="Stageselect.cpp" />
     <ClCompile Include="RobotObstacle.cpp">
       <Filter>Scene\PlayScene\Obstacle</Filter>
@@ -171,10 +170,29 @@
     <ClCompile Include="SkyBox.cpp">
       <Filter>Scene\PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerSpeedController.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="BossObstacle.cpp" />
     <ClCompile Include="Setting.cpp" />
+    <ClCompile Include="SliderButton.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BossObstacle.cpp">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerStateManager.cpp">
+      <Filter>Scene\PlayScene\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerState.cpp">
+      <Filter>Scene\PlayScene\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Scene\PlayScene\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="HpGauge.cpp">
+      <Filter>Scene\PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSpeedController.cpp">
+      <Filter>Scene\PlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -264,9 +282,6 @@
     <ClInclude Include="PauseMenu.h">
       <Filter>Scene\PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Scene\PlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Stage.h">
       <Filter>Scene\PlayScene</Filter>
     </ClInclude>
@@ -293,7 +308,6 @@
     </ClInclude>
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Missile.h" />
-    <ClInclude Include="HpGauge.h" />
     <ClInclude Include="Stageselect.h" />
     <ClInclude Include="RobotObstacle.h">
       <Filter>Scene\PlayScene\Obstacle</Filter>
@@ -307,10 +321,29 @@
     <ClInclude Include="SkyBox.h">
       <Filter>Scene\PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerSpeedController.h" />
     <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="BossObstacle.h" />
     <ClInclude Include="Setting.h" />
+    <ClInclude Include="SliderButton.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="BossObstacle.h">
+      <Filter>Scene\PlayScene\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerStateManager.h">
+      <Filter>Scene\PlayScene\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerState.h">
+      <Filter>Scene\PlayScene\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Scene\PlayScene\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="HpGauge.h">
+      <Filter>Scene\PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSpeedController.h">
+      <Filter>Scene\PlayScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

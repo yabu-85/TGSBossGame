@@ -14,6 +14,8 @@
 #include "AudioManager.h"
 #include "Engine/Model.h"
 
+#define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
+
 namespace {
 	int goal;
 	int stopTime;	//resultシーン移行までの待機時間
@@ -106,15 +108,13 @@ void PlayScene::Update()
 //描画
 void PlayScene::Draw()
 {
-	//Image::SetAlpha(hPict_, 255);
-	//Image::SetTransform(hPict_, transform_);
-	//Image::Draw(hPict_);
-
 }
 
 //開放
 void PlayScene::Release()
 {
+	SAFE_DELETE(pTimer_);
+	SAFE_DELETE(pPlayer_);
 }
 
 void PlayScene::SetObjectActive(bool _active) {

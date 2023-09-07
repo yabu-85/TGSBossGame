@@ -52,7 +52,7 @@ void PlayerSpeedController::Draw()
     Image::SetTransform(hPict_[2], gauge);
     Image::Draw(hPict_[2]);
 
-    //ダメージ画面効果
+    //スピードアップ時の画面効果
     if (speedUpPngDraw > 0) {
         Transform pict;
         pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).x;

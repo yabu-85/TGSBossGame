@@ -14,36 +14,32 @@
 #define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
 
 namespace {
-    static const float airMoveSpeed = 0.002f;
-    static const float crouchSpeed = 0.0005f;
+    const float airMoveSpeed = 0.002f;
+    const float crouchSpeed = 0.0005f;
 
-    static const float noDe = 0.8f; //減速をやめる時間
-    static const float deTime = 0.0055f; //時間の速さ
+    const float gravity_ = 0.0075f;     //重力の値
+    const float initVy_ = 0.17f;        //初期ジャンプ力
+
+    const float noDe = 0.8f;            //減速をやめる時間
+    const float deTime = 0.0055f;       //時間の速さ
 
     //バレットジャンプの強さ
-    static const float buJumpY = 1.5f;
-    static const float buJumpXZ = 0.2f;
-
-    //埋まった時用の
-    static float prevYHeight = 0;
+    const float buJumpY = 1.5f;
+    const float buJumpXZ = 0.2f;
 
 }
 
 Player::Player(GameObject* parent)
-    : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false),
+    : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), prevYHeight_(0),
     isCrouching_(false), graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
-    playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),
-    stateEnter_(true), hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr), pState_(nullptr)
+    playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),stateEnter_(true),
+    hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr), pState_(nullptr)
 {
     moveSpeed_ = 1.5f;
-    rotationSpeed_ = 13.0f;
-    gravity_ = 0.0075f;
-    initVy_ = 0.17f;
 }
 
 Player::~Player()
 {
-    Release();
 }
 
 void Player::Initialize()
@@ -91,33 +87,32 @@ void Player::Update()
         break;
     }
 
+    //移動させる
     transform_.position_.x += ((playerMovement_.x * moveSpeed_) * pSpeedCtrl_->GetMoveSpeed_()); // 移動！
     transform_.position_.z += ((playerMovement_.z * moveSpeed_) * pSpeedCtrl_->GetMoveSpeed_()); // z
 
-    if (transform_.position_.y < 0.0f && prevYHeight == transform_.position_.y) {
+    //埋まった時の対処（できるなら元のバグをなくしたい
+    if (transform_.position_.y < 0.0f && prevYHeight_ == transform_.position_.y) {
         transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
         if (!IsMovementKeyPressed()) playerMovement_ = { 0,0,0 };
     }
-    prevYHeight = transform_.position_.y;
+    prevYHeight_ = transform_.position_.y;
 
+    //壁との当たり判定
     IsInWall();
 
+    //ポジションの制限
     if (transform_.position_.x <= 0.0f) transform_.position_.x = 0.0f;
     if (transform_.position_.x >= 6.9f) transform_.position_.x = 6.9f;
 
+    //落下した時の処理
     if (transform_.position_.y <= -9.0f) {
-        pSpeedCtrl_->ResetSpeed();
-        firstJump_ = false;
-        secondJump_ = false;
-        bulletJump_ = false;
-        playerMovement_ = { 0.0f , 0.0f , 0.0f };
         transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
-        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
-        graY_ = 0.0f;
+        PlayerFallReset();
     }
 
     //移動するなら向きを変える
-    if (IsMovementKeyPressed()) GradualRotate(playerMovement_.x, playerMovement_.z);
+    if (IsMovementKeyPressed()) Rotate(playerMovement_.x, playerMovement_.z, 13.0f);
 
     //重力
     if (!IsPlayerOnGround()) Gravity();
@@ -128,6 +123,7 @@ void Player::Update()
         AudioManager::PlaySoundMa(AUDIO_JUNPING_START);
         Jump();
     }
+
     //しゃがんでない時カメラの高さリセット
     if (state_ != S_CROUCH) {
         if (cameraHeight_ < 1.0f)cameraHeight_ += 0.02f;
@@ -136,6 +132,7 @@ void Player::Update()
         else isCrouching_ = false;
     }
 
+    //反射
     if (Input::IsMouseButtonDown(1)) {
         ObstacleManager* pObsM = (ObstacleManager*)FindObject("ObstacleManager");
         pObsM->a();
@@ -167,24 +164,20 @@ void Player::Update()
     }
 
     //SpeedCtrl
-    if (IsMovementKeyPressed()) {
-        if (IsPlayerOnGround())
-        {
-            pSpeedCtrl_->AddRunTime();
-            AudioManager::PlaySoundMa(AUDIO_RUNNING);
-        }
+    if (IsMovementKeyPressed() && IsPlayerOnGround()) {
+        pSpeedCtrl_->AddRunTime();
+        AudioManager::PlaySoundMa(AUDIO_RUNNING);
     }
     else {
-        pSpeedCtrl_->ResetSpeed();
+        AudioManager::StopSoundMa(AUDIO_RUNNING);
+
+        //地上かつ止まっていたら速度リセット
+        if(IsPlayerOnGround()) pSpeedCtrl_->ResetSpeed();
     }
 
+    //テスト用
     if (Input::IsKey(DIK_UPARROW)) {
         DecreaseHp(1);
-    }
-
-    if (!IsMovementKeyPressed()|| !IsPlayerOnGround())
-    {
-        AudioManager::StopSoundMa(AUDIO_RUNNING);
     }
 }
 
@@ -215,7 +208,7 @@ void Player::SetActiveWithDelay(bool isActive, int time)
         pAim_->SetAimMove(true);
         pSpeedCtrl_ = (PlayerSpeedController*)FindObject("PlayerSpeedController");
 
-        }).detach();
+    }).detach();
 }
 
 void Player::DecreaseHp(int i)
@@ -270,40 +263,21 @@ void Player::UpdateCrouch()
         if (cameraHeight_ > 0.8f)
             cameraHeight_ -= 0.02f;
 
-        fMove_ = { 0,0,0 };
-        XMFLOAT3 aimDirection = pAim_->GetAimDirectionY();
-        if (Input::IsKey(DIK_W)) {
-            fMove_.x += aimDirection.x;
-            fMove_.z += aimDirection.z;
-        }
-        if (Input::IsKey(DIK_A)) {
-            fMove_.x -= aimDirection.z;
-            fMove_.z += aimDirection.x;
-        }
-        if (Input::IsKey(DIK_S)) {
-            fMove_.x -= aimDirection.x;
-            fMove_.z -= aimDirection.z;
-        }
-        if (Input::IsKey(DIK_D)) {
-            fMove_.x += aimDirection.z;
-            fMove_.z -= aimDirection.x;
-        }
-        XMVECTOR vMove = XMLoadFloat3(&fMove_);
-        vMove = XMVector3Normalize(vMove);
-        XMStoreFloat3(&fMove_, vMove);
+        GetMoveDirection();
+
         fMove_ = { ((fMove_.x - playerMovement_.x) * crouchSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * crouchSpeed) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z };
         playerMovement_ = { playerMovement_.x - (playerMovement_.x * 0.01f) , 0.0f , playerMovement_.z - (playerMovement_.z * 0.01f) };
+        
         XMVECTOR vMax = XMLoadFloat3(&playerMovement_);
         float max = XMVectorGetX(XMVector3Length(vMax));
         if (max > maxMoveSpeed_) {
-            vMove = XMLoadFloat3(&playerMovement_);
-            vMove = XMVector3Normalize(vMove);
-            vMove *= maxMoveSpeed_;
+            XMVECTOR vMove = XMLoadFloat3(&playerMovement_);
+            vMove = XMVector3Normalize(vMove) * maxMoveSpeed_;
             XMStoreFloat3(&playerMovement_, vMove);
         }
 
-        InstantRotate(playerMovement_.x, playerMovement_.z);
+        Rotate(playerMovement_.x, playerMovement_.z, 300.0f);
 
         vMax = XMLoadFloat3(&playerMovement_);
         float a = XMVectorGetX(XMVector3Length(vMax));
@@ -338,7 +312,7 @@ void Player::UpdateDead()
 
 /*--------------------------------------private-----------------------------------------*/
 
-void Player::CalcMove()
+void Player::GetMoveDirection(float value)
 {
     fMove_ = { 0,0,0 };
     XMFLOAT3 aimDirection = pAim_->GetAimDirectionY();
@@ -362,17 +336,21 @@ void Player::CalcMove()
     }
 
     XMVECTOR vMove = XMLoadFloat3(&fMove_);
-    vMove = XMVector3Normalize(vMove);
+    vMove = XMVector3Normalize(vMove) * value;
+    XMStoreFloat3(&fMove_, vMove);
 
+}
+
+void Player::CalcMove()
+{
     if (IsPlayerOnGround()) {
-        XMStoreFloat3(&fMove_, vMove * 0.1f);
+        GetMoveDirection(0.1f);
         playerMovement_ = fMove_;
 
     }
     else {
-        XMStoreFloat3(&fMove_, vMove);
-
-        //fMove_
+        GetMoveDirection();
+        
         fMove_ = { ((fMove_.x - playerMovement_.x) * airMoveSpeed) , 0.0f , ((fMove_.z - playerMovement_.z) * airMoveSpeed) };
         playerMovement_ = { playerMovement_.x + fMove_.x , 0.0f , playerMovement_.z + fMove_.z };
 
@@ -380,6 +358,7 @@ void Player::CalcMove()
         float max = XMVectorGetX(XMVector3Length(vMax));
 
         if (max > maxMoveSpeed_) {
+            XMVECTOR vMove;
             vMove = XMLoadFloat3(&playerMovement_);
             vMove = XMVector3Normalize(vMove);
             vMove *= maxMoveSpeed_;
@@ -390,40 +369,7 @@ void Player::CalcMove()
     }
 }
 
-float Player::NormalizeAngle(float angle) {
-    while (angle > 180.0f) {
-        angle -= 360.0f;
-    }
-    while (angle < -180.0f) {
-        angle += 360.0f;
-    }
-    return angle;
-}
-
-void Player::InstantRotate(float x, float z) {
-    float tx = transform_.position_.x + x;
-    float tz = transform_.position_.z + z;
-
-    const XMVECTOR vFront{ 0, 0, 1, 0 };
-    XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tx, 0, transform_.position_.z - tz);
-    XMVECTOR vAimPos = XMLoadFloat3(&fAimPos);
-    vAimPos = XMVector3Normalize(vAimPos);
-    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos);
-    float dot = XMVectorGetX(vDot);
-    float angle = (float)acos(dot);
-
-    // 外積を求めて半回転だったら angle に -1 を掛ける
-    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos);
-    if (XMVectorGetY(vCross) < 0) {
-        angle *= -1;
-    }
-
-    transform_.rotate_.y = XMConvertToDegrees(angle);
-    transform_.rotate_.y += 180.0f; //Blender
-
-}
-
-void Player::GradualRotate(float x, float z)
+void Player::Rotate(float x, float z, float _rotateSpeed)
 {
     float tx = transform_.position_.x + x;
     float tz = transform_.position_.z + z;
@@ -448,14 +394,24 @@ void Player::GradualRotate(float x, float z)
     // 回転角度をスムーズに変更
     float rotationDiff = NormalizeAngle(targetRotation_ - (transform_.rotate_.y - 180.0f));  //Blender
     if (rotationDiff != 0) {
-        if (rotationSpeed_ > abs(rotationDiff)) {
+        if (_rotateSpeed > abs(rotationDiff)) {
             transform_.rotate_.y = targetRotation_;
             transform_.rotate_.y += 180.0f; //Blender
         }
         else {
-            transform_.rotate_.y += rotationSpeed_ * (rotationDiff > 0 ? 1 : -1);
+            transform_.rotate_.y += _rotateSpeed * (rotationDiff > 0 ? 1 : -1);
         }
     }
+}
+
+float Player::NormalizeAngle(float angle) {
+    while (angle > 180.0f) {
+        angle -= 360.0f;
+    }
+    while (angle < -180.0f) {
+        angle += 360.0f;
+    }
+    return angle;
 }
 
 void Player::Gravity()
@@ -470,17 +426,7 @@ void Player::Gravity()
     //空中にいるなら一回目のジャンプは不可に
     firstJump_ = true;
 
-    if (IsPlayerOnGround()) {
-        AudioManager::PlaySoundMa(AUDIO_JUNPING_START);
-        firstJump_ = false;
-        secondJump_ = false;
-        bulletJump_ = false;
-        playerMovement_ = { 0.0f , 0.0f , 0.0f };
-        transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
-        graY_ = 0.0f;
-
-        return;
-    }
+    if (IsPlayerOnGround()) PlayerFallReset();
 
 }
 
@@ -525,7 +471,7 @@ void Player::Jump()
         maxMoveSpeed_ = a;
         if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
 
-        InstantRotate(playerMovement_.x, playerMovement_.z);
+        Rotate(playerMovement_.x, playerMovement_.z, 300.0f);
 
         return;
     }
@@ -543,32 +489,9 @@ void Player::Jump()
         maxMoveSpeed_ = a;
         if (maxMoveSpeed_ < 0.1f) maxMoveSpeed_ = 0.1f;
 
+        //移動キーを押しているときは値をその方向へmaxMoveSpeedの分入れる
         if (IsMovementKeyPressed()) {
-            fMove_ = { 0,0,0 };
-            XMFLOAT3 aimDirection = pAim_->GetAimDirectionY();
-
-            // PlayerクラスのMove関数内の一部
-            if (Input::IsKey(DIK_W)) {
-                fMove_.x += aimDirection.x;
-                fMove_.z += aimDirection.z;
-            }
-            if (Input::IsKey(DIK_A)) {
-                fMove_.x -= aimDirection.z;
-                fMove_.z += aimDirection.x;
-            }
-            if (Input::IsKey(DIK_S)) {
-                fMove_.x -= aimDirection.x;
-                fMove_.z -= aimDirection.z;
-            }
-            if (Input::IsKey(DIK_D)) {
-                fMove_.x += aimDirection.z;
-                fMove_.z -= aimDirection.x;
-            }
-
-            XMVECTOR vMove = XMLoadFloat3(&fMove_);
-            vMove = XMVector3Normalize(vMove);
-
-            XMStoreFloat3(&fMove_, vMove * maxMoveSpeed_);
+            GetMoveDirection(maxMoveSpeed_);
             playerMovement_ = fMove_;
 
         }
@@ -592,6 +515,19 @@ void Player::Jump()
         return;
 
     }
+}
+
+void Player::PlayerFallReset()
+{
+    AudioManager::PlaySoundMa(AUDIO_JUNPING_START);
+    pSpeedCtrl_->ResetSpeed();
+    firstJump_ = false;
+    secondJump_ = false;
+    bulletJump_ = false;
+    playerMovement_ = { 0.0f , 0.0f , 0.0f };
+    transform_.position_.y = pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z);
+    graY_ = 0.0f;
+
 }
 
 bool Player::IsPlayerOnGround() {

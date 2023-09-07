@@ -113,7 +113,7 @@ void ObstacleManager::removeObstacle(Obstacle* _obstacle)
     if (_obstacle != nullptr) {
         for (auto it = obstacles_.begin(); it != obstacles_.end();) {
             if (*it == _obstacle) {
-                it = obstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+                it = obstacles_.erase(it);
             }
             else {
                 it++;
@@ -127,7 +127,7 @@ void ObstacleManager::removeInActiveObstacle(Obstacle* _obstacle)
     if (_obstacle != nullptr) {
         for (auto it = inactiveObstacles_.begin(); it != inactiveObstacles_.end();) {
             if (*it == _obstacle) {
-                it = inactiveObstacles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+                it = inactiveObstacles_.erase(it);
             }
             else {
                 it++;

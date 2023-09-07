@@ -33,12 +33,10 @@ class Player : public GameObject
     int maxHp_;                     //最大HP
     float moveSpeed_;               //移動
     float targetRotation_;          //目標の回転角度
-    float rotationSpeed_;           //回転速度
     float graY_;                    //ジャンプ時の重力計算用
-    float gravity_;                 //重力の値
-    float initVy_;                  //初期ジャンプ力
     float cameraHeight_;            //カメラの高さ (しゃがみとかにしか使わない？)
     float maxMoveSpeed_;            //最大移動速度
+    float prevYHeight_;             //埋まった時用の
     bool firstJump_;                //ジャンプしているか
     bool secondJump_;               //ジャンプしているか2
     bool bulletJump_;               //バレットジャンプしているか
@@ -52,15 +50,17 @@ class Player : public GameObject
     Aim* pAim_;
     PlayerSpeedController* pSpeedCtrl_;
 
-    void CalcMove();                    //移動方向計算・normalize
-    void InstantRotate(float x, float z);               //即座に回転
-    void GradualRotate(float x, float z);               //徐々に振り向く
-    void Gravity();                     //重力うけます
-    void Jump();                        //ジャンプするよ
-    float NormalizeAngle(float angle);  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
+    //引数value：正規化する時にかける値
+    void GetMoveDirection(float value = 1.0f);
 
-    bool IsMovementKeyPressed();        //移動キーを押しているか
-    bool IsPlayerOnGround();            //地面についているか
+    void CalcMove();                                    //移動方向計算・normalize
+    void Rotate(float x, float z, float _rotateSpeed);  //回転する
+    void Gravity();                                     //重力うけます
+    void PlayerFallReset();
+    void Jump();                                        //ジャンプするよ
+    float NormalizeAngle(float angle);                  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
+    bool IsMovementKeyPressed();                        //移動キーを押しているか
+    bool IsPlayerOnGround();                            //地面についているか
     void IsInWall();
 
 public:
