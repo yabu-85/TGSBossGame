@@ -2,6 +2,24 @@
 #include "Engine/Model.h"
 #include "Player.h"
 
+//動きのイメージはCHORUSのプレイヤー
+//HPを0にしたら勝ち、PlayerのHPが０もしくはTimeOverになったら負け
+//今のとこの行動
+//１：ビームを打ちながら前へ進む（ビームの仕様：予測線表示しながらその場所へ打つ）
+//　この時プレイヤーが一定の距離まで近づいたら大ダメージ＆強制的に他の行動へ移行
+//２：地雷？を落とす（BRIGHTTRACTERのダメージエリアみたいなやつ
+//　後ろから前方へ順にが妥当
+//　1か所はプレイヤーのちょい後ろ、２＝プレイヤーの範囲内、３～移動してたら当たりそうな場所へ
+//３：ミサイルを発射ロボットのやつそのままでもいいかな
+//　反射は可能で、ダメージも与えられるように
+
+//HPが半分以下になったら
+//１：特大ビームを打つようにする
+//２：範囲増やす？
+//３：回数、発射数を増やす
+//４；出来たら追加技
+
+
 BossObstacle::BossObstacle(GameObject* parent)
 	:Obstacle(parent), pPlayer_(nullptr), stateEnter_(true), state_(S_ENTER), moveSpeed_(0.0f)
 {
