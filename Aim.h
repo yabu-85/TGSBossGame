@@ -41,6 +41,9 @@ public:
     void SetAimDraw(bool b) { aimDraw_ = b; };
     void SetAimMove(bool b) { aimMove_ = b; };
 
+    float GetMouseSensitivity() { return mouseSensitivity; };
+    void SetMouseSensitivity(float f) { mouseSensitivity = f; };
+
     //シェイクに使う時間(60＝1秒）
     //カメラシェイクの強さ
     void TriggerCameraShake(int t, float s);

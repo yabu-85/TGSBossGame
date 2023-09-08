@@ -30,9 +30,10 @@ namespace AudioManager {
 
 	};
 
+	extern float gameVolue_;
+
 	void Initialize(INIT_TYPE i);
 	void Release();
-
 
 	void PlaySoundMa(TITLE_AUDIO i, float volume = 1.0f);
 	void PlaySoundMa(PLAY_AUDIO i, float volume = 1.0f);

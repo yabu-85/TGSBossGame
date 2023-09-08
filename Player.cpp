@@ -135,7 +135,7 @@ void Player::Update()
     //”½ŽË
     if (Input::IsMouseButtonDown(1)) {
         ObstacleManager* pObsM = (ObstacleManager*)FindObject("ObstacleManager");
-        pObsM->a();
+        pObsM->Reflect();
         
         AudioManager::PlaySoundMa(AUDIO_REFLECTION);
 

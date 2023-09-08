@@ -8,8 +8,13 @@
 #include "PlayScene.h"
 #include <future>
 
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
 Setting::Setting(GameObject* parent)
-	:GameObject(parent, "Setting"), hPict_{ -1,-1 }, pButtonFactory_(nullptr)
+	:GameObject(parent, "Setting"), hPict_{ -1,-1 }, pButtonFactory_(nullptr), pSlider_(nullptr), pSlider2_(nullptr)
 {
 }
 
@@ -25,17 +30,41 @@ void Setting::Initialize()
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
 
+	//ÉeÉXÉgóp-----------------------------------------
 	pSlider_ = Instantiate<SliderButton>(this);
-	pSlider_->SetValue(0.0f, 150.0f, 1.0f, 1.0f, "ReturnGame");
+	pSlider_->SetValue(0.0f, 150.0f, 1.0f, 1.0f, "MouseSensitivity");
 	pSlider_->SetAlpha(200);
 	pSlider_->SetFrameAlpha(200);
 	pSlider_->SetBlendMode(0);
 
+	//ÉtÉ@ÉCÉãì«Ç›çûÇ›
+	std::ifstream ifs("GameValue");
+	std::string data;
+	ifs >> data;
+	//stringÇ©ÇÁintÇ÷ïœä∑ÇµÅAÇªÇÃÇ†Ç∆ílÇÉZÉbÉg
+	std::istringstream ss = std::istringstream(data);
+	int num = 0;
+	ss >> num;
+	pSlider_->SetNum(num, 100);
+
+	////ÉeÉXÉgópÇQÅ|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|
 	pSlider2_ = Instantiate<SliderButton>(this);
-	pSlider2_->SetValue(0.0f, -150.0f, 1.0f, 1.0f, "ReturnGame");
+	pSlider2_->SetValue(0.0f, -150.0f, 1.0f, 1.0f, "AudioVolue");
 	pSlider2_->SetAlpha(200);
 	pSlider2_->SetFrameAlpha(200);
 	pSlider2_->SetBlendMode(0);
+
+	//ÉtÉ@ÉCÉãì«Ç›çûÇ›
+	std::ifstream ifs2("GameAudioValue");
+	std::string data2;
+	ifs2 >> data2;
+	//stringÇ©ÇÁintÇ÷ïœä∑ÇµÅAÇªÇÃÇ†Ç∆ílÇÉZÉbÉg
+	std::istringstream ss2 = std::istringstream(data2);
+	num = 0;
+	ss2 >> num;
+	pSlider2_->SetNum(num, 100);
+
+	/////////--------------------èIÇÌÇË
 
 	hPict_[0] = Image::Load("Png/Black.png");
 	assert(hPict_[0] >= 0);
@@ -46,6 +75,35 @@ void Setting::Initialize()
 
 void Setting::Update()
 {
+	//É}ÉEÉXä¥ìxê›íË->FactoryçÏÇ¡ÇƒÇ‹Ç∆ÇﬂÇΩÇŸÇ§Ç™Ç¢Ç¢ne
+	if (pSlider_->IsWithinBound() && Input::IsMouseButtonUp(0)) {
+		std::string data;
+		int i = pSlider_->GetValue();
+		std::ostringstream oss;
+		oss << i;
+		data = oss.str();
+
+		std::ofstream ofs("GameValue");
+		ofs << data << std::endl;
+		ofs.close();
+	}
+
+	if (pSlider2_->IsWithinBound() && Input::IsMouseButtonUp(0)) {
+		std::string data;
+		int i = pSlider2_->GetValue();
+		std::ostringstream oss;
+		oss << i;
+		data = oss.str();
+
+		std::ofstream ofs("GameAudioValue");
+		ofs << data << std::endl;
+
+		AudioManager::gameVolue_ = i;
+		ofs.close();
+
+	}
+
+
 	if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;

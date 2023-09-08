@@ -6,6 +6,7 @@
 namespace AudioManager
 {
     std::vector<int> hSound_;
+    float gameVolue_; //0.0f ～1.0f
 
     void Initialize(INIT_TYPE type) {
 
@@ -73,12 +74,12 @@ namespace AudioManager
 
 	void PlaySoundMa(TITLE_AUDIO i, float volume)
 	{
-		Audio::Play(hSound_[i], volume * 0.5f);
+		Audio::Play(hSound_[i], volume * gameVolue_);
 	}
 
 	void PlaySoundMa(PLAY_AUDIO i, float volume)
 	{
-        Audio::Play(hSound_[i], volume * 0.5f);
+        Audio::Play(hSound_[i], volume * gameVolue_);
 	}
 
 	void StopSoundMa(TITLE_AUDIO i)

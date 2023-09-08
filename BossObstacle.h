@@ -6,12 +6,13 @@ class BossObstacle : public Obstacle
     enum STATE {
         S_ENTER = 0, //ìoèÍ
 
+        S_DEAD,
     }
     state_;
     bool stateEnter_;
     void UpdateEnter();
+    void UpdateDead();
     void ChangeState(STATE s);
-
 
 public:
     BossObstacle(GameObject* parent);

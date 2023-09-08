@@ -45,6 +45,10 @@ void BossObstacle::UpdateEnter()
 {
 }
 
+void BossObstacle::UpdateDead()
+{
+}
+
 void BossObstacle::ChangeState(STATE s)
 {
 	state_ = s;

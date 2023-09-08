@@ -8,12 +8,21 @@
 #include <map>
 #include "Engine/Direct3D.h"
 
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+namespace {
+    const float defaultAimSensitivity_ = 5.0f;
+}
+
 Aim::Aim(GameObject* parent)
     : GameObject(parent, "Aim"), cameraPos_{ 0,0,0 }, cameraTarget_{ 0,0,0 }, aimDirectionXY_{ 0,0,0 }, aimDirectionY_{ 0,0,0 },
     plaPos_{ 0,0,0 }, pPlayer_(nullptr), hPict_(-1), aimDraw_(true), aimMove_(false), isShaking_(false), shakeTimer_(0),
     shakeAmplitude_(1.0f), shakeStrength_(0.0f), pStage_(nullptr), shakeTimerSub_(0)
 {
-    mouseSensitivity = 2.5f;
+    mouseSensitivity = defaultAimSensitivity_;
     perspectiveDistance_ = 3.2f;
     heightDistance_ = 1.5f;
     cross_.scale_ = { 0.5f, 0.5f, 0.5f };
@@ -41,6 +50,18 @@ void Aim::Update()
         pPlayer_ = (Player*)FindObject("Player");
         return;
     }
+
+    //ファイル読み込み
+    std::ifstream ifs("GameValue");
+    std::string data;
+	ifs >> data;
+    
+    //stringからintへ変換し、そのあとfloatで計算
+    std::istringstream ss = std::istringstream(data);
+    int num = 0;
+    ss >> num;
+    float fNum = (float)num / 100.0f;
+    mouseSensitivity = defaultAimSensitivity_ * fNum;
 
     if (!aimMove_) return;
 

@@ -9,8 +9,11 @@
 #include "Engine/Input.h"
 #include "BossObstacle.h"
 
-//Ufoだけロード範囲を狭める
-static float ufoLoadRange = -20.0f;
+namespace {
+    //Ufだけロード範囲を狭めるo
+    const float ufoLoadRange = -20.0f;
+
+}
 
 ObstacleManager::ObstacleManager(GameObject* parent)
     :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),
@@ -196,7 +199,7 @@ void ObstacleManager::LoadCsv()
 
 //反射で使うやつ名前変えとく気が向いたら
 //これを読んだらManegerのobstacles_のRobotの子供Missile達にプレイヤーの衝突距離かを計算している
-void ObstacleManager::a()
+void ObstacleManager::Reflect()
 {
     for (Obstacle* e : obstacles_) {
         if (!e) {

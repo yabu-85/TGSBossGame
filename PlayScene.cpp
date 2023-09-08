@@ -42,7 +42,7 @@ void PlayScene::Initialize()
 	Stage* pStage = Instantiate<Stage>(this);
  	pStage->InitMapData(stageName[stage]);
 	goal = pStage->GetHeight();
-	stopTime = 100;
+	stopTime = 0;
 	result = 0;
 
 	pPlayer_ = Instantiate<Player>(this);

@@ -41,5 +41,8 @@ public:
 	std::string GetName() { return name_; };
 	void SetBlendMode(int mode);
 
+	void SetNum(int _num, int _max) { num_ = _num; maxNum_ = _max; };
+	int GetValue() { return num_; };
+
 };
 
