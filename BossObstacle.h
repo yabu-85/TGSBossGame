@@ -16,7 +16,17 @@ class BossObstacle : public Obstacle
     void UpdateDead();
     void ChangeState(STATE s);
 
+    float targetRotation_;       //向く方向
+    float moveSpeed_;            //移動速度
+    XMFLOAT3 targetPosition_;    //移動する目標地点
+    XMVECTOR MoveDirection_;     //移動方向
+
     Player* pPlayer_;
+
+    void Rotate(float x, float z, float _rotateSpeed);  //回転します
+    float NormalizeAngle(float angle);                  //angleの値を調整する関数
+    void Move();                                        //Targetへの移動
+    bool IsInTargetPosition();                          //Targetの位置に到着したか
 
 public:
     BossObstacle(GameObject* parent);
@@ -25,6 +35,7 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+
 
 };
 

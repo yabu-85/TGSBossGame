@@ -14,8 +14,6 @@
 #include "AudioManager.h"
 #include "Engine/Model.h"
 
-#define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
-
 namespace {
 	int goal;
 	int stopTime;	//resultシーン移行までの待機時間
@@ -23,7 +21,7 @@ namespace {
 
 	//ステージごとの設定
 	std::string stageName[] = { "Map1", "Map2" };
-	int stageTime[] = { 80, 50 };
+	float stageTime[] = { 80.0f, 50.0f };
 
 }
 
@@ -113,8 +111,6 @@ void PlayScene::Draw()
 //開放
 void PlayScene::Release()
 {
-	SAFE_DELETE(pTimer_);
-	SAFE_DELETE(pPlayer_);
 }
 
 void PlayScene::SetObjectActive(bool _active) {

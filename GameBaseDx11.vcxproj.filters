@@ -175,12 +175,6 @@
     <ClCompile Include="BossObstacle.cpp">
       <Filter>Scene\PlayScene\Obstacle</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateManager.cpp">
-      <Filter>Scene\PlayScene\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerState.cpp">
-      <Filter>Scene\PlayScene\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Scene\PlayScene\Player</Filter>
     </ClCompile>
@@ -325,12 +319,6 @@
     </ClInclude>
     <ClInclude Include="BossObstacle.h">
       <Filter>Scene\PlayScene\Obstacle</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerStateManager.h">
-      <Filter>Scene\PlayScene\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerState.h">
-      <Filter>Scene\PlayScene\Player</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Scene\PlayScene\Player</Filter>

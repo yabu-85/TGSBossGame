@@ -155,8 +155,6 @@
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="ExitMenu.cpp" />
     <ClCompile Include="PlayerSpeedController.cpp" />
-    <ClCompile Include="PlayerState.cpp" />
-    <ClCompile Include="PlayerStateManager.cpp" />
     <ClCompile Include="RaserObstacle.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="ResultScene.cpp" />
@@ -209,8 +207,6 @@
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="ExitMenu.h" />
     <ClInclude Include="PlayerSpeedController.h" />
-    <ClInclude Include="PlayerState.h" />
-    <ClInclude Include="PlayerStateManager.h" />
     <ClInclude Include="RaserObstacle.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="ResultScene.h" />

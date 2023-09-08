@@ -5,7 +5,6 @@
 
 class Aim;
 class Stage;
-class PlayerStateManager;
 
 class Player : public GameObject
 {
@@ -24,8 +23,6 @@ class Player : public GameObject
     void UpdateMove();
     void UpdateCrouch();
     void UpdateDead();
-
-    PlayerStateManager* pState_;
 
     int hModel_;                    //ƒ‚ƒfƒ‹”Ô†
     int hPict_;
