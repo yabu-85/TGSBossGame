@@ -11,8 +11,6 @@
 #include "Engine/Image.h"
 #include "AudioManager.h"
 
-#define SAFE_DELETE(p) if(p != nullptr){ p = nullptr; delete p;}
-
 namespace {
     const float airMoveSpeed = 0.002f;
     const float crouchSpeed = 0.0005f;
@@ -195,8 +193,6 @@ void Player::Draw()
 
 void Player::Release()
 {
-    SAFE_DELETE(pAim_);
-    SAFE_DELETE(pStage_);
 }
 
 void Player::SetActiveWithDelay(bool isActive, int time)

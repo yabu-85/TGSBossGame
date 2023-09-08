@@ -77,11 +77,7 @@ void BossObstacle::UpdateEnter()
 
 void BossObstacle::UpdateDead()
 {
-    targetPosition_ = pPlayer_->GetPosition();
-    targetPosition_.y = 5.0f;
-    targetPosition_.z += 30.0f;
-    moveSpeed_ = 0.6f;
-    Move();
+    transform_.position_.z = pPlayer_->GetPosition().z + 30.0f;
 
     XMFLOAT3 plaPos = pPlayer_->GetPosition();
     XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
@@ -151,7 +147,7 @@ void BossObstacle::Move()
 {
     XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
     XMVECTOR vTar = XMLoadFloat3(&targetPosition_);
-    XMVECTOR vVec = XMVector3Normalize(vTar - vPos) * 0.1;
+    XMVECTOR vVec = XMVector3Normalize(vTar - vPos) * 0.2;
     vVec = XMVector3Normalize(vVec + MoveDirection_);
     MoveDirection_ = vVec;
     XMStoreFloat3(&transform_.position_, vPos + (vVec * moveSpeed_) );
