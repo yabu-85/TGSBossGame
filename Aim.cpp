@@ -14,7 +14,7 @@
 using namespace std;
 
 namespace {
-    const float defaultAimSensitivity_ = 5.0f;
+    const float defaultAimSensitivity_ = 2.0f;
 }
 
 Aim::Aim(GameObject* parent)
@@ -55,13 +55,12 @@ void Aim::Update()
     std::ifstream ifs("GameValue");
     std::string data;
 	ifs >> data;
-    
     //string‚©‚çint‚Ö•ÏŠ·‚µA‚»‚Ì‚ ‚Æfloat‚ÅŒvŽZ
     std::istringstream ss = std::istringstream(data);
     int num = 0;
     ss >> num;
     float fNum = (float)num / 100.0f;
-    mouseSensitivity = defaultAimSensitivity_ * fNum;
+    mouseSensitivity = defaultAimSensitivity_ * fNum + 0.001f;
 
     if (!aimMove_) return;
 

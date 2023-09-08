@@ -1,6 +1,8 @@
 #pragma once
 #include "Obstacle.h"
 
+class Player;
+
 class BossObstacle : public Obstacle
 {
     enum STATE {
@@ -13,6 +15,8 @@ class BossObstacle : public Obstacle
     void UpdateEnter();
     void UpdateDead();
     void ChangeState(STATE s);
+
+    Player* pPlayer_;
 
 public:
     BossObstacle(GameObject* parent);

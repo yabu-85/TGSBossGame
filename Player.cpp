@@ -108,6 +108,7 @@ void Player::Update()
     //—‰º‚µ‚½‚Ìˆ—
     if (transform_.position_.y <= -9.0f) {
         transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
+        pSpeedCtrl_->ResetSpeed();
         PlayerFallReset();
     }
 
@@ -520,7 +521,6 @@ void Player::Jump()
 void Player::PlayerFallReset()
 {
     AudioManager::PlaySoundMa(AUDIO_JUNPING_START);
-    pSpeedCtrl_->ResetSpeed();
     firstJump_ = false;
     secondJump_ = false;
     bulletJump_ = false;

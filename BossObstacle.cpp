@@ -1,8 +1,9 @@
 #include "BossObstacle.h"
 #include "Engine/Model.h"
+#include "Player.h"
 
 BossObstacle::BossObstacle(GameObject* parent)
-	:Obstacle(parent)
+	:Obstacle(parent), pPlayer_(nullptr)
 {
 	objectName_ = "BossObstacle";
 }
@@ -17,6 +18,7 @@ void BossObstacle::Initialize()
 	hModel_ = Model::Load("Model/Boss_03.fbx");
 	assert(hModel_ >= 0);
 
+	pPlayer_ = (Player*)FindObject("Player");
 }
 
 void BossObstacle::Update()
@@ -24,7 +26,12 @@ void BossObstacle::Update()
 	if (!active_) return;
 
 	transform_.position_.y = 2.0f;
-	transform_.rotate_.y += 1.0f;
+	//transform_.rotate_.y += 1.0f;
+
+	if (pPlayer_->GetPosition().z + 30.0f >= transform_.position_.z) {
+		transform_.position_.z += 0.2f;
+	}
+
 }
 
 void BossObstacle::Draw()
