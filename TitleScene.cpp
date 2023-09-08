@@ -18,6 +18,11 @@ TitleScene::TitleScene(GameObject* parent)
 
 void TitleScene::Initialize()
 {
+
+	AudioManager::InitVolue();
+	AudioManager::Release();
+	AudioManager::Initialize(AudioManager::TITLE);
+
 	//test—p
 	pText_ = new Text;
 	pText_->Initialize();
@@ -50,9 +55,6 @@ void TitleScene::Initialize()
 		pButtonFactory_->SetBlendMode(0);
 
 	}
-
-	AudioManager::Release();
-	AudioManager::Initialize(AudioManager::TITLE);
 
 }
 

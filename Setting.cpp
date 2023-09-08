@@ -32,7 +32,7 @@ void Setting::Initialize()
 
 	//テスト用-----------------------------------------
 	pSlider_ = Instantiate<SliderButton>(this);
-	pSlider_->SetValue(0.0f, 150.0f, 1.0f, 1.0f, "MouseSensitivity");
+	pSlider_->SetValue(0.0f, 100.0f, 1.0f, 1.0f, "MouseSensitivity");
 	pSlider_->SetAlpha(200);
 	pSlider_->SetFrameAlpha(200);
 	pSlider_->SetBlendMode(0);
@@ -85,7 +85,7 @@ void Setting::Update()
 
 		std::ofstream ofs("GameValue");
 		ofs << data << std::endl;
-		ofs.close();
+		pSlider_->SetNum(i, 100);
 	}
 
 	if (pSlider2_->IsWithinBound() && Input::IsMouseButtonUp(0)) {
@@ -98,9 +98,8 @@ void Setting::Update()
 		std::ofstream ofs("GameAudioValue");
 		ofs << data << std::endl;
 
-		AudioManager::gameVolue_ = i;
-		ofs.close();
-
+		AudioManager::gameVolue_ = (float)i / 100.0f;
+		pSlider2_->SetNum(i, 100);
 	}
 
 

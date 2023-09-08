@@ -151,8 +151,9 @@ void SliderButton::SetValue(float x, float y, float w, float h, std::string n)
 
 bool SliderButton::IsWithinBound()
 {
-	if (!isButtonInactive_)
-		return false;
+	if (!isButtonInactive_) return false;
+
+	if (isDragging_) return true;
 
 	float scrX = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
 	float scrY = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");

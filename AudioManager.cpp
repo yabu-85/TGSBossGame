@@ -3,10 +3,15 @@
 #include <cassert>
 #include <vector>
 
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
 namespace AudioManager
 {
     std::vector<int> hSound_;
-    float gameVolue_; //0.0f ～1.0f
+    float gameVolue_ = 1.0f; //0.0f ～1.0f
 
     void Initialize(INIT_TYPE type) {
 
@@ -66,6 +71,17 @@ namespace AudioManager
         }
     }
 
+    void InitVolue()
+    {
+        //ファイル読み込み
+        std::ifstream ifs2("GameAudioValue");
+        std::string data2;
+        ifs2 >> data2;
+        //stringからintへ変換し、そのあと値をセット
+        std::istringstream ss2 = std::istringstream(data2);
+        ss2 >> gameVolue_;
+        gameVolue_ /= 100.0f;
+    }
 
 	void Release()
 	{

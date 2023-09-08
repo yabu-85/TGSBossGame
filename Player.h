@@ -56,7 +56,7 @@ class Player : public GameObject
     void CalcMove();                                    //移動方向計算・normalize
     void Rotate(float x, float z, float _rotateSpeed);  //回転する
     void Gravity();                                     //重力うけます
-    void PlayerFallReset();
+    void PlayerFallReset();                             //落下した時のフラグなどのリセット
     void Jump();                                        //ジャンプするよ
     float NormalizeAngle(float angle);                  //angleの値を調整する関数（振り向きが距離が近い方で向いてくれるための
     bool IsMovementKeyPressed();                        //移動キーを押しているか
