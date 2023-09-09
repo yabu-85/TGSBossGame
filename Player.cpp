@@ -227,7 +227,7 @@ void Player::UpdateIdle()
 {
     if (IsMovementKeyPressed()) {
         if (stateEnter_) {
-            Model::SetAnimFrame(hModel_, 30, 60, 1);
+            Model::SetAnimFrame(hModel_, 30, 60, 1.5);
             stateEnter_ = false;
         }
 
@@ -293,7 +293,7 @@ void Player::UpdateCrouch()
 
     }
     else {
-        if (IsMovementKeyPressed()) Model::SetAnimFrame(hModel_, 30, 60, 1);
+        if (IsMovementKeyPressed()) Model::SetAnimFrame(hModel_, 30, 60, 1.5);
         else {
             Model::SetAnimFrame(hModel_, 0, 0, 1);
             playerMovement_ = XMFLOAT3(0, 0, 0);

@@ -1,6 +1,7 @@
 #include "BossObstacle.h"
 #include "Engine/Model.h"
 #include "Player.h"
+#include "Missile.h"
 
 //“®‚«‚ÌƒCƒ[ƒW‚ÍCHORUS‚ÌƒvƒŒƒCƒ„[
 //HP‚ð0‚É‚µ‚½‚çŸ‚¿APlayer‚ÌHP‚ª‚O‚à‚µ‚­‚ÍTimeOver‚É‚È‚Á‚½‚ç•‰‚¯
@@ -18,7 +19,6 @@
 //‚QF”ÍˆÍ‘‚â‚·H
 //‚RF‰ñ”A”­ŽË”‚ð‘‚â‚·
 //‚SGo—ˆ‚½‚ç’Ç‰Á‹Z
-
 
 BossObstacle::BossObstacle(GameObject* parent)
 	:Obstacle(parent), pPlayer_(nullptr), stateEnter_(true), state_(S_ENTER), moveSpeed_(0.0f)
@@ -48,11 +48,18 @@ void BossObstacle::Update()
     case STATE::S_ENTER:
         UpdateEnter();
         break;
+    case STATE::S_MISSILE:
+        UpdateMissile();
+        break;
     case STATE::S_DEAD:
         UpdateDead();
         break;
     }
 
+    XMFLOAT3 plaPos = pPlayer_->GetPosition();
+    if (!IsInTargetPosition(plaPos, 80.0f)) {
+        KillMe();
+    }
 
 }
 
@@ -79,7 +86,7 @@ void BossObstacle::UpdateEnter()
         transform_.rotate_.y = 0;
 	}
 
-    if (!IsInTargetPosition()) {
+    if (!IsInTargetPosition(2.0f)) {
         targetPosition_ = pPlayer_->GetPosition();
         targetPosition_.y = 5.0f;
         targetPosition_.z += 30.0f;
@@ -89,22 +96,22 @@ void BossObstacle::UpdateEnter()
         return;
     }
 
-    ChangeState(S_DEAD);
+    ChangeState(S_MISSILE);
+}
 
+void BossObstacle::UpdateMissile()
+{
+    return;
+
+    Missile* pMissile = Instantiate<Missile>(GetParent());
+    pMissile->SetPosition(transform_.position_.x, transform_.position_.y, transform_.position_.z);
+    pMissile->SetTarget(0.0f, 0.0f, 0.0f);
+    
+    //
 }
 
 void BossObstacle::UpdateDead()
 {
-    transform_.position_.z = pPlayer_->GetPosition().z + 30.0f;
-
-    XMFLOAT3 plaPos = pPlayer_->GetPosition();
-    XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-    XMVECTOR vTar = XMLoadFloat3(&plaPos);
-    XMVECTOR vVec = vTar - vPos;
-    XMFLOAT3 f;
-    XMStoreFloat3(&f, vVec);
-
-    Rotate(f.x, f.z, 5.0f);
 }
 
 void BossObstacle::ChangeState(STATE s)
@@ -165,19 +172,43 @@ void BossObstacle::Move()
 {
     XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
     XMVECTOR vTar = XMLoadFloat3(&targetPosition_);
-    XMVECTOR vVec = XMVector3Normalize(vTar - vPos) * 0.2;
+    XMVECTOR vVec = XMVector3Normalize(vTar - vPos) * 0.2f;
     vVec = XMVector3Normalize(vVec + MoveDirection_);
     MoveDirection_ = vVec;
     XMStoreFloat3(&transform_.position_, vPos + (vVec * moveSpeed_) );
 
 }
 
-bool BossObstacle::IsInTargetPosition()
+bool BossObstacle::IsInTargetPosition(float _leng)
 {
     XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
     XMVECTOR vTar = XMLoadFloat3(&targetPosition_);
     float distance = XMVectorGetX(XMVector3Length(vTar - vPos));
-    if (distance <= moveSpeed_) return true;
+    if (distance <= _leng) return true;
 
     return false;
 }
+
+bool BossObstacle::IsInTargetPosition(XMFLOAT3 _tar, float _leng)
+{
+    XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
+    XMVECTOR vTar = XMLoadFloat3(&_tar);
+    float distance = XMVectorGetX(XMVector3Length(vTar - vPos));
+    if (distance <= _leng) return true;
+
+    return false;
+}
+
+void BossObstacle::ShotBeam()
+{
+
+}
+
+void BossObstacle::AirStrike()
+{
+}
+
+void BossObstacle::ShotMissile()
+{
+}
+

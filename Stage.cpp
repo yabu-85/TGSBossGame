@@ -1,10 +1,16 @@
 #include "Stage.h"
 #include "Engine/Model.h"
 #include "Engine/CsvReader.h"
+#include "Player.h"
 
+namespace {
+    const int drawLeng = 90; //前描画しない距離
+    const int backDrawLeng = 7; //後ろ描画しない距離
+
+}
 
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), table_(nullptr), width_(0), height_(0)
+    :GameObject(parent, "Stage"), table_(nullptr), width_(0), height_(0), pPlayer_(nullptr)
 {
     for (int i = 0; i < TYPE_MAX; i++) hModel_[i] = -1;
 
@@ -38,11 +44,22 @@ void Stage::Draw()
     //transform.position を使うとバグるのでblocktrans変数を使う
     Transform blockTrans;
 
+    if (pPlayer_ == nullptr) {
+        if (FindObject("Player"))pPlayer_ = (Player*)FindObject("Player");
+
+        return;
+    }
+
+    float plaPosZ = pPlayer_->GetPosition().z;
+
     //一つのStageオブジェクトで個数分表示させる
     for (int x = 0; x < width_; x++) 
     {
         for (int z = 0; z < height_; z++) 
         {
+            if (plaPosZ + drawLeng < z || plaPosZ - backDrawLeng > z)
+                continue;
+
             blockTrans.position_.x = (float)x;
             blockTrans.position_.z = (float)z;
             int type = table_[x][z];

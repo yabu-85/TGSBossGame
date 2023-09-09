@@ -20,7 +20,7 @@ namespace {
 	int result;		//1=クリア 2=ゲームオーバー
 
 	//ステージごとの設定
-	std::string stageName[] = { "Map1", "Map2" };
+	std::string stageName[] = { "Map3", "Map2" };
 	float stageTime[] = { 80.0f, 50.0f };
 
 }
@@ -75,7 +75,7 @@ void PlayScene::Update()
 	}
 
 	//ゲームオーバー
-	if (pTimer_->IsFinished() || pPlayer_->GetHp() <= 0) result = 1;
+	//if (pTimer_->IsFinished() || pPlayer_->GetHp() <= 0) result = 1;
 	//ゲームクリア
 	if (goal <= pPlayer_->GetPosition().z) result = 2;
 
