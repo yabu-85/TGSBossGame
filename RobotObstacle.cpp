@@ -99,6 +99,10 @@ void RobotObstacle::KillMeSub()
 	ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
 	pOM->removeObstacle(this);
 
+	for (Missile *it : missiles_) {
+		it->KillMeSub();
+	}
+
 	KillMe();
 }
 
@@ -213,9 +217,7 @@ void RobotObstacle::ShotMissile()
 
 	int missileCount = 8;
 	for (int i = 0; i < missileCount; i++) {
-	//	Missile* pMissile = Instantiate<Missile>(this);
 		Missile* pMissile = Instantiate<Missile>(GetParent());
-
 		pMissile->SetPosition(transform_.position_.x + tblP[i].x, transform_.position_.y + tblP[i].y, transform_.position_.z + tblP[i].z);
 		pMissile->SetTarget(tblT[i].x, tblT[i].y, tblT[i].z);
 		pMissile->SetParent(this);

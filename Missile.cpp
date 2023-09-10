@@ -5,8 +5,6 @@
 #include "RobotObstacle.h"
 #include "AudioManager.h"
 
-#define SAFE_DELETE(p) {if ((p)!=nullptr) { delete (p); (p)=nullptr;}}
-
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
     propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
@@ -22,6 +20,7 @@ void Missile::Initialize()
 {
 	hModel_ = Model::Load("Model/Missile.fbx", 0, 0);
 	assert(hModel_ >= 0);
+
 	transform_.position_.y = 1.0f;
     rotationAngle_ = { -(float)(rand() % 5), (float)(rand() % 10), (float)(rand() % 10) };
 
@@ -97,8 +96,7 @@ void Missile::Update()
             }
 
             AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);
-            Model::StopDraw(hModel_);
-            KillMe();
+            KillMeSub();
         }
 
         return;
@@ -145,8 +143,7 @@ void Missile::Update()
         if (!pRobotObstacle_->IsDead())
             pRobotObstacle_->NotifyMissileDestroyed(this);
 
-        Model::StopDraw(hModel_);
-        KillMe();
+        KillMeSub();
 
     }
     
@@ -184,8 +181,7 @@ void Missile::Update()
         if (!pRobotObstacle_->IsDead())
             pRobotObstacle_->NotifyMissileDestroyed(this);
 
-        Model::StopDraw(hModel_);
-        KillMe();
+        KillMeSub();
     }
 }
 
@@ -226,6 +222,12 @@ void Missile::Reflect()
     if (distance <= 7.0f) {
         missileReflected_ = true;
     }
+}
+
+void Missile::KillMeSub()
+{
+    Model::StopDraw(hModel_);
+    KillMe();
 }
 
 

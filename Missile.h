@@ -44,6 +44,7 @@ public:
 	void Reflect();
 
 	void SetActive(bool b) { isActive_ = b; };
+	void KillMeSub();
 
 };
 

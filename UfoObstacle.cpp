@@ -125,7 +125,10 @@ void UfoObstacle::UpdateDetection()
 {
 	//ŠÔØ‚ê‚Å‹‚é
 	int shotTime = 500;
-	if (time_ > shotTime) ChangeState(S_LEAVING);
+	if (time_ > shotTime) {
+		Model::StopDraw(hModelSub_[2]);
+		ChangeState(S_LEAVING);
+	}
 	time_++;
 
 	//‚±‚Á‚¿‚Í”ÍˆÍ“à‚É“ü‚Á‚½‚çUŒ‚‚Ì€”õ‚Ö
