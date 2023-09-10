@@ -85,9 +85,7 @@ void RobotObstacle::NotifyMissileDestroyed(Missile* destMissile) {
 	if (destMissile != nullptr) {
 		for (auto it = missiles_.begin(); it != missiles_.end();) {
 			if (*it == destMissile) {
-				*it = nullptr;
-				delete* it; // メモリを解放
-				it = missiles_.erase(it); // 要素を削除し、次の要素を指すイテレータを取得
+				it = missiles_.erase(it);
 			}
 			else {
 				it++;
@@ -103,6 +101,8 @@ void RobotObstacle::KillMeSub()
 
 	KillMe();
 }
+
+//--------------------state----------------------//
 
 void RobotObstacle::UpdateEnter()
 {
@@ -147,10 +147,7 @@ void RobotObstacle::UpdateLeaving()
 {
 	transform_.position_.y += 2.0f;
 	if (transform_.position_.y > 40.0f) {
-		ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
-		pOM->removeObstacle(this);
-
-		KillMe();
+		KillMeSub();
 	}
 
 }
@@ -160,6 +157,8 @@ void RobotObstacle::ChangeState(STATE s)
 	state_ = s;
 	stateEnter_ = true;
 }
+
+//--------------private---------------------//
 
 void RobotObstacle::Rotate()
 {
@@ -214,7 +213,9 @@ void RobotObstacle::ShotMissile()
 
 	int missileCount = 8;
 	for (int i = 0; i < missileCount; i++) {
+	//	Missile* pMissile = Instantiate<Missile>(this);
 		Missile* pMissile = Instantiate<Missile>(GetParent());
+
 		pMissile->SetPosition(transform_.position_.x + tblP[i].x, transform_.position_.y + tblP[i].y, transform_.position_.z + tblP[i].z);
 		pMissile->SetTarget(tblT[i].x, tblT[i].y, tblT[i].z);
 		pMissile->SetParent(this);

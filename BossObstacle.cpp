@@ -2,6 +2,7 @@
 #include "Engine/Model.h"
 #include "Player.h"
 #include "Missile.h"
+#include "ObstacleManager.h"
 
 //動きのイメージはCHORUSのプレイヤー
 //HPを0にしたら勝ち、PlayerのHPが０もしくはTimeOverになったら負け
@@ -58,6 +59,9 @@ void BossObstacle::Update()
 
     XMFLOAT3 plaPos = pPlayer_->GetPosition();
     if (!IsInTargetPosition(plaPos, 80.0f)) {
+        ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
+        pOM->removeObstacle(this);
+
         KillMe();
     }
 
