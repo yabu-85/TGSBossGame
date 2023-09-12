@@ -17,7 +17,7 @@ namespace {
 
 ObstacleManager::ObstacleManager(GameObject* parent)
     :GameObject(parent, "ObstacleManager"), width_(0), height_(0), activationZone_(0), activationZoneSub_(0),
-    pPlayer_(nullptr), isActive_(true)
+    pPlayer_(nullptr), isActive_(true), csvInit_(false)
 {
 }
 
@@ -69,8 +69,12 @@ void ObstacleManager::Release()
 
 void ObstacleManager::InitCsv(std::string mp)
 {
-    // CSVファイル読み込み
-    csv_.Load(mp + ".csv");
+    if (csvInit_ == false) {
+        // CSVファイル読み込み
+        csv_.Load(mp + ".csv");
+
+        csvInit_ = true;
+    }
 
     //ステージの幅と高さを設定
     width_ = (int)csv_.GetWidth();
@@ -245,5 +249,22 @@ void ObstacleManager::SetAllObstacleActive(bool b)
             }
         }
     }
+}
+
+void ObstacleManager::KillObstacles()
+{   
+    for (Obstacle* obj : obstacles_) {
+        obj->KillMeSub();
+    }
+
+    for (Obstacle* obj : obstacles_) {
+        removeObstacle(obj);
+    }
+    obstacles_.clear();
+
+    for (Obstacle* obj : inactiveObstacles_) {
+        removeInActiveObstacle(obj);
+    }
+    inactiveObstacles_.clear();
 
 }

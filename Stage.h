@@ -17,8 +17,9 @@ class Stage : public GameObject
 {    
     int width_;                 //ステージ幅
     int height_;                //ステージ高さ
-    int hModel_[TYPE_MAX];      //モデル番号
+    int hModel_;      //モデル番号
     int** table_;               //ステージセルのデータ
+    XMFLOAT3 plaPos_;
     Player* pPlayer_;
 
 public:
@@ -29,11 +30,11 @@ public:
     void Draw() override;
     void Release() override;
 
-    float GetFloorHeight(int x, int z);     //床の高さを取得する関数
-    bool IsWall(int x, int z);              //壁であるか判定する関数
-    int GetModelHandle(int i) { return hModel_[i]; } //モデル番号を取得する関数
-    XMFLOAT3 GetPlaPos();                   //CSV上でのプレイヤー座標を取得する関数
-    int GetHeight() { return height_; };    //マップの高さ（ゴールまで）
+    float GetFloorHeight(int x, int z);         //床の高さを取得する関数
+    bool IsWall(int x, int z);                  //壁であるか判定する関数
+    int GetModelHandle(int i) { return hModel_; } //モデル番号を取得する関数
+    XMFLOAT3 GetPlaPos() { return plaPos_; };   //CSV上でのプレイヤー座標を取得する関数
+    int GetHeight() { return height_; };        //マップの高さ（ゴールまで）
     
     //プレイヤーが落ちた時の一番近い床
     XMFLOAT3 NearestFloorLocation(XMFLOAT3 pos);

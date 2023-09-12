@@ -34,8 +34,18 @@ void ResultScene::Initialize()
 	assert(hPict_[2] >= 0);
 
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
-	pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "ReturnTitle");
-	pButtonFactory_->ButtonCreate(0.0f, -600.0f, 1.0f, 1.0f, "Quit");
+	if (pSceneManager->GetResult()) {
+		//クリアした場合のボタン
+		pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "ReturnTitle");
+		pButtonFactory_->ButtonCreate(0.0f, -600.0f, 1.0f, 1.0f, "Exit");
+	}
+	else {
+		pButtonFactory_->ButtonCreate(0.0f, -200.0f, 1.0f, 1.0f, "Retry");
+		pButtonFactory_->ButtonCreate(0.0f, -450.0f, 1.0f, 1.0f, "ReturnTitle");
+		pButtonFactory_->ButtonCreate(0.0f, -700.0f, 1.0f, 1.0f, "Exit");
+
+	}
+	
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
@@ -48,12 +58,17 @@ void ResultScene::Initialize()
 //更新
 void ResultScene::Update()
 {
+	if (pButtonFactory_->CheckButtonPressed() == "Retry") {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
+
+	}
 	if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle") {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_TITLE);
 
 	}
-	else if (pButtonFactory_->CheckButtonPressed() == "Quit") {
+	else if (pButtonFactory_->CheckButtonPressed() == "Exit") {
 		Instantiate<ExitMenu>(this);
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;

@@ -22,4 +22,6 @@ public:
 	//PlayScene‚Ì‚·‚×‚Ä‚ÌActive‚ğ§Œä‚·‚é
 	void SetObjectActive(bool _active);
 
+	void ResetGame();
+
 };

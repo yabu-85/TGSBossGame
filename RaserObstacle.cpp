@@ -47,6 +47,11 @@ void RaserObstacle::Release()
 {
 }
 
+void RaserObstacle::KillMeSub()
+{
+	KillMe();
+}
+
 
 void RaserObstacle::UpdateEnter()
 {

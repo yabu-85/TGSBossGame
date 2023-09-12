@@ -69,3 +69,8 @@ void WallObstacle::Draw()
 void WallObstacle::Release()
 {
 }
+
+void WallObstacle::KillMeSub()
+{
+	KillMe();
+}

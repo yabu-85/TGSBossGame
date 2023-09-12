@@ -93,6 +93,13 @@ void UfoObstacle::Release()
 {
 }
 
+void UfoObstacle::KillMeSub()
+{
+	Model::StopDraw(hModelSub_[2]);
+
+	KillMe();
+}
+
 void UfoObstacle::UpdateEnter()
 {
 	if (stateEnter_) {

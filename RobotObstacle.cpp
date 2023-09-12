@@ -96,9 +96,6 @@ void RobotObstacle::NotifyMissileDestroyed(Missile* destMissile) {
 
 void RobotObstacle::KillMeSub()
 {
-	ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
-	pOM->removeObstacle(this);
-
 	for (Missile *it : missiles_) {
 		it->KillMeSub();
 	}
@@ -145,6 +142,9 @@ void RobotObstacle::UpdateIdle()
 {
 	for (Missile* mis : missiles_) {
 		if (mis->IsTargetHit()) {
+			ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
+			pOM->removeObstacle(this);
+
 			mis->KillMeSub();
 			KillMeSub();
 
@@ -152,6 +152,9 @@ void RobotObstacle::UpdateIdle()
 		}
 
 		if (mis->IsExplode()) {
+			ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
+			pOM->removeObstacle(this);
+
 			mis->KillMeSub();
 			NotifyMissileDestroyed(mis);
 
@@ -168,6 +171,9 @@ void RobotObstacle::UpdateLeaving()
 {
 	transform_.position_.y += 2.0f;
 	if (transform_.position_.y > 40.0f) {
+		ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
+		pOM->removeObstacle(this);
+
 		KillMeSub();
 	}
 
@@ -237,7 +243,6 @@ void RobotObstacle::ShotMissile()
 		Missile* pMissile = Instantiate<Missile>(GetParent());
 		pMissile->SetPosition(transform_.position_.x + tblP[i].x, transform_.position_.y + tblP[i].y, transform_.position_.z + tblP[i].z);
 		pMissile->SetTarget(tblT[i].x, tblT[i].y, tblT[i].z);
-		pMissile->SetParent(this);
 		missiles_.push_back(pMissile);
 	}
 }

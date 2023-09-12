@@ -32,9 +32,10 @@ PauseMenu::~PauseMenu()
 void PauseMenu::Initialize()
 {
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
-	pButtonFactory_->ButtonCreate(0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame");
-	pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Setting");
-	pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "ReturnTitle");
+	pButtonFactory_->ButtonCreate(0.0f, 400.0f, 1.0f, 1.0f, "Retry");
+	pButtonFactory_->ButtonCreate(0.0f, 100.0f, 1.0f, 1.0f, "ReturnGame");
+	pButtonFactory_->ButtonCreate(0.0f, -200.0f, 1.0f, 1.0f, "Setting");
+	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "ReturnTitle");
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
@@ -54,6 +55,14 @@ void PauseMenu::Initialize()
 
 void PauseMenu::Update()
 {
+	if (pButtonFactory_->CheckButtonPressed() == "Retry") {
+		PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
+		pPlayScene->ResetGame();
+
+		KillMe();
+		return;
+	}
+
 	if (pButtonFactory_->CheckButtonPressed() == "ReturnGame") {
 		PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
 		pPlayScene->SetObjectActive(true);

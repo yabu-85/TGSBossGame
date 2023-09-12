@@ -75,7 +75,7 @@ void PlayScene::Update()
 	}
 
 	//ゲームオーバー
-	//if (pTimer_->IsFinished() || pPlayer_->GetHp() <= 0) result = 1;
+	if (pTimer_->IsFinished() || pPlayer_->GetHp() <= 0) result = 1;
 	//ゲームクリア
 	if (goal <= pPlayer_->GetPosition().z) result = 2;
 
@@ -97,10 +97,6 @@ void PlayScene::Update()
 			}
 		}
 	}
-
-	if (Input::IsKeyDown(DIK_LEFTARROW)) pTimer_->Stop();
-	if (Input::IsKeyDown(DIK_RIGHTARROW)) pTimer_->Start();
-
 }
 
 //描画
@@ -125,5 +121,31 @@ void PlayScene::SetObjectActive(bool _active) {
 
 	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
 	pObstacleManager->SetAllObstacleActive(_active);
+
+}
+
+void PlayScene::ResetGame()
+{
+	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+	int stage = pSceneManager->GetPlayStage() - 1;
+
+	ObstacleManager* pObstacleManager = (ObstacleManager*)FindObject("ObstacleManager");
+	pObstacleManager->KillObstacles();
+	pObstacleManager->Initialize();
+	pObstacleManager->InitCsv(stageName[stage]);
+
+	pTimer_->SetLimit(stageTime[stage]);
+	pTimer_->Start();
+
+	Stage* pStage = (Stage*)FindObject("Stage");
+	pStage->Initialize();
+	pPlayer_->SetPosition(pStage->GetPlaPos());
+	pPlayer_->SetActiveWithDelay(true, 10); //クリックの動作を入れないように遅延
+	pPlayer_->ResetPlayer();
+
+	AudioManager::Release();
+	AudioManager::Initialize(AudioManager::PLAY);
+
+	SetObjectActive(true);
 
 }

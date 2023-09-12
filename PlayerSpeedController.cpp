@@ -45,7 +45,7 @@ void PlayerSpeedController::Draw()
 {
     Transform gauge;
     gauge.scale_.y = 0.6f;
-    gauge.position_.x = 0.1f;
+    gauge.position_.x = 0.25f;
     gauge.position_.y = -0.8f;
     float hpGauge = (float)((runTime_ * 100) / (moveSpeedUp_ * speedUpTime)) * 0.01f;  //hp50 = 1
     gauge.scale_.x = hpGauge;

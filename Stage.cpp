@@ -10,9 +10,8 @@ namespace {
 }
 
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), table_(nullptr), width_(0), height_(0), pPlayer_(nullptr)
+    :GameObject(parent, "Stage"), table_(nullptr), width_(0), height_(0), pPlayer_(nullptr), plaPos_(0,0,0), hModel_(-1)
 {
-    for (int i = 0; i < TYPE_MAX; i++) hModel_[i] = -1;
 
 }
 
@@ -26,13 +25,9 @@ void Stage::Initialize()
     { 
         "Model/StagePit2.fbx",
     };
-
-    //モデルデータのロード
-    for (int i = 0; i < TYPE_MAX; i++) 
-    { 
-        hModel_[i] = Model::Load(fileName[i]);
-        assert(hModel_[i] >= 0);
-    }
+    
+    hModel_ = Model::Load(fileName[0]);
+    assert(hModel_ >= 0);
 }
 
 void Stage::Update()
@@ -62,11 +57,11 @@ void Stage::Draw()
 
             blockTrans.position_.x = (float)x;
             blockTrans.position_.z = (float)z;
-            int type = table_[x][z];
+            if (table_[x][z] != 0) continue;
 
             //モデル描画
-            Model::SetTransform(hModel_[type], blockTrans);
-            Model::Draw(hModel_[type]);
+            Model::SetTransform(hModel_, blockTrans);
+            Model::Draw(hModel_);
         }
     }
 }
@@ -113,24 +108,6 @@ bool Stage::IsWall(int x, int z)
     }
 }
 
-XMFLOAT3 Stage::GetPlaPos()
-{
-    //フィールドを走査する
-    for (int x = 0; x < width_; x++) 
-    {
-        for (int y = 0; y < height_; y++) 
-        {
-            //目的のナンバーを持つセル(Player)が見つかった
-            if (table_[x][y] == TYPE_PLAYER)
-            {
-                table_[x][y] = 0;
-                return XMFLOAT3((float)x + 0.5f, 0.0f, (float)y + 0.5f);
-            }
-        }
-    }
-    return XMFLOAT3{ 0,0,0 };
-}
-
 XMFLOAT3 Stage::NearestFloorLocation(XMFLOAT3 pos)
 {
     const float leng = 15.0f;
@@ -167,7 +144,8 @@ void Stage::InitMapData(std::string mp)
         {
             if (csv.GetValue(x, y) == 10)
             {
-                table_[x][height_ - 1 - y] = 10;
+                table_[x][height_ - 1 - y] = 0;
+                plaPos_ = XMFLOAT3((float)x + 0.5f, 0.0f, (float)height_ - 1 - y + 0.5f);
             }
             else if (csv.GetValue(x, y) != -1)
             {

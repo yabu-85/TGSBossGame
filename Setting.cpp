@@ -25,7 +25,7 @@ Setting::~Setting()
 void Setting::Initialize()
 {
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
-	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "ReturnTitle");
+	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "Return");
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
@@ -103,7 +103,7 @@ void Setting::Update()
 	}
 
 
-	if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
+	if (pButtonFactory_->CheckButtonPressed() == "Return"){
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;
 		pB->SetActive(true);

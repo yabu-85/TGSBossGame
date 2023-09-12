@@ -8,7 +8,7 @@
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
     propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
-    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), isActive_(true), isTargetHit_(false), isExplode_(false)
+    rotationAngle_{0,0,0}, isActive_(true), isTargetHit_(false), isExplode_(false)
 {
 }
 

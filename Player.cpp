@@ -215,6 +215,29 @@ void Player::DecreaseHp(int i)
 
 }
 
+void Player::ResetPlayer()
+{
+    targetRotation_ = 0;
+    firstJump_ = false;
+    secondJump_ = false; 
+    prevYHeight_ = 0;
+    isCrouching_ = false;
+    graY_ = 0;
+    fMove_ = { 0,0,0 };
+    state_ = S_IDLE;
+    anime_ = false;
+    cameraHeight_ = 1.0f;
+    playerMovement_ = { 0,0,0 };
+    bulletJump_ = false;
+    maxMoveSpeed_ = 1.0f;
+    isActive_ = false;
+    stateEnter_ = true;
+    hp_ = 50;
+    maxHp_ = 50;
+    Model::SetAnimFrame(hModel_, 0, 0, 1);
+    
+}
+
 /*--------------------------------State------------------------*/
 
 void Player::ChangeState(STATE s)

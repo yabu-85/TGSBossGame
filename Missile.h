@@ -26,7 +26,6 @@ class Missile :
 	bool isTargetHit_;				//ターゲットに当たったか
 	bool isExplode_;				//目標地点について爆破したか
 
-	GameObject* pRobotObstacle_;	
 	Player* pPlayer_;
 
 	void CreateExplodeParticle();
@@ -40,7 +39,6 @@ public:
 	void Release() override;
 
 	void SetTarget(float x, float y, float z);
-	void SetParent(GameObject* p) { pRobotObstacle_ = p; };
 	void SetReflected(bool b) { missileReflected_ = b; };
 	void Reflect();
 

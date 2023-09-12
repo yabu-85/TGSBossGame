@@ -62,7 +62,24 @@ void BossObstacle::Update()
         ObstacleManager* pOM = (ObstacleManager*)FindObject("ObstacleManager");
         pOM->removeObstacle(this);
 
-        KillMe();
+        KillMeSub();
+    }
+
+    for (Missile* mis : missiles_) {
+        if (mis->IsTargetHit()) {
+            mis->KillMeSub();
+            KillMeSub();
+
+            continue;
+        }
+
+        if (mis->IsExplode()) {
+            mis->KillMeSub();
+            NotifyMissileDestroyed(mis);
+
+            continue;
+        }
+
     }
 
 }
@@ -77,6 +94,28 @@ void BossObstacle::Draw()
 
 void BossObstacle::Release()
 {
+}
+
+void BossObstacle::NotifyMissileDestroyed(Missile* destMissile) {
+    if (destMissile != nullptr) {
+        for (auto it = missiles_.begin(); it != missiles_.end();) {
+            if (*it == destMissile) {
+                it = missiles_.erase(it);
+            }
+            else {
+                it++;
+            }
+        }
+    }
+}
+
+void BossObstacle::KillMeSub()
+{
+    for (Missile* it : missiles_) {
+        it->KillMeSub();
+    }
+
+    KillMe();
 }
 
 //--------------state---------------//
@@ -213,6 +252,7 @@ void BossObstacle::ShotMissile()
     Missile* pMissile = Instantiate<Missile>(GetParent());
     pMissile->SetPosition(transform_.position_.x, transform_.position_.y, transform_.position_.z);
     pMissile->SetTarget(0.0f, 0.0f, 0.0f);
+    missiles_.push_back(pMissile);
 
 }
 
