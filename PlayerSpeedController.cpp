@@ -21,8 +21,8 @@ PlayerSpeedController::~PlayerSpeedController()
 
 void PlayerSpeedController::Initialize()
 {
-    std::string fileName[] = { "SpeedChange", "SpeedGauge", "SpeedGaugeFrame" };
-    for (int i = 0; i < 3; i++) {
+    std::string fileName[] = { "SpeedUp", "SpeedDown", "SpeedGauge", "SpeedGaugeFrame"};
+    for (int i = 0; i < 4; i++) {
         hPict_[i] = Image::Load("Png/" + fileName[i] + ".png");
         assert(hPict_[i] >= 0);
     }
@@ -49,28 +49,40 @@ void PlayerSpeedController::Draw()
     gauge.position_.y = -0.8f;
     float hpGauge = (float)((runTime_ * 100) / (moveSpeedUp_ * speedUpTime)) * 0.01f;  //hp50 = 1
     gauge.scale_.x = hpGauge;
-    Image::SetTransform(hPict_[1], gauge);
-    Image::Draw(hPict_[1]);
-
-    gauge.scale_.x = 1.0f;
     Image::SetTransform(hPict_[2], gauge);
     Image::Draw(hPict_[2]);
+
+    gauge.scale_.x = 1.0f;
+    Image::SetTransform(hPict_[3], gauge);
+    Image::Draw(hPict_[3]);
 
     //スピードアップ時の画面効果
     if (speedUpPngDraw > 0) {
         Transform pict;
-        if (isUp_) drawTime += drawSpeed;
-        else drawTime -= drawSpeed;
-        pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).x;
-        pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).y;
-        Image::SetRect(hPict_[0], 0, drawTime, 1920, 1280);
-        Image::SetAlpha(hPict_[0], (int)(255 * (float)(speedUpPngDraw / 60.0f)));
-        Image::SetTransform(hPict_[0], pict);
-        Image::Draw(hPict_[0]);
+
+        if (isUp_) 
+        {
+            pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).x;
+            pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).y;
+            Image::SetRect(hPict_[0], 0, drawTime, 1920, 1280);
+            Image::SetAlpha(hPict_[0], (int)(255 * (float)(speedUpPngDraw / 60.0f)));
+            Image::SetTransform(hPict_[0], pict);
+            Image::Draw(hPict_[0]);
+            drawTime += drawSpeed;
+        }
+        else 
+        {
+            pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[1]).x;
+            pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[1]).y;
+            Image::SetRect(hPict_[1], 0, drawTime, 1920, 1280);
+            Image::SetAlpha(hPict_[1], (int)(255 * (float)(speedUpPngDraw / 60.0f)));
+            Image::SetTransform(hPict_[1], pict);
+            Image::Draw(hPict_[1]);
+            drawTime -= drawSpeed;
+        }
 
         speedUpPngDraw--;
     }
-
     Model::DrawOrder();
 
 }
