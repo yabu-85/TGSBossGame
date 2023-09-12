@@ -196,7 +196,7 @@ void UfoObstacle::UpdatePreparation()
 	VFX::Start(data1);
 
 
-	int shotTime = 220;
+	int shotTime = 60;
 	if (time_ > shotTime) {
 
 		//‘æ“ñ‚ÌTargetPositionŒˆ’è
