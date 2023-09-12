@@ -8,7 +8,7 @@
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
     propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
-    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), isActive_(true)
+    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), isActive_(true), isTargetHit_(false), isExplode_(false)
 {
 }
 
@@ -31,7 +31,7 @@ void Missile::Initialize()
     countPerMeter = 1.0f;
     speed = 0.05f;
     damping = 0.0f;
-    impact = 0.5f;
+    impact = 1.0f;
 
     //‰~‰^“®‚ÌŒüS—Í
     maxCentripetalAccel = 0.1f;
@@ -67,7 +67,7 @@ void Missile::Update()
 
     //‰Î‚Ì•²
     dataExp_.position = transform_.position_;
-    VFX::Start(dataExp_);
+    //VFX::Start(dataExp_);
 
     //’µ‚Ë•Ô‚³‚ê‚Ä‚éê‡‚Ìˆ—
     if (missileReflected_) {
@@ -86,17 +86,11 @@ void Missile::Update()
         transform_.rotate_.z += rotationAngle_.z;
 
         //”š”­‚Ì”ÍˆÍ“à‚©‚Ç‚¤‚©
-        float dist = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
-        if (dist <= 1.0f) {
+        float distance = XMVectorGetX(XMVector3Length((pos2 + pos) - pos1));
+        if (distance <= 1.0f) {
             CreateExplodeParticle();
-
-            //‚Ü‚¾Œ‚‚Á‚½e‚ª¶‚«‚Ä‚¢‚ê‚Î“|‚·
-            if (pRobotObstacle_ != nullptr) {
-                pRobotObstacle_->KillMeSub();
-            }
-
+            isTargetHit_ = true;
             AudioManager::PlaySoundMa(AUDIO_ROBOT_HIT);
-            KillMeSub();
         }
 
         return;
@@ -136,14 +130,10 @@ void Missile::Update()
         (tar.z - pos.z) * (tar.z - pos.z)
     );
     //‚±‚±‚ÍTarget‚ÌêŠ‚Ì”ÍˆÍ‚É“ü‚Á‚½‚ç
-    if (distance < impact) {
+    if (distance < 1.0f) {
         CreateExplodeParticle();        
         AudioManager::PlaySoundMa(AUDIO_MISSILE_EXPLODE);
-        
-        if (!pRobotObstacle_->IsDead())
-            pRobotObstacle_->NotifyMissileDestroyed(this);
-
-        KillMeSub();
+        isExplode_ = true;
 
     }
     
@@ -177,11 +167,9 @@ void Missile::Update()
         AudioManager::PlaySoundMa(AUDIO_MISSILE_EXPLODE);
 
         pPlayer_->DecreaseHp(5);
+        isExplode_ = true;
 
-        if (!pRobotObstacle_->IsDead())
-            pRobotObstacle_->NotifyMissileDestroyed(this);
 
-        KillMeSub();
     }
 }
 
@@ -190,7 +178,6 @@ void Missile::Draw()
 	Transform trs = transform_;
 	trs.rotate_.y += 180.0f;
 	Model::SetTransform(hModel_, trs);
-	//Model::Draw(hModel_);
 }
 
 void Missile::Release()
@@ -250,6 +237,6 @@ void Missile::CreateExplodeParticle()
     data.scale = XMFLOAT2(1.05f, 1.05f);
     data.color = XMFLOAT4(1.0f, 1.0f, 0.1f, 1.0f);
     data.deltaColor = XMFLOAT4(0.0f, -1.0f / 20.0f, 0.0f, -1.0f / 20.0f);
-    VFX::Start(data);
+    //VFX::Start(data);
 
 }

@@ -242,26 +242,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		while (ShowCursor(FALSE) >= 0);
 		return 0;
 
-		//キーボードのキーが押された
-	case WM_KEYDOWN:
-		//エスケープキーが押された場合
-		if (wParam == VK_ESCAPE)
-		{
-			while (ShowCursor(TRUE) < 0);   //マウスカーソルを表示する
-			int result = MessageBox(hWnd, "プログラムを終了しますか？", "確認", MB_OKCANCEL | MB_ICONQUESTION);
-
-			//OKボタンが押された場合、プログラムを終了
-			if (result == IDOK)
-			{
-				ReleaseMousePointer();  // マウスポインターの制限を解除
-				PostQuitMessage(0);      // プログラム終了
-			}
-			else if (result == IDCANCEL)
-			{
-				// キャンセル選択時は何もしない
-			}
-		}
-		return 0;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }

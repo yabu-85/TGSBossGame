@@ -3,12 +3,15 @@
 #include "Engine/Model.h"
 
 namespace {
-    static int speedUpPngDraw = 0;
-
+    const int drawSpeed = 25;
+    const int speedUpTime = 300;
+    int speedUpPngDraw = 0;
+    int drawTime = 0;
+    float upSpeed = 0.2f; 
 }
 
 PlayerSpeedController::PlayerSpeedController(GameObject* parent)
-    :GameObject(parent, "PlayerSpeedController"), hPict_{ -1, -1, -1 }, moveSpeedUp_(1.0f), runTime_(0)
+    :GameObject(parent, "PlayerSpeedController"), hPict_{ -1, -1, -1 }, moveSpeedUp_(1.0f), runTime_(0), isUp_(true)
 {
 }
 
@@ -18,7 +21,7 @@ PlayerSpeedController::~PlayerSpeedController()
 
 void PlayerSpeedController::Initialize()
 {
-    std::string fileName[] = { "ColorDamage", "SpeedGauge", "SpeedGaugeFrame" };
+    std::string fileName[] = { "SpeedChange", "SpeedGauge", "SpeedGaugeFrame" };
     for (int i = 0; i < 3; i++) {
         hPict_[i] = Image::Load("Png/" + fileName[i] + ".png");
         assert(hPict_[i] >= 0);
@@ -28,10 +31,11 @@ void PlayerSpeedController::Initialize()
 
 void PlayerSpeedController::Update()
 {
-    if (runTime_ > (int)(moveSpeedUp_ * 300)) {
+    if (runTime_ > (int)(moveSpeedUp_ * speedUpTime)) {
         runTime_ = 0;
-        moveSpeedUp_ += 0.2f;
+        moveSpeedUp_ += upSpeed;
         speedUpPngDraw = 60;
+        isUp_ = true;
     }
 
 
@@ -43,7 +47,7 @@ void PlayerSpeedController::Draw()
     gauge.scale_.y = 0.6f;
     gauge.position_.x = 0.1f;
     gauge.position_.y = -0.8f;
-    float hpGauge = (float)((runTime_ * 100) / (moveSpeedUp_ * 300)) * 0.01f;  //hp50 = 1
+    float hpGauge = (float)((runTime_ * 100) / (moveSpeedUp_ * speedUpTime)) * 0.01f;  //hp50 = 1
     gauge.scale_.x = hpGauge;
     Image::SetTransform(hPict_[1], gauge);
     Image::Draw(hPict_[1]);
@@ -55,8 +59,11 @@ void PlayerSpeedController::Draw()
     //スピードアップ時の画面効果
     if (speedUpPngDraw > 0) {
         Transform pict;
+        if (isUp_) drawTime += drawSpeed;
+        else drawTime -= drawSpeed;
         pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).x;
         pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).y;
+        Image::SetRect(hPict_[0], 0, drawTime, 1920, 1280);
         Image::SetAlpha(hPict_[0], (int)(255 * (float)(speedUpPngDraw / 60.0f)));
         Image::SetTransform(hPict_[0], pict);
         Image::Draw(hPict_[0]);
@@ -72,9 +79,11 @@ void PlayerSpeedController::Release()
 {
 }
 
-void PlayerSpeedController::ResetSpeed()
+void PlayerSpeedController::ResetSpeed(bool b)
 {
     moveSpeedUp_ = 1.0f;
     runTime_ = 0;
+    isUp_ = false;
+    if (b) speedUpPngDraw = 60;
 
 }

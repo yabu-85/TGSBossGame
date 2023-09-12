@@ -1,7 +1,10 @@
 #pragma once
 #include "Obstacle.h"
+#include "Missile.h"
+#include <vector>
 
 class Player;
+class Missile;
 
 class BossObstacle : public Obstacle
 {
@@ -23,7 +26,8 @@ class BossObstacle : public Obstacle
     float moveSpeed_;            //移動速度
     XMFLOAT3 targetPosition_;    //移動する目標地点
     XMVECTOR MoveDirection_;     //移動方向
-
+    
+    std::vector<Missile*> missiles_;
     Player* pPlayer_;
 
     void Rotate(float x, float z, float _rotateSpeed);  //回転します

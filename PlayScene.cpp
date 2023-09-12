@@ -70,7 +70,7 @@ void PlayScene::Initialize()
 //çXêV
 void PlayScene::Update()
 {
-	if (Input::IsKeyDown(DIK_E) && !FindObject("PauseMenu")) {
+	if (Input::IsKeyDown(DIK_ESCAPE) && !FindObject("PauseMenu")) {
 		Instantiate<PauseMenu>(this);
 	}
 

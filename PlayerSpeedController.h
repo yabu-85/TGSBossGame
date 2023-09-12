@@ -7,6 +7,7 @@ class PlayerSpeedController :
     int hPict_[3];    //画像番号
     int runTime_;
     float moveSpeedUp_;
+    bool isUp_;         //スピード上げる=true, 下がる=false
 
 public:
     PlayerSpeedController(GameObject* parent);
@@ -17,7 +18,7 @@ public:
     void Release() override;
 
     void AddRunTime() { runTime_++; };
-    void ResetSpeed();
+    void ResetSpeed(bool b = false);
 
     float GetMoveSpeed_() { return moveSpeedUp_; };
 

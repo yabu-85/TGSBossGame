@@ -6,6 +6,7 @@
 #include "AudioManager.h"
 #include "PlayScene.h"
 #include <future>
+#include "Setting.h"
 
 //メニュークラスを作るとして
 //Pause、Settingクラスを継承して作ることになる　と思う
@@ -32,7 +33,8 @@ void PauseMenu::Initialize()
 {
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
 	pButtonFactory_->ButtonCreate(0.0f, 300.0f, 1.0f, 1.0f, "ReturnGame");
-	pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "ReturnTitle");
+	pButtonFactory_->ButtonCreate(0.0f, 0.0f, 1.0f, 1.0f, "Setting");
+	pButtonFactory_->ButtonCreate(0.0f, -300.0f, 1.0f, 1.0f, "ReturnTitle");
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
@@ -62,6 +64,15 @@ void PauseMenu::Update()
 		KillMe();
 
 	}
+	else if (pButtonFactory_->CheckButtonPressed() == "Setting") {
+		Instantiate<Setting>(this);
+		AudioManager::PlaySoundMa(AUDIO_ENTERCURSOR);
+
+		pButtonFactory_->SetActive(false);
+		pButtonFactory_->SetAlpha(10);
+		pButtonFactory_->SetFrameAlpha(10);
+
+	}
 	else if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
 		AudioManager::PlaySoundMa(AUDIO_ENTERCURSOR);
 		
@@ -69,16 +80,6 @@ void PauseMenu::Update()
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_TITLE);
 
-	}
-	else if (pButtonFactory_->CheckButtonPressed() == "Quit") {
-		Instantiate<ExitMenu>(this);
-
-		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
-		ButtonFactory* pB = (ButtonFactory*)gs2;
-		pB->SetActive(false);
-		pB->SetAlpha(10);
-		pB->SetFrameAlpha(10);
-	
 	}
 
 }

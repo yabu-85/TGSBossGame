@@ -42,7 +42,7 @@ void WallObstacle::Update()
 			XMFLOAT3 move = { 0, 0, 0 };
 			pPlayer_->SetPlayerMovement(move);
 			PlayerSpeedController* pSpeed = (PlayerSpeedController*)FindObject("PlayerSpeedController");
-			pSpeed->ResetSpeed();
+			pSpeed->ResetSpeed(true);
 		}
 	}
 

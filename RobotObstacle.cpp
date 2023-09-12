@@ -143,6 +143,23 @@ void RobotObstacle::UpdateShot()
 
 void RobotObstacle::UpdateIdle()
 {
+	for (Missile* mis : missiles_) {
+		if (mis->IsTargetHit()) {
+			mis->KillMeSub();
+			KillMeSub();
+
+			continue;
+		}
+
+		if (mis->IsExplode()) {
+			mis->KillMeSub();
+			NotifyMissileDestroyed(mis);
+
+			continue;
+		}
+
+	}
+
 	if(missiles_.empty()) ChangeState(S_LEAVING);
 
 }

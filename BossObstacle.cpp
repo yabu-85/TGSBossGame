@@ -104,14 +104,10 @@ void BossObstacle::UpdateEnter()
 }
 
 void BossObstacle::UpdateMissile()
-{
-    return;
+{   
+    ShotMissile();
 
-    Missile* pMissile = Instantiate<Missile>(GetParent());
-    pMissile->SetPosition(transform_.position_.x, transform_.position_.y, transform_.position_.z);
-    pMissile->SetTarget(0.0f, 0.0f, 0.0f);
-    
-    //
+
 }
 
 void BossObstacle::UpdateDead()
@@ -214,5 +210,9 @@ void BossObstacle::AirStrike()
 
 void BossObstacle::ShotMissile()
 {
+    Missile* pMissile = Instantiate<Missile>(GetParent());
+    pMissile->SetPosition(transform_.position_.x, transform_.position_.y, transform_.position_.z);
+    pMissile->SetTarget(0.0f, 0.0f, 0.0f);
+
 }
 

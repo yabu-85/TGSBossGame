@@ -3,7 +3,6 @@
 #include "Engine/VFX.h"
 
 class Player;
-class RobotObstacle;
 
 class Missile :
     public GameObject
@@ -22,10 +21,12 @@ class Missile :
 	float speed;					//スピード
 	float damping;					//減衰
 	float impact;					//衝突距離
-    bool missileReflected_;         //反射されたかどうか falseされてない
 	bool isActive_;					//アクティブ状態か
-	
-	RobotObstacle* pRobotObstacle_;	
+	bool missileReflected_;         //反射されたかどうか falseされてない
+	bool isTargetHit_;				//ターゲットに当たったか
+	bool isExplode_;				//目標地点について爆破したか
+
+	GameObject* pRobotObstacle_;	
 	Player* pPlayer_;
 
 	void CreateExplodeParticle();
@@ -39,12 +40,15 @@ public:
 	void Release() override;
 
 	void SetTarget(float x, float y, float z);
-	void SetParent(RobotObstacle* p) { pRobotObstacle_ = p; };
+	void SetParent(GameObject* p) { pRobotObstacle_ = p; };
 	void SetReflected(bool b) { missileReflected_ = b; };
 	void Reflect();
 
 	void SetActive(bool b) { isActive_ = b; };
 	void KillMeSub();
+
+	bool IsTargetHit() { return isTargetHit_; };	//ターゲットに当たったか
+	bool IsExplode() { return isExplode_; };		//目標地点について爆破したか
 
 };
 
