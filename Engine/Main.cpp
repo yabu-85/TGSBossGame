@@ -255,6 +255,15 @@ void LimitMousePointer(HWND hwnd)
 	// ウィンドウの矩形領域をスクリーン座標に変換
 	MapWindowPoints(hwnd, nullptr, reinterpret_cast<POINT*>(&windowRect), 2);
 
+	// タスクバーの高さを取得
+	RECT taskbarRect;
+	HWND taskbar = FindWindow("Shell_TrayWnd", nullptr);
+	if (taskbar && GetWindowRect(taskbar, &taskbarRect))
+	{
+		// タスクバーの高さを制限領域から除外
+		windowRect.bottom -= (taskbarRect.bottom - taskbarRect.top);
+	}
+
 	// マウスポインターの制限領域を設定
 	ClipCursor(&windowRect);
 }
