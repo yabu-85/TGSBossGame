@@ -67,8 +67,8 @@ void Button::Release()
 
 void Button::SetValue(float x, float y, float w, float h, std::string n)
 {
-	static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
-	static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
+	static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
+	static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
 	
 	transform_.position_.x = x / screenWidth;
 	transform_.position_.y = y / screenHeight;
@@ -97,8 +97,8 @@ void Button::SetValue(float x, float y, float w, float h, std::string n)
 
 void Button::SetValue(float x, float y, float w, float h, std::string n, std::string frame)
 {
-	static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
-	static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
+	static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
+	static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
 
 	transform_.position_.x = x / screenWidth;
 	transform_.position_.y = y / screenHeight;

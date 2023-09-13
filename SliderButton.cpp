@@ -73,8 +73,8 @@ void SliderButton::Update()
 
 	//値を変える
 	if (isDragging_) {
-		float scrX = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
-		float scrY = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");
+		float scrX = GetSystemMetrics(SM_CXSCREEN);
+		float scrY = GetSystemMetrics(SM_CYSCREEN);
 
 		XMFLOAT3 mouse = Input::GetMousePositionSub();
 		mouse = { mouse.x / scrX, -(mouse.y / scrY), 0 };
@@ -100,7 +100,7 @@ void SliderButton::Draw()
 	Direct3D::SetBlendMode(mode_);
 
 	float gauge = (float)((num_ * 100) / maxNum_) * 0.01f;
-	const int screnWidth = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
+	const int screnWidth = GetSystemMetrics(SM_CXSCREEN);
 
 	//濃いほうのバー
 	Transform slider = transform_;
@@ -132,8 +132,8 @@ void SliderButton::Release()
 
 void SliderButton::SetValue(float x, float y, float w, float h, std::string n)
 {
-	static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
-	static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
+	static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
+	static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
 	frameSize_ = Image::GetTextureSize(hPict_[1]);
 
 	transform_.position_.x = x / screenWidth;
@@ -155,8 +155,8 @@ bool SliderButton::IsWithinBound()
 
 	if (isDragging_) return true;
 
-	float scrX = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");
-	float scrY = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");
+	float scrX = GetSystemMetrics(SM_CXSCREEN);
+	float scrY = GetSystemMetrics(SM_CYSCREEN);
 
 	XMFLOAT3 mouse = Input::GetMousePositionSub();
 	mouse = { mouse.x / scrX, -(mouse.y / scrY), 0 };

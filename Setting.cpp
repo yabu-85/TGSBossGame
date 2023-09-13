@@ -123,8 +123,8 @@ void Setting::Draw()
 
 	Transform abb;
 	abb.position_ = Input::GetMousePositionSub();
-	static float screenWidth = (float)GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
-	static float screenHeight = (float)GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
+	static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
+	static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
 	abb.position_ = { abb.position_.x / screenWidth, -abb.position_.y / screenHeight , 0 };
 
 	Image::SetTransform(hPict_[1], abb);

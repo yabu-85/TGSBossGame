@@ -61,8 +61,8 @@ void PlayerSpeedController::Draw()
 
         if (isUp_)
         {
-            pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).x;
-            pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).y;
+            pict.scale_.x = GetSystemMetrics(SM_CXSCREEN) / Image::GetTextureSize(hPict_[0]).x;
+            pict.scale_.y = GetSystemMetrics(SM_CYSCREEN) / Image::GetTextureSize(hPict_[0]).y;
             Image::SetRect(hPict_[0], 0, drawTime, 1920, 1280);
             Image::SetAlpha(hPict_[0], (int)(255 * (float)(speedUpPngDraw / 60.0f)));
             Image::SetTransform(hPict_[0], pict);
@@ -71,8 +71,8 @@ void PlayerSpeedController::Draw()
         }
         else
         {
-            pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[1]).x;
-            pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[1]).y;
+            pict.scale_.x = GetSystemMetrics(SM_CXSCREEN) / Image::GetTextureSize(hPict_[1]).x;
+            pict.scale_.y = GetSystemMetrics(SM_CYSCREEN) / Image::GetTextureSize(hPict_[1]).y;
             Image::SetRect(hPict_[1], 0, drawTime, 1920, 1280);
             Image::SetAlpha(hPict_[1], (int)(255 * (float)(speedUpPngDraw / 60.0f)));
             Image::SetTransform(hPict_[1], pict);
