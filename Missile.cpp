@@ -66,7 +66,7 @@ void Missile::Update()
     if (isActive_ == false) return;
 
     //‰Î‚Ì•²
-    if (rand() % 2 == 0) {
+    if (rand() % 4 == 0) {
         dataExp_.position = transform_.position_;
         VFX::Start(dataExp_);
     }
