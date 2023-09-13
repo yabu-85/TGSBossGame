@@ -18,7 +18,7 @@ public:
     void Release() override;
 
     void AddRunTime() { runTime_++; };
-    void ResetSpeed(bool b = false);
+    void ResetSpeed(bool b);
 
     float GetMoveSpeed_() { return moveSpeedUp_; };
 

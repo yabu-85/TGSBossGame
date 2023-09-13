@@ -38,7 +38,6 @@ void PlayerSpeedController::Update()
         isUp_ = true;
     }
 
-
 }
 
 void PlayerSpeedController::Draw()
@@ -97,5 +96,6 @@ void PlayerSpeedController::ResetSpeed(bool b)
     runTime_ = 0;
     isUp_ = false;
     if (b) speedUpPngDraw = 60;
+    else speedUpPngDraw = 0;
 
 }

@@ -107,7 +107,7 @@ void Player::Update()
     //落下した時の処理
     if (transform_.position_.y <= -9.0f) {
         transform_.position_ = pStage_->NearestFloorLocation(transform_.position_);
-        pSpeedCtrl_->ResetSpeed();
+        pSpeedCtrl_->ResetSpeed(true);
         PlayerFallReset();
     }
 
@@ -172,13 +172,9 @@ void Player::Update()
         AudioManager::StopSoundMa(AUDIO_RUNNING);
 
         //地上かつ止まっていたら速度リセット
-        if(IsPlayerOnGround()) pSpeedCtrl_->ResetSpeed();
+        if(IsPlayerOnGround()) pSpeedCtrl_->ResetSpeed(false);
     }
 
-    //テスト用
-    if (Input::IsKey(DIK_UPARROW)) {
-        DecreaseHp(1);
-    }
 }
 
 void Player::Draw()
