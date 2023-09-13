@@ -24,5 +24,7 @@ public:
     void SetCsvPos(XMFLOAT3 pos) { csvPos_ = pos; };
     XMFLOAT3 GetCsvPos() { return csvPos_ ; };
     
+    virtual void KillMeSub() = 0;
+
 };
 

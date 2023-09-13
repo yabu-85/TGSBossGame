@@ -8,7 +8,7 @@
 Missile::Missile(GameObject* parent)
 	:GameObject(parent, "Missile"), hModel_(-1), position{0,0,0,0}, velocity{0,0,0,0}, target{0,0,0,0},maxCentripetalAccel(0),
     propulsion(0),countPerMeter(0),speed(0),damping(0),impact(0), pPlayer_(nullptr), launchPoint_{0,0,0}, missileReflected_(false),
-    rotationAngle_{0,0,0}, pRobotObstacle_(nullptr), isActive_(true), isTargetHit_(false), isExplode_(false)
+    rotationAngle_{0,0,0}, isActive_(true), isTargetHit_(false), isExplode_(false)
 {
 }
 
@@ -96,6 +96,7 @@ void Missile::Update()
         return;
     }
 
+    //移動ーーーーーーーーーーーーーーーーーーーー
     position = XMLoadFloat3(&transform_.position_);
     XMVECTOR toTarget = target - position;
     XMVECTOR vn = XMVector3Normalize(velocity);
@@ -120,10 +121,31 @@ void Missile::Update()
     XMFLOAT3 pos;
     XMStoreFloat3(&pos, position);
     transform_.position_ = pos;
-    
+
+    //回転ーーーーーーーーーーーーーーーーーーーーーー
+    const XMVECTOR vFront{ 0, 0, 1, 0 };
     XMFLOAT3 tar;
-    pos = transform_.position_;
     XMStoreFloat3(&tar, target);
+    XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tar.x, 0, transform_.position_.z - tar.z);
+    XMVECTOR vAimPos = XMLoadFloat3(&fAimPos);
+    vAimPos = XMVector3Normalize(vAimPos);
+    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos);
+    dot = XMVectorGetX(vDot);
+    float angle = (float)acos(dot);
+    // 外積を求めて半回転だったら angle に -1 を掛ける
+    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos);
+    if (XMVectorGetY(vCross) < 0) {
+        angle *= -1;
+    }
+    transform_.rotate_.y = XMConvertToDegrees(angle);
+    transform_.rotate_.y += 180.0f; //Blender
+
+    //////////////////////
+
+    //もう爆発してるから判定しない
+    if (isExplode_ || isTargetHit_) return;
+    
+    pos = transform_.position_;
     float distance = (float)sqrt(
         (tar.x - pos.x) * (tar.x - pos.x) +
         (tar.y - pos.y) * (tar.y - pos.y) +
@@ -137,23 +159,6 @@ void Missile::Update()
 
     }
     
-    const XMVECTOR vFront{ 0, 0, 1, 0 };
-    XMFLOAT3 fAimPos = XMFLOAT3(transform_.position_.x - tar.x, 0, transform_.position_.z - tar.z);
-    XMVECTOR vAimPos = XMLoadFloat3(&fAimPos);
-    vAimPos = XMVector3Normalize(vAimPos);
-    XMVECTOR vDot = XMVector3Dot(vFront, vAimPos);
-    dot = XMVectorGetX(vDot);
-    float angle = (float)acos(dot);
-
-    // 外積を求めて半回転だったら angle に -1 を掛ける
-    XMVECTOR vCross = XMVector3Cross(vFront, vAimPos);
-    if (XMVectorGetY(vCross) < 0) {
-        angle *= -1;
-    }
-
-    transform_.rotate_.y = XMConvertToDegrees(angle);
-    transform_.rotate_.y += 180.0f; //Blender
-
     //こっちはプレイヤーとの範囲内か
     XMFLOAT3 pPos = pPlayer_->GetPosition();
     pPos.y += 0.5f;
@@ -168,7 +173,6 @@ void Missile::Update()
 
         pPlayer_->DecreaseHp(5);
         isExplode_ = true;
-
 
     }
 }

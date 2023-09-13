@@ -35,8 +35,14 @@ public:
 	//すでにロゴを表示したか/falseまだ
 	bool IsLogoShown() { return logoShown_; };
 	void SetLogoShown(bool b) { logoShown_ = b; };
+	
 	void SetResult(bool b) { result_ = b; };
 	bool GetResult() { return result_; };
+
+	void SetClearTime(int _time) { clearTime_ = _time; };
+	int GetClearTime() { return clearTime_; };
+	void SetClearTimeSma(int _time) { clearTimeSma_ = _time; };
+	int GetClearTimeSma() { return clearTimeSma_; };
 
 	//PlaySceneに移動する時のStageをセット１，２
 	void SetPlayStage(int i) { playStage_ = i; };
@@ -47,8 +53,10 @@ private:
 	SCENE_ID nextSceneID_;		//次のシーン
 
 	bool logoShown_;			//ロゴ表示したか（falseまだ
-	bool result_;				//クリアの場合はtrue
-
 	int playStage_;				//どのステージに移行するか
+
+	bool result_;				//クリアの場合はtrue
+	int clearTime_;				//クリアタイム
+	int clearTimeSma_;				//クリアタイム
 
 };

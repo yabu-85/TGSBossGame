@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="Aim.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="Beam.cpp" />
     <ClCompile Include="BossObstacle.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonFactory.cpp" />
@@ -179,6 +180,7 @@
   <ItemGroup>
     <ClInclude Include="Aim.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="Beam.h" />
     <ClInclude Include="BossObstacle.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonFactory.h" />

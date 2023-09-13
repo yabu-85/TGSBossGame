@@ -47,5 +47,8 @@ public:
     void Draw() override;
     void Release() override;
 
+    void NotifyMissileDestroyed(Missile* destMissile);
+    void KillMeSub() override;
+
 };
 

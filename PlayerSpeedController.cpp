@@ -7,7 +7,7 @@ namespace {
     const int speedUpTime = 300;
     int speedUpPngDraw = 0;
     int drawTime = 0;
-    float upSpeed = 0.2f; 
+    float upSpeed = 0.2f;
 }
 
 PlayerSpeedController::PlayerSpeedController(GameObject* parent)
@@ -21,7 +21,7 @@ PlayerSpeedController::~PlayerSpeedController()
 
 void PlayerSpeedController::Initialize()
 {
-    std::string fileName[] = { "SpeedUp", "SpeedDown", "SpeedGauge", "SpeedGaugeFrame"};
+    std::string fileName[] = { "SpeedUp", "SpeedDown", "SpeedGauge", "SpeedGaugeFrame" };
     for (int i = 0; i < 4; i++) {
         hPict_[i] = Image::Load("Png/" + fileName[i] + ".png");
         assert(hPict_[i] >= 0);
@@ -60,7 +60,7 @@ void PlayerSpeedController::Draw()
     if (speedUpPngDraw > 0) {
         Transform pict;
 
-        if (isUp_) 
+        if (isUp_)
         {
             pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).x;
             pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[0]).y;
@@ -70,7 +70,7 @@ void PlayerSpeedController::Draw()
             Image::Draw(hPict_[0]);
             drawTime += drawSpeed;
         }
-        else 
+        else
         {
             pict.scale_.x = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini") / Image::GetTextureSize(hPict_[1]).x;
             pict.scale_.y = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini") / Image::GetTextureSize(hPict_[1]).y;

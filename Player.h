@@ -81,4 +81,6 @@ public:
     bool IsisCrouc() { return isCrouching_; };
     void SetPlayerMovement(XMFLOAT3 _move) { playerMovement_ = _move; };
 
+    void ResetPlayer();
+
 };

@@ -49,8 +49,7 @@ public:
     //ミサイルのリスト取得
     std::vector<Missile*> GetMissiles() { return missiles_; };
 
-    //
-    void KillMeSub();
+    void KillMeSub() override;
 
 };
 

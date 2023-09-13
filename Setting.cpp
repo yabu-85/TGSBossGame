@@ -14,7 +14,7 @@
 using namespace std;
 
 Setting::Setting(GameObject* parent)
-	:GameObject(parent, "Setting"), hPict_{ -1,-1 }, pButtonFactory_(nullptr), pSlider_(nullptr), pSlider2_(nullptr)
+	:GameObject(parent, "Setting"), hPict_{ -1,-1, -1, -1 }, pButtonFactory_(nullptr), pSlider_(nullptr), pSlider2_(nullptr)
 {
 }
 
@@ -25,7 +25,7 @@ Setting::~Setting()
 void Setting::Initialize()
 {
 	pButtonFactory_ = Instantiate<ButtonFactory>(this);
-	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "ReturnTitle");
+	pButtonFactory_->ButtonCreate(0.0f, -500.0f, 1.0f, 1.0f, "Return");
 	pButtonFactory_->SetAlpha(200);
 	pButtonFactory_->SetFrameAlpha(200);
 	pButtonFactory_->SetBlendMode(0);
@@ -66,11 +66,12 @@ void Setting::Initialize()
 
 	/////////--------------------I‚í‚è
 
-	hPict_[0] = Image::Load("Png/Black.png");
-	assert(hPict_[0] >= 0);
-	hPict_[1] = Image::Load("Png/cross.png");
-	assert(hPict_[1] >= 0);
+	std::string fileName[] = { "Black", "cross", "AimSpeed", "SoundVolme" };
+	for (int i = 0; i < 4; i++) {
+		hPict_[i] = Image::Load("Png/" + fileName[i] + ".png");
+		assert(hPict_[i] >= 0);
 
+	}
 }
 
 void Setting::Update()
@@ -103,7 +104,7 @@ void Setting::Update()
 	}
 
 
-	if (pButtonFactory_->CheckButtonPressed() == "ReturnTitle"){
+	if (pButtonFactory_->CheckButtonPressed() == "Return"){
 		GameObject* gs2 = GetParent()->FindObject("ButtonFactory");
 		ButtonFactory* pB = (ButtonFactory*)gs2;
 		pB->SetActive(true);
@@ -128,6 +129,17 @@ void Setting::Draw()
 
 	Image::SetTransform(hPict_[1], abb);
 	Image::Draw(hPict_[1]);
+
+	Transform text;
+	text.scale_ = { 0.5f, 0.5f, 0.5f };
+	text.position_ = { 0.0f, 0.2f, 0.0f };
+	Image::SetTransform(hPict_[2], text);
+	Image::Draw(hPict_[2]);
+
+	text.position_ = { 0.0f, -0.1f, 0.0f };
+	Image::SetTransform(hPict_[3], text);
+	Image::Draw(hPict_[3]);
+
 }
 
 void Setting::Release()

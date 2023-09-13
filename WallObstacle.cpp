@@ -37,7 +37,9 @@ void WallObstacle::Update()
 
 	if (!pPlayer_->IsisCrouc()) {
 		XMFLOAT3 plaPos = pPlayer_->GetPosition();
-		if ((plaPos.z <= transform_.position_.z + leng) && (plaPos.z > transform_.position_.z - leng)) {
+		if ((plaPos.z <= transform_.position_.z + leng) && (plaPos.z > transform_.position_.z - leng) &&
+			plaPos.y < transform_.position_.y + 6.0f) {
+
 			parcent = 1.0f;
 			XMFLOAT3 move = { 0, 0, 0 };
 			pPlayer_->SetPlayerMovement(move);
@@ -68,4 +70,9 @@ void WallObstacle::Draw()
 
 void WallObstacle::Release()
 {
+}
+
+void WallObstacle::KillMeSub()
+{
+	KillMe();
 }

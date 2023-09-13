@@ -15,5 +15,7 @@ public:
     void Draw() override;
     void Release() override;
     
+    void KillMeSub() override;
+
 };
 

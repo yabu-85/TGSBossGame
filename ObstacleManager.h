@@ -31,6 +31,7 @@ class ObstacleManager : public GameObject
     int activationZone_;
     int activationZoneSub_;
     bool isActive_;
+    bool csvInit_;
     Player* pPlayer_;
 
 public:
@@ -61,6 +62,8 @@ public:
     void Reflect();
 
     void SetAllObstacleActive(bool b);
+
+    void KillObstacles();
 
 };
 

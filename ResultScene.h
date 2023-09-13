@@ -7,6 +7,12 @@ class ButtonFactory;
 class ResultScene : public GameObject
 {
 	int hPict_[3];
+	int hPictTime_[12];    //‰æ‘œ”Ô†
+	int hPictLank_;
+	int clearTime_;
+	int clearTimeSma_;
+	bool result_;
+
 	ButtonFactory* pButtonFactory_;
 
 	void DrawCursor();

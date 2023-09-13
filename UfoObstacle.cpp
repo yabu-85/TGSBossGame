@@ -93,6 +93,13 @@ void UfoObstacle::Release()
 {
 }
 
+void UfoObstacle::KillMeSub()
+{
+	Model::StopDraw(hModelSub_[2]);
+
+	KillMe();
+}
+
 void UfoObstacle::UpdateEnter()
 {
 	if (stateEnter_) {
@@ -196,7 +203,7 @@ void UfoObstacle::UpdatePreparation()
 	VFX::Start(data1);
 
 
-	int shotTime = 60;
+	int shotTime = 220;
 	if (time_ > shotTime) {
 
 		//‘æ“ñ‚ÌTargetPositionŒˆ’è
