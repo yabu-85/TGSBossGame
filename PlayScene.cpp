@@ -73,7 +73,7 @@ void PlayScene::Update()
 	if (Input::IsKeyDown(DIK_ESCAPE) && !FindObject("PauseMenu")) {
 		Instantiate<PauseMenu>(this);
 	}
-
+#if 0
 	if (Input::IsKeyDown(DIK_3)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->SetResult(true);
@@ -87,7 +87,7 @@ void PlayScene::Update()
 		pSceneManager->SetResult(false);
 		pSceneManager->ChangeScene(SCENE_ID_RESULT);
 	}
-
+#endif
 
 	//ƒQ[ƒ€ƒNƒŠƒA
 	if (goal <= pPlayer_->GetPosition().z) result = 1;
