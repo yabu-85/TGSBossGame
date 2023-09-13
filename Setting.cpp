@@ -117,14 +117,18 @@ void Setting::Update()
 
 void Setting::Draw()
 {
+	static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
+	static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
+	XMFLOAT3 size = Image::GetTextureSize(hPict_[0]);
+
+	Transform back = transform_;
+	back.scale_ = { 1, 1.5, 0 };
 	Image::SetAlpha(hPict_[0], 100);
-	Image::SetTransform(hPict_[0], transform_);
+	Image::SetTransform(hPict_[0], back);
 	Image::Draw(hPict_[0]);
 
 	Transform abb;
 	abb.position_ = Input::GetMousePositionSub();
-	static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
-	static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
 	abb.position_ = { abb.position_.x / screenWidth, -abb.position_.y / screenHeight , 0 };
 
 	Image::SetTransform(hPict_[1], abb);
@@ -136,7 +140,7 @@ void Setting::Draw()
 	Image::SetTransform(hPict_[2], text);
 	Image::Draw(hPict_[2]);
 
-	text.position_ = { 0.0f, -0.1f, 0.0f };
+	text.position_ = { 0.0f, -0.05f, 0.0f };
 	Image::SetTransform(hPict_[3], text);
 	Image::Draw(hPict_[3]);
 

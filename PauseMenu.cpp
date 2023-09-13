@@ -95,9 +95,10 @@ void PauseMenu::Update()
 
 void PauseMenu::Draw()
 {
-
+	Transform back = transform_;
+	back.scale_.y = 1.5f;
 	Image::SetAlpha(hPict_[0], 100);
-	Image::SetTransform(hPict_[0], transform_);
+	Image::SetTransform(hPict_[0], back);
 	Image::Draw(hPict_[0]);
 
 	Transform abb;

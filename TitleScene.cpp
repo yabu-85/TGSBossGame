@@ -107,9 +107,13 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	if (disp_) {
+		static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
+		static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
+		XMFLOAT3 size = Image::GetTextureSize(hPict_[0]);
+
 		Transform pos1 = transform_;
-		pos1.scale_.x = 0.8f;
-		pos1.scale_.y = 0.8f;
+		pos1.scale_.x = (size.x / screenWidth );
+		pos1.scale_.y = ( size.y / screenHeight);
 		Image::SetTransform(hPict_[0], pos1);
 		Image::Draw(hPict_[0]);
 
@@ -117,8 +121,8 @@ void TitleScene::Draw()
 
 		Transform pos = transform_;
 		pos.position_.y = 0.5f;
-		pos.scale_.x = 1.2f;
-		pos.scale_.y = 1.2f;
+		pos.scale_.x = (size.x / screenWidth);
+		pos.scale_.y = (size.y / screenHeight);
 		Image::SetTransform(hPict_[2], pos);
 		Image::Draw(hPict_[2]);
 	}

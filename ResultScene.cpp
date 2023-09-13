@@ -127,14 +127,21 @@ void ResultScene::Update()
 //描画
 void ResultScene::Draw()
 {
+	static float screenWidth = (float)GetSystemMetrics(SM_CXSCREEN);		//スクリーンの幅
+	static float screenHeight = (float)GetSystemMetrics(SM_CYSCREEN);	//スクリーンの高さ
+	XMFLOAT3 size = Image::GetTextureSize(hPict_[0]);
+
 	Transform pos;
-	pos.scale_ = XMFLOAT3(2.0f, 1.6f, 2.0f);
+	pos.scale_.x = (screenWidth / size.x);
+	pos.scale_.y = (screenHeight / size.y);
+
 	Image::SetAlpha(hPict_[0], 150);
 	Image::SetTransform(hPict_[0], pos);
 	Image::Draw(hPict_[0]);
 
 	pos.position_.y = 0.2f;
-	pos.scale_ = XMFLOAT3(1.7f, 1.7f, 1.7f);
+	pos.scale_.x =  (screenWidth / size.x);
+	pos.scale_.y =  (screenHeight / size.y);
 	Image::SetTransform(hPict_[1], pos);
 	Image::Draw(hPict_[1]);
 
