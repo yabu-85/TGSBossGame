@@ -173,7 +173,7 @@ void Missile::Update()
         CreateExplodeParticle();
         AudioManager::PlaySoundMa(AUDIO_MISSILE_EXPLODE);
 
-        pPlayer_->DecreaseHp(5);
+        pPlayer_->DecreaseHp(4);
         isExplode_ = true;
 
     }
