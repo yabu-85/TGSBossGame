@@ -74,21 +74,6 @@ void PlayScene::Update()
 		Instantiate<PauseMenu>(this);
 	}
 
-	if (Input::IsKeyDown(DIK_3)) {
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->SetResult(true);
-		pSceneManager->SetClearTime(pTimer_->GetTime());
-		pSceneManager->SetClearTimeSma(pTimer_->GetTimeSma());
-		pSceneManager->ChangeScene(SCENE_ID_RESULT);
-	}
-
-	if (Input::IsKeyDown(DIK_4)) {
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->SetResult(false);
-		pSceneManager->ChangeScene(SCENE_ID_RESULT);
-	}
-
-
 	//ゲームクリア
 	if (goal <= pPlayer_->GetPosition().z) result = 1;
 	//ゲームオーバー

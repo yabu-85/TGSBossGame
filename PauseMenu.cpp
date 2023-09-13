@@ -21,7 +21,7 @@
 
 
 PauseMenu::PauseMenu(GameObject* parent)
-	:GameObject(parent, "PauseMenu"), hPict_{ -1,-1 }, pButtonFactory_(nullptr)
+	:GameObject(parent, "PauseMenu"), hPict_{ -1,-1 }, pButtonFactory_(nullptr), waitTime_(0)
 {
 }
 
@@ -55,6 +55,9 @@ void PauseMenu::Initialize()
 
 void PauseMenu::Update()
 {
+	waitTime_++;
+	if (waitTime_ < 10) return;
+
 	if (pButtonFactory_->CheckButtonPressed() == "Retry") {
 		PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
 		pPlayScene->ResetGame();
@@ -62,8 +65,7 @@ void PauseMenu::Update()
 		KillMe();
 		return;
 	}
-
-	if (pButtonFactory_->CheckButtonPressed() == "ReturnGame") {
+	else if (pButtonFactory_->CheckButtonPressed() == "ReturnGame" || Input::IsKeyDown(DIK_ESCAPE)) {
 		PlayScene* pPlayScene = (PlayScene*)FindObject("PlayScene");
 		pPlayScene->SetObjectActive(true);
 
