@@ -4,7 +4,7 @@
 class PlayerSpeedController :
     public GameObject
 {
-    int hPict_[3];    //画像番号
+    int hPict_[4];    //画像番号
     int runTime_;
     float moveSpeedUp_;
     bool isUp_;         //スピード上げる=true, 下がる=false

@@ -248,6 +248,11 @@ void ObstacleManager::SetAllObstacleActive(bool b)
                 missile->SetActive(b);
             }
         }
+
+        if (e->GetObjectName() == "RaserObstacle") {
+            RaserObstacle* pRaser = dynamic_cast<RaserObstacle*>(e);
+            pRaser->SetBeamActive(b);
+        }
     }
 }
 

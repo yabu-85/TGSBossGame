@@ -29,8 +29,6 @@ void RobotObstacle::Initialize()
 	pPlayer_ = (Player*)FindObject("Player");
 	transform_.rotate_.y = 180;
 
-	count_ = 90;
-
 }
 
 void RobotObstacle::Update()
@@ -125,6 +123,11 @@ void RobotObstacle::UpdateEnter()
 
 void RobotObstacle::UpdateCharging()
 {
+	if (stateEnter_) {
+		stateEnter_ = false;
+		count_ = 90;
+	}
+
 	count_--;
 	if (count_ <= 0)
 		ChangeState(S_SHOT);

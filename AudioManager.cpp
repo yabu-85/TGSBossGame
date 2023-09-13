@@ -40,6 +40,7 @@ namespace AudioManager
                 {"Sound/MissileShot.wav", false, 1},
                 {"Sound/UFO_Charging.wav", false, 1},
                 {"Sound/UFO_Attack.wav", false, 1},
+                {"Sound/BeamShot.wav", false, 1},
 
                 //PlayerのAudio
                 {"Sound/Running.wav", true, 1},

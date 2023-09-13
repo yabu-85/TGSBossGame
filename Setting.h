@@ -7,7 +7,7 @@ class SliderButton;
 class Setting :
     public GameObject
 {
-    int hPict_[2];
+    int hPict_[4];
     ButtonFactory* pButtonFactory_;
     SliderButton* pSlider_;
     SliderButton* pSlider2_;

@@ -71,8 +71,8 @@ void Aim::Update()
     transform_.rotate_.x -= (mouseMove.y * 0.05f) * mouseSensitivity; //c•ûŒü‚Ì‰ñ“]
     if (transform_.rotate_.x <= -89.0f) transform_.rotate_.x = -89.0f;
     if (transform_.rotate_.x >= 89.0f) transform_.rotate_.x = 89.0f;
-  //  if (transform_.rotate_.y <= -270.0f) transform_.rotate_.y = -270.0f;
-  //  if (transform_.rotate_.y >= -90.0f) transform_.rotate_.y = -90.0f;
+    if (transform_.rotate_.y <= -260.0f) transform_.rotate_.y = -260.0f;
+    if (transform_.rotate_.y >= -100.0f) transform_.rotate_.y = -100.0f;
 
     //ƒJƒƒ‰‚Ì‰ñ“]
     XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(transform_.rotate_.x));

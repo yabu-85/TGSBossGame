@@ -102,6 +102,7 @@ void Player::Update()
     //ƒ|ƒWƒVƒ‡ƒ“‚Ì§ŒÀ
     if (transform_.position_.x <= 0.0f) transform_.position_.x = 0.0f;
     if (transform_.position_.x >= 6.9f) transform_.position_.x = 6.9f;
+    if (transform_.position_.z <= 5.0f) transform_.position_.z = 5.0f;
 
     //—‰º‚µ‚½‚Ìˆ—
     if (transform_.position_.y <= -9.0f) {

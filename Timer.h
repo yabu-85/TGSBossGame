@@ -51,4 +51,5 @@ public:
 
     //ƒ^ƒCƒ€Žæ“¾
     int GetTime() { return frame_ / FPS; }
+    int GetTimeSma() { return calcTime_; };
 };

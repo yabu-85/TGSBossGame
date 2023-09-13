@@ -1,6 +1,9 @@
 #pragma once
 #include "Obstacle.h"
 
+class Beam;
+class Player;
+
 class RaserObstacle :
     public Obstacle
 {
@@ -21,6 +24,15 @@ class RaserObstacle :
     void ChangeState(STATE s);
 
     int hModelHead_;
+    int count_;
+    bool aliveBeam_;    //これBeamのポインタがnullが出来なかった時用の
+    Player* pPlayer_;
+    Beam* pBeam_;
+
+    //回転する
+    void Rotate();
+    //ミサイル撃つ&リストに登録
+    void ShotBeam();
 
 public:
     RaserObstacle(GameObject* parent);
@@ -31,6 +43,7 @@ public:
     void Release() override;
 
     void KillMeSub() override;
+    void SetBeamActive(bool b);
 
 };
 

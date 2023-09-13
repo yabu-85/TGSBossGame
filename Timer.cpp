@@ -56,12 +56,13 @@ void Timer::Draw()
 
     int firstDigit = sec % 10;                          //一の位
     int secondDigit = (sec / 10) % 10;                  //十の位の数字を取得
+    int third = (sec / 100);
 
     //左の一の位
     Transform pic1 = transform_;
     pic1.scale_.x += 1.2f;
     pic1.scale_.y += 1.2f;
-    pic1.position_ = { -0.1f, 0.8f, 0.0f };
+    pic1.position_ = { 0.0f, 0.8f, 0.0f };
     Image::SetTransform(hPict_[firstDigit], pic1);
     Image::Draw(hPict_[firstDigit]);
     
@@ -70,6 +71,13 @@ void Timer::Draw()
     pic2.position_.x -= 0.09f;
     Image::SetTransform(hPict_[secondDigit], pic2);
     Image::Draw(hPict_[secondDigit]);
+
+    //左の百の位
+    Transform pic3 = pic1;
+    pic3 = pic1;
+    pic3.position_.x -= 0.18f;
+    Image::SetTransform(hPict_[third], pic3);
+    Image::Draw(hPict_[third]);
 
     //ピリオド
     Transform picPeriod = pic1;
