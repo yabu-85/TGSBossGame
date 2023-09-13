@@ -9,7 +9,7 @@
 namespace {
 	int lank = 3; //Cƒ‰ƒ“ƒN
 	//¶‚©‚çS,A,B,C‚Å‚»‚Ì”ˆÈã‚¾‚Á‚½‚ç‚»‚Ìƒ‰ƒ“ƒN‚É‚È‚é
-	int stageClearTime[2][3] = { { 170, 140, 70},
+	int stageClearTime[2][3] = { { 60, 50, 30},
 						         { 100, 10, 10} 
 	};
 	

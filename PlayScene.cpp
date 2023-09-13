@@ -21,7 +21,7 @@ namespace {
 
 	//ステージごとの設定
 	std::string stageName[] = { "Map1", "Map2" };
-	float stageTime[] = { 180.0f, 130.0f };
+	float stageTime[] = { 100.0f, 130.0f };
 
 }
 
