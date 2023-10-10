@@ -134,14 +134,12 @@ void Sprite::Draw(Transform& transform, RECT rect, float alpha)
 	cb.world = XMMatrixTranspose(world);
 
 	// テクスチャ座標変換行列を渡す
-	XMMATRIX mTexTrans = XMMatrixTranslation((float)rect.left / (float)pTexture_->GetSize().x,
-		(float)rect.top / (float)pTexture_->GetSize().y, 0.0f);
-	XMMATRIX mTexScale = XMMatrixScaling((float)rect.right / (float)pTexture_->GetSize().x,
-		(float)rect.bottom / (float)pTexture_->GetSize().y, 1.0f);
+	XMFLOAT3 texSize = pTexture_->GetSize();
+	XMMATRIX mTexTrans = XMMatrixTranslation((float)rect.left / texSize.x, (float)rect.top / texSize.y, 0.0f);
+	XMMATRIX mTexScale = XMMatrixScaling((float)rect.right / texSize.x, (float)rect.bottom / texSize.y, 1.0f);
 	XMMATRIX mTexel = mTexScale * mTexTrans;
 	cb.uvTrans = XMMatrixTranspose(mTexel);
 	
-
 	// テクスチャ合成色情報を渡す
 	cb.color = XMFLOAT4(1, 1, 1, alpha);
 

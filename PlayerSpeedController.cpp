@@ -51,7 +51,7 @@ void PlayerSpeedController::Draw()
     Image::SetTransform(hPict_[2], gauge);
     Image::Draw(hPict_[2]);
 
-    gauge.scale_.x = 1.0f;
+    gauge.scale_.x = 0.99f;
     Image::SetTransform(hPict_[3], gauge);
     Image::Draw(hPict_[3]);
 

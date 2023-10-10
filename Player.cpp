@@ -31,7 +31,7 @@ Player::Player(GameObject* parent)
     : GameObject(parent, "Player"), hModel_(-1), targetRotation_(0), firstJump_(false), secondJump_(false), prevYHeight_(0),
     isCrouching_(false), graY_(0), fMove_{ 0,0,0 }, state_(S_IDLE), anime_(false), pAim_(nullptr), cameraHeight_(1.0f),
     playerMovement_{ 0,0,0 }, bulletJump_(false), pStage_(nullptr), maxMoveSpeed_(1.0f), isActive_(false),stateEnter_(true),
-    hp_(0), maxHp_(0), pText(nullptr), hPict_(-1), pSpeedCtrl_(nullptr)
+    hp_(0), maxHp_(0), hPict_(-1), pSpeedCtrl_(nullptr)
 {
     moveSpeed_ = 1.5f;
 }
@@ -42,9 +42,6 @@ Player::~Player()
 
 void Player::Initialize()
 {
-    pText = new Text;
-    pText->Initialize();
-
     transform_.scale_.x = 0.2f;
     transform_.scale_.y = 0.2f;
     transform_.scale_.z = 0.2f;
@@ -179,10 +176,6 @@ void Player::Update()
 
 void Player::Draw()
 {
-    pText->Draw(30, 30, (int)transform_.position_.x);
-    pText->Draw(30, 70, (int)transform_.position_.z);
-    pText->Draw(30, 150, (int)pStage_->GetFloorHeight((int)transform_.position_.x, (int)transform_.position_.z));
-
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 

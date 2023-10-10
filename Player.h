@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include "Engine/Text.h"
 #include "PlayerSpeedController.h"
 
 class Aim;
@@ -8,8 +7,6 @@ class Stage;
 
 class Player : public GameObject
 {
-    Text* pText;
-
     enum STATE {
         S_IDLE,
         S_MOVE,
